@@ -121,7 +121,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'app_router.dart';
+import 'core/app_router.dart';
 
 void main() => runApp(const MyApp());
 

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ev_charge/widgets/bottom_navbar.dart';
 
-class SecondPage extends StatelessWidget {
-  const SecondPage({Key? key}) : super(key: key);
+class Settings extends StatelessWidget {
+  const Settings({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second Page'),
+        title: const Text('Settings'),
         backgroundColor: Colors.blue,
       ),
       body: Center(
@@ -19,6 +20,7 @@ class SecondPage extends StatelessWidget {
           child: const Text('Go Back'),
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
