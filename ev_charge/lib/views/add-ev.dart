@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ev_charge/widgets/bottom_navbar.dart';
+
+class AddEv extends StatelessWidget {
+  const AddEv({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add EV'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            context.pop();
+          },
+          child: const Text('Go Back'),
+        ),
+      ),
+      bottomNavigationBar: const BottomNavBar(),
+    );
+  }
+}

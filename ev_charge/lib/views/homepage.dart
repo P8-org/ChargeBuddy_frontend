@@ -21,13 +21,24 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: ElevatedButton(
+      body: Column(
+        children: [
+          Center(
+          child: ElevatedButton(
           onPressed: () {
             context.go('/infopage');
           },
           child: const Text('Go to Info Page'),
         ),
+      ),
+      Center(
+        child: ElevatedButton(
+          onPressed: () {
+            context.go('/add-ev');
+          },
+          child: const Text('Add EV'))
+      )
+        ],
       ),
       bottomNavigationBar: const BottomNavBar(),
     );
