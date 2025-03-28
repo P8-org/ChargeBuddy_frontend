@@ -18,4 +18,4 @@ dart run drift_dev make-migrations
 > The schemaVersion in database.dart should be updated, when creating a new schema.
 
 This should also be done every time the database.dart file is changed,
-but only needs to be done after the database has been created.
+but only after the database has been created.
