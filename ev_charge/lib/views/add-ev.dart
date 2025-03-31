@@ -112,8 +112,8 @@ class EVFormState extends State<EVForm> {
           stringCollector("Model", modelNameController),
           intCollector("Model Year", modelYearController),
           optionalStringCollector("Custom Name", userSetNameController),
-          intCollector("Battery Capacity (kWh)", batteryCapacityController),
-          intCollector("Maximum Charging Power (kW)", maxChargingPowerController),
+          doubleCollector("Battery Capacity (kWh)", batteryCapacityController),
+          doubleCollector("Maximum Charging Power (kW)", maxChargingPowerController),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Row(
