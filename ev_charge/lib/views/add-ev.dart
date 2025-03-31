@@ -116,7 +116,14 @@ class EVFormState extends State<EVForm> {
           intCollector("Maximum Charging Power (kW)", maxChargingPowerController),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: ElevatedButton(
+            child: Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text ('Cancel')),
+                ElevatedButton(
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
@@ -133,6 +140,9 @@ class EVFormState extends State<EVForm> {
               },
               child: const Text('Submit'),
             ),
+              ],
+            )
+            
           ),
 
           // Add TextFormFields and ElevatedButton here.
@@ -153,14 +163,6 @@ class AddEv extends StatelessWidget {
       ),
       body: Column (
         children: [
-          Center(
-            child: ElevatedButton(
-              onPressed:  () {
-                context.pop();
-              },
-              child: const Text('Cancel'),
-            ),
-          ),
           Center(
             child: const EVForm()
           ),
