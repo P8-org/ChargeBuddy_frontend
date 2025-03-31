@@ -34,6 +34,8 @@ dependencies:
   drift: ^2.26.0
   drift_flutter: ^0.2.4
   path_provider: ^2.1.5
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -44,6 +46,10 @@ dev_dependencies:
     sdk: flutter
   drift_dev: ^2.26.0
   build_runner: ^2.4.15
+
+  custom_lint:
+  riverpod_generator: ^2.6.5
+  riverpod_lint: ^2.6.5
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
