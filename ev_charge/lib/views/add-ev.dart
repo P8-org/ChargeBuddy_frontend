@@ -63,7 +63,7 @@ Padding doubleCollector(String label, TextEditingController controller, ) {
                 labelText: label,
               ),
               validator: (value) {
-                if (value == null || value.isEmpty || int.tryParse(value) == null) {
+                if (value == null || value.isEmpty || double.tryParse(value) == null) {
                   return 'Please enter a numerical value';
                 } else if (double.parse(value) < 0) {
                   return 'Please enter a positive numerical value';
