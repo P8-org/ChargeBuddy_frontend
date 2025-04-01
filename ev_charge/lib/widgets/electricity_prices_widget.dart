@@ -47,7 +47,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
           return const Center(child: Text("No data available"));
         }
 
-        final prices = snapshot.data!;
+        final prices = snapshot.data!.reversed.toList();
 
         return Column(
           children: [
@@ -60,7 +60,9 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                 BarChartData(
                   maxY:
                       prices
-                          .map((e) => e.price) // makes a list of only the prices
+                          .map(
+                            (e) => e.price,
+                          ) // makes a list of only the prices
                           .reduce((a, b) => a > b ? a : b) +
                       5, // finds the maximum price and adds 5 to it
                   minY: 0,
@@ -76,7 +78,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 20,
+                        reservedSize: 50,
                         getTitlesWidget: (value, meta) {
                           return Text('${value.toInt()}');
                         },
@@ -87,7 +89,11 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
                           int hourIndex = value.toInt();
-                          return Text('${prices[hourIndex].hour}');
+
+                          if (hourIndex % 3 == 0) {
+                            return Text('${prices[hourIndex].hour}');
+                          } else
+                            return const Text('');
                         },
                       ),
                     ),
