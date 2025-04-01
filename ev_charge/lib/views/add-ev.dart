@@ -107,13 +107,14 @@ class EVFormState extends State<EVForm> {
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
-      child: Column(
+      child: ListView(
+        padding: const EdgeInsets.all(8),
         children: <Widget>[
           stringCollector("Model", modelNameController),
-          /*intCollector("Model Year", modelYearController),
+          intCollector("Model Year", modelYearController),
           optionalStringCollector("Custom Name", userSetNameController),
           doubleCollector("Battery Capacity (kWh)", batteryCapacityController),
-          doubleCollector("Maximum Charging Power (kW)", maxChargingPowerController),*/
+          doubleCollector("Maximum Charging Power (kW)", maxChargingPowerController),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Row(

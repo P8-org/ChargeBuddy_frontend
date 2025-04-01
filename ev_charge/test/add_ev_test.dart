@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Add EV: form textField test', (WidgetTester tester) async {
     router.go('/add-ev');
     await tester.pumpWidget(
       MaterialApp.router(
@@ -19,9 +19,7 @@ void main() {
       )
     );
 
-    await tester.pump();
-
-    final titleFinder = find.text('Please enter some text');
+    final titleFinder = find.text('Maximum Charging Power (kW)');
     expect(titleFinder, findsWidgets);
   });
 
