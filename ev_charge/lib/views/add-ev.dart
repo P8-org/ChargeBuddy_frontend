@@ -110,13 +110,14 @@ class EVFormState extends State<EVForm> {
       child: Column(
         children: <Widget>[
           stringCollector("Model", modelNameController),
-          intCollector("Model Year", modelYearController),
+          /*intCollector("Model Year", modelYearController),
           optionalStringCollector("Custom Name", userSetNameController),
           doubleCollector("Battery Capacity (kWh)", batteryCapacityController),
-          doubleCollector("Maximum Charging Power (kW)", maxChargingPowerController),
+          doubleCollector("Maximum Charging Power (kW)", maxChargingPowerController),*/
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 ElevatedButton(
                   onPressed: () {
@@ -161,13 +162,7 @@ class AddEv extends StatelessWidget {
         title: const Text('Add EV'),
         backgroundColor: Colors.blue,
       ),
-      body: Column (
-        children: [
-          Center(
-            child: const EVForm()
-          ),
-        ]
-      ),
+      body: const EVForm(),
       bottomNavigationBar: const BottomNavBar(),
     );
   }
