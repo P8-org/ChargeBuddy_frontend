@@ -7,26 +7,20 @@ part 'database.g.dart';
 class EVCarModels extends Table {
   late final id = integer().autoIncrement()();
   late final modelName = text().withLength(min: 3, max: 64)();
-  late final modelYear = integer().nullable()();
+  late final modelYear = integer()();
   late final batteryCapacity = real()();
   late final maxChargingPower = real()();
 }
 
 class UserEVs extends Table {
   late final id = integer().autoIncrement()();
-  late final userId = integer().references(Users, #id)();
   late final carModelId = integer().references(EVCarModels, #id)();
   late final userSetName = text().withLength(min: 3, max: 64)();
+  late final currentCharge = real()();
 }
 
-class Users extends Table {
+class Constraints extends Table {
   late final id = integer().autoIncrement()();
-  late final name = text().withLength(min: 3, max: 64)();
-}
-
-class Schedules extends Table {
-  late final id = integer().autoIncrement()();
-  late final userId = integer().references(Users, #id)();
   late final userCarModelId = integer().references(UserEVs, #id)();
 
 
@@ -46,11 +40,22 @@ class Schedules extends Table {
   ];
 }
 
+class Schedule extends Table {
+  late final id = integer().autoIncrement()();
+  late final userEvId = integer().references(UserEVs, #id)();
+
+  /// Amount of energy needed (in kWh) for this hour
+  late final chargeKwh = real()();
+
+  /// The hour offset from [createdAt], e.g. 0 = current hour, 1 = +1h
+  late final Column<int> chargeHour = integer().check(chargeHour.isBetweenValues(0, 24))();
+
+  /// When this schedule was generated (e.g., by API call)
+  late final createdAt = dateTime().withDefault(currentDateAndTime)();
+}
 
 
-
-
-@DriftDatabase(tables: [EVCarModels])
+@DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedule])
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.
