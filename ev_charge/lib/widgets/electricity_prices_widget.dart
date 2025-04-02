@@ -73,7 +73,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                             (e) => e.price,
                           ) // makes a list of only the prices
                           .reduce((a, b) => a > b ? a : b) +
-                      5, // finds the maximum price and adds 5 to it
+                      100, // finds the maximum price and adds 5 to it
                   minY: 0,
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: true),
