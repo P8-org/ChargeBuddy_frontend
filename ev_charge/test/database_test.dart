@@ -28,6 +28,7 @@ void main() {
           ),
         );
 
+    // ignore: unused_local_variable
     final userEvId = await db
         .into(db.userEVs)
         .insert(
