@@ -8,7 +8,7 @@ class ElectricityPrices {
   ElectricityPrices({
     required this.hour,
     required this.price,
-    this.barColor = Colors.blue,
+    this.barColor = Colors.green,
   });
 
   factory ElectricityPrices.fromJson(Map<String, dynamic> json) {
@@ -19,16 +19,3 @@ class ElectricityPrices {
   }
 }
 
-List<ElectricityPrices> generateElectricityPrices() {
-  List<ElectricityPrices> prices = [];
-  for (int i = 0; i < 24; i++) {
-    prices.add(
-      ElectricityPrices(
-        hour: i,
-        price: i.toDouble(),
-        barColor: Colors.blue,
-      ),
-    );
-  }
-  return prices;
-}
