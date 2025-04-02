@@ -55,7 +55,7 @@ class Schedules extends Table {
 }
 
 
-@DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedule])
+@DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedules])
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.
