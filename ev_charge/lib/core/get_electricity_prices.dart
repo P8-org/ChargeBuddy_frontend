@@ -6,8 +6,11 @@ import '../viewmodels/electricity_prices.dart';
 // http://127.0.0.1:8000/power
 
 class ElectricityPricesService {
-  static Future<List<ElectricityPrices>> fetchElectricityPrices() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/power'));
+  final http.Client client;
+  ElectricityPricesService(this.client);
+
+  Future<List<ElectricityPrices>> fetchElectricityPrices() async {
+    final response = await client.get(Uri.parse('http://10.0.2.2:8000/power'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);

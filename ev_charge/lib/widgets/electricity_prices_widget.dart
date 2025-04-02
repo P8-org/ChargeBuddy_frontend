@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:ev_charge/core/get_electricity_prices.dart';
 import 'package:ev_charge/viewmodels/electricity_prices.dart';
+import 'package:http/http.dart' as http; // Import http
 
 class ElectricityPricesWidget extends StatefulWidget {
   const ElectricityPricesWidget({super.key});
@@ -17,7 +18,10 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
   @override
   void initState() {
     super.initState();
-    futureElectricityPrices = ElectricityPricesService.fetchElectricityPrices();
+
+    final client = http.Client();
+    final service = ElectricityPricesService(client);
+    futureElectricityPrices = service.fetchElectricityPrices();
   }
 
   List<BarChartGroupData> getBarChartData(List<ElectricityPrices> prices) {
@@ -92,8 +96,9 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
 
                           if (hourIndex % 3 == 0) {
                             return Text('${prices[hourIndex].hour}');
-                          } else
+                          } else {
                             return const Text('');
+                          }
                         },
                       ),
                     ),
