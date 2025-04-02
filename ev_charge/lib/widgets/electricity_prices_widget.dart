@@ -32,7 +32,12 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
       return BarChartGroupData(
         x: index,
         barRods: [
-          BarChartRodData(toY: data.price, color: data.barColor, width: 12),
+          BarChartRodData(
+            toY: data.price,
+            color: data.barColor,
+            width: 12,
+            borderRadius: BorderRadius.zero,
+          ),
         ],
       );
     }).toList();
