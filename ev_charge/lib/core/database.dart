@@ -40,7 +40,7 @@ class Constraints extends Table {
   ];
 }
 
-class Schedule extends Table {
+class Schedules extends Table {
   late final id = integer().autoIncrement()();
   late final userEvId = integer().references(UserEVs, #id)();
 
@@ -55,7 +55,7 @@ class Schedule extends Table {
 }
 
 
-@DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedule])
+@DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedules])
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.

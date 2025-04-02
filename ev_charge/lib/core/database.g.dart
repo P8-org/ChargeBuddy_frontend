@@ -1084,12 +1084,12 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
   }
 }
 
-class $ScheduleTable extends Schedule
-    with TableInfo<$ScheduleTable, ScheduleData> {
+class $SchedulesTable extends Schedules
+    with TableInfo<$SchedulesTable, Schedule> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ScheduleTable(this.attachedDatabase, [this._alias]);
+  $SchedulesTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1164,10 +1164,10 @@ class $ScheduleTable extends Schedule
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'schedule';
+  static const String $name = 'schedules';
   @override
   VerificationContext validateIntegrity(
-    Insertable<ScheduleData> instance, {
+    Insertable<Schedule> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1211,9 +1211,9 @@ class $ScheduleTable extends Schedule
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ScheduleData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Schedule map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ScheduleData(
+    return Schedule(
       id:
           attachedDatabase.typeMapping.read(
             DriftSqlType.int,
@@ -1243,12 +1243,12 @@ class $ScheduleTable extends Schedule
   }
 
   @override
-  $ScheduleTable createAlias(String alias) {
-    return $ScheduleTable(attachedDatabase, alias);
+  $SchedulesTable createAlias(String alias) {
+    return $SchedulesTable(attachedDatabase, alias);
   }
 }
 
-class ScheduleData extends DataClass implements Insertable<ScheduleData> {
+class Schedule extends DataClass implements Insertable<Schedule> {
   final int id;
   final int userEvId;
 
@@ -1260,7 +1260,7 @@ class ScheduleData extends DataClass implements Insertable<ScheduleData> {
 
   /// When this schedule was generated (e.g., by API call)
   final DateTime createdAt;
-  const ScheduleData({
+  const Schedule({
     required this.id,
     required this.userEvId,
     required this.chargeKwh,
@@ -1278,8 +1278,8 @@ class ScheduleData extends DataClass implements Insertable<ScheduleData> {
     return map;
   }
 
-  ScheduleCompanion toCompanion(bool nullToAbsent) {
-    return ScheduleCompanion(
+  SchedulesCompanion toCompanion(bool nullToAbsent) {
+    return SchedulesCompanion(
       id: Value(id),
       userEvId: Value(userEvId),
       chargeKwh: Value(chargeKwh),
@@ -1288,12 +1288,12 @@ class ScheduleData extends DataClass implements Insertable<ScheduleData> {
     );
   }
 
-  factory ScheduleData.fromJson(
+  factory Schedule.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ScheduleData(
+    return Schedule(
       id: serializer.fromJson<int>(json['id']),
       userEvId: serializer.fromJson<int>(json['userEvId']),
       chargeKwh: serializer.fromJson<double>(json['chargeKwh']),
@@ -1313,21 +1313,21 @@ class ScheduleData extends DataClass implements Insertable<ScheduleData> {
     };
   }
 
-  ScheduleData copyWith({
+  Schedule copyWith({
     int? id,
     int? userEvId,
     double? chargeKwh,
     int? chargeHour,
     DateTime? createdAt,
-  }) => ScheduleData(
+  }) => Schedule(
     id: id ?? this.id,
     userEvId: userEvId ?? this.userEvId,
     chargeKwh: chargeKwh ?? this.chargeKwh,
     chargeHour: chargeHour ?? this.chargeHour,
     createdAt: createdAt ?? this.createdAt,
   );
-  ScheduleData copyWithCompanion(ScheduleCompanion data) {
-    return ScheduleData(
+  Schedule copyWithCompanion(SchedulesCompanion data) {
+    return Schedule(
       id: data.id.present ? data.id.value : this.id,
       userEvId: data.userEvId.present ? data.userEvId.value : this.userEvId,
       chargeKwh: data.chargeKwh.present ? data.chargeKwh.value : this.chargeKwh,
@@ -1339,7 +1339,7 @@ class ScheduleData extends DataClass implements Insertable<ScheduleData> {
 
   @override
   String toString() {
-    return (StringBuffer('ScheduleData(')
+    return (StringBuffer('Schedule(')
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
           ..write('chargeKwh: $chargeKwh, ')
@@ -1355,7 +1355,7 @@ class ScheduleData extends DataClass implements Insertable<ScheduleData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is ScheduleData &&
+      (other is Schedule &&
           other.id == this.id &&
           other.userEvId == this.userEvId &&
           other.chargeKwh == this.chargeKwh &&
@@ -1363,20 +1363,20 @@ class ScheduleData extends DataClass implements Insertable<ScheduleData> {
           other.createdAt == this.createdAt);
 }
 
-class ScheduleCompanion extends UpdateCompanion<ScheduleData> {
+class SchedulesCompanion extends UpdateCompanion<Schedule> {
   final Value<int> id;
   final Value<int> userEvId;
   final Value<double> chargeKwh;
   final Value<int> chargeHour;
   final Value<DateTime> createdAt;
-  const ScheduleCompanion({
+  const SchedulesCompanion({
     this.id = const Value.absent(),
     this.userEvId = const Value.absent(),
     this.chargeKwh = const Value.absent(),
     this.chargeHour = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
-  ScheduleCompanion.insert({
+  SchedulesCompanion.insert({
     this.id = const Value.absent(),
     required int userEvId,
     required double chargeKwh,
@@ -1385,7 +1385,7 @@ class ScheduleCompanion extends UpdateCompanion<ScheduleData> {
   }) : userEvId = Value(userEvId),
        chargeKwh = Value(chargeKwh),
        chargeHour = Value(chargeHour);
-  static Insertable<ScheduleData> custom({
+  static Insertable<Schedule> custom({
     Expression<int>? id,
     Expression<int>? userEvId,
     Expression<double>? chargeKwh,
@@ -1401,14 +1401,14 @@ class ScheduleCompanion extends UpdateCompanion<ScheduleData> {
     });
   }
 
-  ScheduleCompanion copyWith({
+  SchedulesCompanion copyWith({
     Value<int>? id,
     Value<int>? userEvId,
     Value<double>? chargeKwh,
     Value<int>? chargeHour,
     Value<DateTime>? createdAt,
   }) {
-    return ScheduleCompanion(
+    return SchedulesCompanion(
       id: id ?? this.id,
       userEvId: userEvId ?? this.userEvId,
       chargeKwh: chargeKwh ?? this.chargeKwh,
@@ -1440,7 +1440,7 @@ class ScheduleCompanion extends UpdateCompanion<ScheduleData> {
 
   @override
   String toString() {
-    return (StringBuffer('ScheduleCompanion(')
+    return (StringBuffer('SchedulesCompanion(')
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
           ..write('chargeKwh: $chargeKwh, ')
@@ -1457,7 +1457,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $EVCarModelsTable eVCarModels = $EVCarModelsTable(this);
   late final $UserEVsTable userEVs = $UserEVsTable(this);
   late final $ConstraintsTable constraints = $ConstraintsTable(this);
-  late final $ScheduleTable schedule = $ScheduleTable(this);
+  late final $SchedulesTable schedules = $SchedulesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1466,7 +1466,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     eVCarModels,
     userEVs,
     constraints,
-    schedule,
+    schedules,
   ];
 }
 
@@ -1835,19 +1835,19 @@ final class $$UserEVsTableReferences
     );
   }
 
-  static MultiTypedResultKey<$ScheduleTable, List<ScheduleData>>
-  _scheduleRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.schedule,
-    aliasName: $_aliasNameGenerator(db.userEVs.id, db.schedule.userEvId),
+  static MultiTypedResultKey<$SchedulesTable, List<Schedule>>
+  _schedulesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.schedules,
+    aliasName: $_aliasNameGenerator(db.userEVs.id, db.schedules.userEvId),
   );
 
-  $$ScheduleTableProcessedTableManager get scheduleRefs {
-    final manager = $$ScheduleTableTableManager(
+  $$SchedulesTableProcessedTableManager get schedulesRefs {
+    final manager = $$SchedulesTableTableManager(
       $_db,
-      $_db.schedule,
+      $_db.schedules,
     ).filter((f) => f.userEvId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult.readTableOrNull(_scheduleRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(_schedulesRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -1926,22 +1926,22 @@ class $$UserEVsTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> scheduleRefs(
-    Expression<bool> Function($$ScheduleTableFilterComposer f) f,
+  Expression<bool> schedulesRefs(
+    Expression<bool> Function($$SchedulesTableFilterComposer f) f,
   ) {
-    final $$ScheduleTableFilterComposer composer = $composerBuilder(
+    final $$SchedulesTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.schedule,
+      referencedTable: $db.schedules,
       getReferencedColumn: (t) => t.userEvId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ScheduleTableFilterComposer(
+          }) => $$SchedulesTableFilterComposer(
             $db: $db,
-            $table: $db.schedule,
+            $table: $db.schedules,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2070,22 +2070,22 @@ class $$UserEVsTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> scheduleRefs<T extends Object>(
-    Expression<T> Function($$ScheduleTableAnnotationComposer a) f,
+  Expression<T> schedulesRefs<T extends Object>(
+    Expression<T> Function($$SchedulesTableAnnotationComposer a) f,
   ) {
-    final $$ScheduleTableAnnotationComposer composer = $composerBuilder(
+    final $$SchedulesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.schedule,
+      referencedTable: $db.schedules,
       getReferencedColumn: (t) => t.userEvId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ScheduleTableAnnotationComposer(
+          }) => $$SchedulesTableAnnotationComposer(
             $db: $db,
-            $table: $db.schedule,
+            $table: $db.schedules,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2112,7 +2112,7 @@ class $$UserEVsTableTableManager
           PrefetchHooks Function({
             bool carModelId,
             bool constraintsRefs,
-            bool scheduleRefs,
+            bool schedulesRefs,
           })
         > {
   $$UserEVsTableTableManager(_$AppDatabase db, $UserEVsTable table)
@@ -2163,13 +2163,13 @@ class $$UserEVsTableTableManager
           prefetchHooksCallback: ({
             carModelId = false,
             constraintsRefs = false,
-            scheduleRefs = false,
+            schedulesRefs = false,
           }) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
                 if (constraintsRefs) db.constraints,
-                if (scheduleRefs) db.schedule,
+                if (schedulesRefs) db.schedules,
               ],
               addJoins: <
                 T extends TableManagerState<
@@ -2227,22 +2227,18 @@ class $$UserEVsTableTableManager
                           ),
                       typedResults: items,
                     ),
-                  if (scheduleRefs)
-                    await $_getPrefetchedData<
-                      UserEV,
-                      $UserEVsTable,
-                      ScheduleData
-                    >(
+                  if (schedulesRefs)
+                    await $_getPrefetchedData<UserEV, $UserEVsTable, Schedule>(
                       currentTable: table,
                       referencedTable: $$UserEVsTableReferences
-                          ._scheduleRefsTable(db),
+                          ._schedulesRefsTable(db),
                       managerFromTypedResult:
                           (p0) =>
                               $$UserEVsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).scheduleRefs,
+                              ).schedulesRefs,
                       referencedItemsForCurrentItem:
                           (item, referencedItems) => referencedItems.where(
                             (e) => e.userEvId == item.id,
@@ -2272,7 +2268,7 @@ typedef $$UserEVsTableProcessedTableManager =
       PrefetchHooks Function({
         bool carModelId,
         bool constraintsRefs,
-        bool scheduleRefs,
+        bool schedulesRefs,
       })
     >;
 typedef $$ConstraintsTableCreateCompanionBuilder =
@@ -2595,16 +2591,16 @@ typedef $$ConstraintsTableProcessedTableManager =
       Constraint,
       PrefetchHooks Function({bool userCarModelId})
     >;
-typedef $$ScheduleTableCreateCompanionBuilder =
-    ScheduleCompanion Function({
+typedef $$SchedulesTableCreateCompanionBuilder =
+    SchedulesCompanion Function({
       Value<int> id,
       required int userEvId,
       required double chargeKwh,
       required int chargeHour,
       Value<DateTime> createdAt,
     });
-typedef $$ScheduleTableUpdateCompanionBuilder =
-    ScheduleCompanion Function({
+typedef $$SchedulesTableUpdateCompanionBuilder =
+    SchedulesCompanion Function({
       Value<int> id,
       Value<int> userEvId,
       Value<double> chargeKwh,
@@ -2612,12 +2608,12 @@ typedef $$ScheduleTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
     });
 
-final class $$ScheduleTableReferences
-    extends BaseReferences<_$AppDatabase, $ScheduleTable, ScheduleData> {
-  $$ScheduleTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$SchedulesTableReferences
+    extends BaseReferences<_$AppDatabase, $SchedulesTable, Schedule> {
+  $$SchedulesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $UserEVsTable _userEvIdTable(_$AppDatabase db) => db.userEVs
-      .createAlias($_aliasNameGenerator(db.schedule.userEvId, db.userEVs.id));
+      .createAlias($_aliasNameGenerator(db.schedules.userEvId, db.userEVs.id));
 
   $$UserEVsTableProcessedTableManager get userEvId {
     final $_column = $_itemColumn<int>('user_ev_id')!;
@@ -2634,9 +2630,9 @@ final class $$ScheduleTableReferences
   }
 }
 
-class $$ScheduleTableFilterComposer
-    extends Composer<_$AppDatabase, $ScheduleTable> {
-  $$ScheduleTableFilterComposer({
+class $$SchedulesTableFilterComposer
+    extends Composer<_$AppDatabase, $SchedulesTable> {
+  $$SchedulesTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2687,9 +2683,9 @@ class $$ScheduleTableFilterComposer
   }
 }
 
-class $$ScheduleTableOrderingComposer
-    extends Composer<_$AppDatabase, $ScheduleTable> {
-  $$ScheduleTableOrderingComposer({
+class $$SchedulesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SchedulesTable> {
+  $$SchedulesTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2740,9 +2736,9 @@ class $$ScheduleTableOrderingComposer
   }
 }
 
-class $$ScheduleTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ScheduleTable> {
-  $$ScheduleTableAnnotationComposer({
+class $$SchedulesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SchedulesTable> {
+  $$SchedulesTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2787,32 +2783,32 @@ class $$ScheduleTableAnnotationComposer
   }
 }
 
-class $$ScheduleTableTableManager
+class $$SchedulesTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $ScheduleTable,
-          ScheduleData,
-          $$ScheduleTableFilterComposer,
-          $$ScheduleTableOrderingComposer,
-          $$ScheduleTableAnnotationComposer,
-          $$ScheduleTableCreateCompanionBuilder,
-          $$ScheduleTableUpdateCompanionBuilder,
-          (ScheduleData, $$ScheduleTableReferences),
-          ScheduleData,
+          $SchedulesTable,
+          Schedule,
+          $$SchedulesTableFilterComposer,
+          $$SchedulesTableOrderingComposer,
+          $$SchedulesTableAnnotationComposer,
+          $$SchedulesTableCreateCompanionBuilder,
+          $$SchedulesTableUpdateCompanionBuilder,
+          (Schedule, $$SchedulesTableReferences),
+          Schedule,
           PrefetchHooks Function({bool userEvId})
         > {
-  $$ScheduleTableTableManager(_$AppDatabase db, $ScheduleTable table)
+  $$SchedulesTableTableManager(_$AppDatabase db, $SchedulesTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer:
-              () => $$ScheduleTableFilterComposer($db: db, $table: table),
+              () => $$SchedulesTableFilterComposer($db: db, $table: table),
           createOrderingComposer:
-              () => $$ScheduleTableOrderingComposer($db: db, $table: table),
+              () => $$SchedulesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer:
-              () => $$ScheduleTableAnnotationComposer($db: db, $table: table),
+              () => $$SchedulesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -2820,7 +2816,7 @@ class $$ScheduleTableTableManager
                 Value<double> chargeKwh = const Value.absent(),
                 Value<int> chargeHour = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-              }) => ScheduleCompanion(
+              }) => SchedulesCompanion(
                 id: id,
                 userEvId: userEvId,
                 chargeKwh: chargeKwh,
@@ -2834,7 +2830,7 @@ class $$ScheduleTableTableManager
                 required double chargeKwh,
                 required int chargeHour,
                 Value<DateTime> createdAt = const Value.absent(),
-              }) => ScheduleCompanion.insert(
+              }) => SchedulesCompanion.insert(
                 id: id,
                 userEvId: userEvId,
                 chargeKwh: chargeKwh,
@@ -2847,7 +2843,7 @@ class $$ScheduleTableTableManager
                       .map(
                         (e) => (
                           e.readTable(table),
-                          $$ScheduleTableReferences(db, table, e),
+                          $$SchedulesTableReferences(db, table, e),
                         ),
                       )
                       .toList(),
@@ -2875,10 +2871,12 @@ class $$ScheduleTableTableManager
                       state.withJoin(
                             currentTable: table,
                             currentColumn: table.userEvId,
-                            referencedTable: $$ScheduleTableReferences
+                            referencedTable: $$SchedulesTableReferences
                                 ._userEvIdTable(db),
                             referencedColumn:
-                                $$ScheduleTableReferences._userEvIdTable(db).id,
+                                $$SchedulesTableReferences
+                                    ._userEvIdTable(db)
+                                    .id,
                           )
                           as T;
                 }
@@ -2894,18 +2892,18 @@ class $$ScheduleTableTableManager
       );
 }
 
-typedef $$ScheduleTableProcessedTableManager =
+typedef $$SchedulesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $ScheduleTable,
-      ScheduleData,
-      $$ScheduleTableFilterComposer,
-      $$ScheduleTableOrderingComposer,
-      $$ScheduleTableAnnotationComposer,
-      $$ScheduleTableCreateCompanionBuilder,
-      $$ScheduleTableUpdateCompanionBuilder,
-      (ScheduleData, $$ScheduleTableReferences),
-      ScheduleData,
+      $SchedulesTable,
+      Schedule,
+      $$SchedulesTableFilterComposer,
+      $$SchedulesTableOrderingComposer,
+      $$SchedulesTableAnnotationComposer,
+      $$SchedulesTableCreateCompanionBuilder,
+      $$SchedulesTableUpdateCompanionBuilder,
+      (Schedule, $$SchedulesTableReferences),
+      Schedule,
       PrefetchHooks Function({bool userEvId})
     >;
 
@@ -2918,6 +2916,6 @@ class $AppDatabaseManager {
       $$UserEVsTableTableManager(_db, _db.userEVs);
   $$ConstraintsTableTableManager get constraints =>
       $$ConstraintsTableTableManager(_db, _db.constraints);
-  $$ScheduleTableTableManager get schedule =>
-      $$ScheduleTableTableManager(_db, _db.schedule);
+  $$SchedulesTableTableManager get schedules =>
+      $$SchedulesTableTableManager(_db, _db.schedules);
 }
