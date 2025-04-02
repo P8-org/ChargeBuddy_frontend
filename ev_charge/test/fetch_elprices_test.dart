@@ -1,5 +1,6 @@
 import 'package:ev_charge/core/get_electricity_prices.dart';
 import 'package:ev_charge/viewmodels/electricity_prices.dart';
+import 'package:ev_charge/core/platform_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
@@ -19,14 +20,15 @@ void main() {
       mockClient = MockClient();
       service = ElectricityPricesService(mockClient);
     });
-
+    final url = getBaseUrl() + '/power';
     test(
       'return electricity prices if the http call completes successfully',
       () async {
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
         when(
-          mockClient.get(Uri.parse('http://10.0.2.2:8000/power')),
+
+          mockClient.get(Uri.parse(url)),
         ).thenAnswer(
           (_) async => http.Response(
             '[{"HourDK": "2025-04-01T00:00:00", "SpotPriceDKK": 50.0}, '
