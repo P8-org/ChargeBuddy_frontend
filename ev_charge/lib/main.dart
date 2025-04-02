@@ -1,6 +1,6 @@
 import 'package:ev_charge/core/app_router.dart';
 import 'package:ev_charge/core/database.dart';
-import 'package:ev_charge/core/DBManager.dart';
+import 'package:ev_charge/core/db_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
