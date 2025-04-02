@@ -40,7 +40,7 @@ class Constraints extends Table {
   ];
 }
 
-class Schedule extends Table {
+class Schedules extends Table {
   late final id = integer().autoIncrement()();
   late final userEvId = integer().references(UserEVs, #id)();
 
