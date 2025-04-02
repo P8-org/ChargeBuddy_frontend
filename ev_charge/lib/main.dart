@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/app_router.dart';
+import 'core/database.dart';
 
-void main() => runApp(const MyApp());
+/// A global provider for the Drift database
+final dbProvider = Provider<AppDatabase>((ref) {
+  return AppDatabase(); // Calls _openConnection() internally
+});
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Seeding and other asynchronous tasks can be done here
+
+  runApp(const ProviderScope(child: MyApp()));
+}
 
 /// The main app.
 class MyApp extends StatelessWidget {
-  /// Constructs a [MyApp]
   const MyApp({super.key});
 
   @override
