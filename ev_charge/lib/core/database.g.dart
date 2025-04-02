@@ -44,9 +44,9 @@ class $EVCarModelsTable extends EVCarModels
   late final GeneratedColumn<int> modelYear = GeneratedColumn<int>(
     'model_year',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _batteryCapacityMeta = const VerificationMeta(
     'batteryCapacity',
@@ -106,8 +106,6 @@ class $EVCarModelsTable extends EVCarModels
         _modelYearMeta,
         modelYear.isAcceptableOrUnknown(data['model_year']!, _modelYearMeta),
       );
-    } else if (isInserting) {
-      context.missing(_modelYearMeta);
     }
     if (data.containsKey('battery_capacity')) {
       context.handle(
@@ -150,11 +148,10 @@ class $EVCarModelsTable extends EVCarModels
             DriftSqlType.string,
             data['${effectivePrefix}model_name'],
           )!,
-      modelYear:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}model_year'],
-          )!,
+      modelYear: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}model_year'],
+      ),
       batteryCapacity:
           attachedDatabase.typeMapping.read(
             DriftSqlType.double,
@@ -177,13 +174,13 @@ class $EVCarModelsTable extends EVCarModels
 class EVCarModel extends DataClass implements Insertable<EVCarModel> {
   final int id;
   final String modelName;
-  final int modelYear;
+  final int? modelYear;
   final double batteryCapacity;
   final double maxChargingPower;
   const EVCarModel({
     required this.id,
     required this.modelName,
-    required this.modelYear,
+    this.modelYear,
     required this.batteryCapacity,
     required this.maxChargingPower,
   });
@@ -192,7 +189,9 @@ class EVCarModel extends DataClass implements Insertable<EVCarModel> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['model_name'] = Variable<String>(modelName);
-    map['model_year'] = Variable<int>(modelYear);
+    if (!nullToAbsent || modelYear != null) {
+      map['model_year'] = Variable<int>(modelYear);
+    }
     map['battery_capacity'] = Variable<double>(batteryCapacity);
     map['max_charging_power'] = Variable<double>(maxChargingPower);
     return map;
@@ -202,7 +201,10 @@ class EVCarModel extends DataClass implements Insertable<EVCarModel> {
     return EVCarModelsCompanion(
       id: Value(id),
       modelName: Value(modelName),
-      modelYear: Value(modelYear),
+      modelYear:
+          modelYear == null && nullToAbsent
+              ? const Value.absent()
+              : Value(modelYear),
       batteryCapacity: Value(batteryCapacity),
       maxChargingPower: Value(maxChargingPower),
     );
@@ -216,7 +218,7 @@ class EVCarModel extends DataClass implements Insertable<EVCarModel> {
     return EVCarModel(
       id: serializer.fromJson<int>(json['id']),
       modelName: serializer.fromJson<String>(json['modelName']),
-      modelYear: serializer.fromJson<int>(json['modelYear']),
+      modelYear: serializer.fromJson<int?>(json['modelYear']),
       batteryCapacity: serializer.fromJson<double>(json['batteryCapacity']),
       maxChargingPower: serializer.fromJson<double>(json['maxChargingPower']),
     );
@@ -227,7 +229,7 @@ class EVCarModel extends DataClass implements Insertable<EVCarModel> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'modelName': serializer.toJson<String>(modelName),
-      'modelYear': serializer.toJson<int>(modelYear),
+      'modelYear': serializer.toJson<int?>(modelYear),
       'batteryCapacity': serializer.toJson<double>(batteryCapacity),
       'maxChargingPower': serializer.toJson<double>(maxChargingPower),
     };
@@ -236,13 +238,13 @@ class EVCarModel extends DataClass implements Insertable<EVCarModel> {
   EVCarModel copyWith({
     int? id,
     String? modelName,
-    int? modelYear,
+    Value<int?> modelYear = const Value.absent(),
     double? batteryCapacity,
     double? maxChargingPower,
   }) => EVCarModel(
     id: id ?? this.id,
     modelName: modelName ?? this.modelName,
-    modelYear: modelYear ?? this.modelYear,
+    modelYear: modelYear.present ? modelYear.value : this.modelYear,
     batteryCapacity: batteryCapacity ?? this.batteryCapacity,
     maxChargingPower: maxChargingPower ?? this.maxChargingPower,
   );
@@ -291,7 +293,7 @@ class EVCarModel extends DataClass implements Insertable<EVCarModel> {
 class EVCarModelsCompanion extends UpdateCompanion<EVCarModel> {
   final Value<int> id;
   final Value<String> modelName;
-  final Value<int> modelYear;
+  final Value<int?> modelYear;
   final Value<double> batteryCapacity;
   final Value<double> maxChargingPower;
   const EVCarModelsCompanion({
@@ -304,11 +306,10 @@ class EVCarModelsCompanion extends UpdateCompanion<EVCarModel> {
   EVCarModelsCompanion.insert({
     this.id = const Value.absent(),
     required String modelName,
-    required int modelYear,
+    this.modelYear = const Value.absent(),
     required double batteryCapacity,
     required double maxChargingPower,
   }) : modelName = Value(modelName),
-       modelYear = Value(modelYear),
        batteryCapacity = Value(batteryCapacity),
        maxChargingPower = Value(maxChargingPower);
   static Insertable<EVCarModel> custom({
@@ -330,7 +331,7 @@ class EVCarModelsCompanion extends UpdateCompanion<EVCarModel> {
   EVCarModelsCompanion copyWith({
     Value<int>? id,
     Value<String>? modelName,
-    Value<int>? modelYear,
+    Value<int?>? modelYear,
     Value<double>? batteryCapacity,
     Value<double>? maxChargingPower,
   }) {
@@ -1473,7 +1474,7 @@ typedef $$EVCarModelsTableCreateCompanionBuilder =
     EVCarModelsCompanion Function({
       Value<int> id,
       required String modelName,
-      required int modelYear,
+      Value<int?> modelYear,
       required double batteryCapacity,
       required double maxChargingPower,
     });
@@ -1481,7 +1482,7 @@ typedef $$EVCarModelsTableUpdateCompanionBuilder =
     EVCarModelsCompanion Function({
       Value<int> id,
       Value<String> modelName,
-      Value<int> modelYear,
+      Value<int?> modelYear,
       Value<double> batteryCapacity,
       Value<double> maxChargingPower,
     });
@@ -1690,7 +1691,7 @@ class $$EVCarModelsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> modelName = const Value.absent(),
-                Value<int> modelYear = const Value.absent(),
+                Value<int?> modelYear = const Value.absent(),
                 Value<double> batteryCapacity = const Value.absent(),
                 Value<double> maxChargingPower = const Value.absent(),
               }) => EVCarModelsCompanion(
@@ -1704,7 +1705,7 @@ class $$EVCarModelsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String modelName,
-                required int modelYear,
+                Value<int?> modelYear = const Value.absent(),
                 required double batteryCapacity,
                 required double maxChargingPower,
               }) => EVCarModelsCompanion.insert(
