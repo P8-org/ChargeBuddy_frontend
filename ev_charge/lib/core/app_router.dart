@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../views/homepage.dart';
 import '../views/infopage.dart';
 import '../views/settings.dart';
-import '../views/add-ev.dart';
+import '../views/add_ev.dart';
 
 // GoRouter configuration
 final GoRouter router = GoRouter(
@@ -27,7 +27,7 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
-          path: 'add-ev',
+          path: 'add_ev',
           builder: (BuildContext context, GoRouterState state) {
             return const AddEv();
           }

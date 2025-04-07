@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
       Center(
         child: ElevatedButton(
           onPressed: () {
-            context.go('/add-ev');
+            context.go('/add_ev');
           },
           child: const Text('Add EV'))
       )

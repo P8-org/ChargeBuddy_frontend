@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:ev_charge/main.dart';
 
-import 'package:ev_charge/views/add-ev.dart';
+import 'package:ev_charge/views/add_ev.dart';
 import 'package:ev_charge/core/app_router.dart';
 import 'package:ev_charge/main.dart';
 import 'package:go_router/go_router.dart';

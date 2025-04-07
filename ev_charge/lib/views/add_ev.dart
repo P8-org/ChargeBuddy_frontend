@@ -3,8 +3,8 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
-
 import 'package:ev_charge/widgets/form_input_fields.dart';
+
 
 class EVForm extends StatefulWidget {
   const EVForm({super.key});
@@ -36,7 +36,7 @@ class EVFormState extends State<EVForm> {
       child: ListView(
         padding: const EdgeInsets.all(8),
         children: <Widget>[
-          formInputField("Modell", modelNameController, stringValidator()),
+          formInputField("Model", modelNameController, stringValidator()),
           formInputField("Model Year", modelYearController, intValidator()),
           formInputField("Custom Name", userSetNameController, null),
           formInputField("Battery Capacity (kWh)", batteryCapacityController, doubleValidator()),
@@ -81,6 +81,8 @@ class EVFormState extends State<EVForm> {
 }
 class AddEv extends StatelessWidget {
   const AddEv({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {

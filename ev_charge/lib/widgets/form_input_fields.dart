@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 
 Padding formInputField(String label, TextEditingController controller, String? Function(String?)? validator) {
   return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: label,
-              ),
-              validator: validator,
-              controller: controller,
-            ),
-          );
+    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+    child: TextFormField(
+      decoration: InputDecoration(
+        border: UnderlineInputBorder(),
+        labelText: label,
+      ),
+      validator: validator,
+      controller: controller,
+    ),
+  );
 }
 
 String? Function(String?)? intValidator() {
