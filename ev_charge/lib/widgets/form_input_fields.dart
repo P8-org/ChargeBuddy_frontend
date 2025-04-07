@@ -15,19 +15,6 @@ Padding formInputField(String label, TextEditingController controller, String? F
           );
 }
 
-Padding optionalFormInputField(String label, TextEditingController controller) {
-  return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: label,
-              ),
-              controller: controller,
-            ),
-          );
-}
-
 String? Function(String?)? intValidator() {
   return (value) {
     if (value == null || value.isEmpty || int.tryParse(value) == null) {

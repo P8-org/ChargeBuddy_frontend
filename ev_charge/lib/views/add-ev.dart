@@ -38,7 +38,7 @@ class EVFormState extends State<EVForm> {
         children: <Widget>[
           formInputField("Modell", modelNameController, stringValidator()),
           formInputField("Model Year", modelYearController, intValidator()),
-          optionalFormInputField("Custom Name", userSetNameController),
+          formInputField("Custom Name", userSetNameController, null),
           formInputField("Battery Capacity (kWh)", batteryCapacityController, doubleValidator()),
           formInputField("Maximum Charging Power (kW)", maxChargingPowerController, doubleValidator()),
           Padding(
