@@ -39,8 +39,8 @@ String? Function(String?)? doubleValidator() {
 
 String? Function(String?)? stringValidator() {
   return (value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter some text';
+    if (value == null || value.isEmpty || value.length < 3) {
+      return 'Please enter atleast 3 characters';
     }
     return null;
   };
