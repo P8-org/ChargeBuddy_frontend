@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
 
+import 'package:ev_charge/widgets/form_input_fields.dart';
 
 class EVForm extends StatefulWidget {
   const EVForm({super.key});
@@ -13,81 +14,6 @@ class EVForm extends StatefulWidget {
     return EVFormState();
   }
 }
-
-Padding stringCollector(String label, TextEditingController controller) {
-  return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: label,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-              controller: controller,
-            ),
-          );
-}
-
-Padding intCollector(String label, TextEditingController controller, ) { // TODO: Turn it into a year collector
-  return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: label,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty || int.tryParse(value) == null) {
-                  return 'Please enter a numerical value';
-                } else if (int.parse(value) < 0) {
-                  return 'Please enter a positive numerical value';
-                }
-                return null;
-              },
-              controller: controller,
-            ),
-          );
-}
-
-Padding doubleCollector(String label, TextEditingController controller, ) {
-  return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: label,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty || double.tryParse(value) == null) {
-                  return 'Please enter a numerical value';
-                } else if (double.parse(value) < 0) {
-                  return 'Please enter a positive numerical value';
-                }
-                return null;
-              },
-              controller: controller,
-            ),
-          );
-}
-
-Padding optionalStringCollector(String label, TextEditingController controller) {
-  return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: label,
-              ),
-              controller: controller,
-            ),
-          );
-}
-
 class EVFormState extends State<EVForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
@@ -110,11 +36,11 @@ class EVFormState extends State<EVForm> {
       child: ListView(
         padding: const EdgeInsets.all(8),
         children: <Widget>[
-          stringCollector("Model", modelNameController),
-          intCollector("Model Year", modelYearController),
-          optionalStringCollector("Custom Name", userSetNameController),
-          doubleCollector("Battery Capacity (kWh)", batteryCapacityController),
-          doubleCollector("Maximum Charging Power (kW)", maxChargingPowerController),
+          formInputField("Modell", modelNameController, stringValidator()),
+          formInputField("Model Year", modelYearController, intValidator()),
+          optionalFormInputField("Custom Name", userSetNameController),
+          formInputField("Battery Capacity (kWh)", batteryCapacityController, doubleValidator()),
+          formInputField("Maximum Charging Power (kW)", maxChargingPowerController, doubleValidator()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Row(
