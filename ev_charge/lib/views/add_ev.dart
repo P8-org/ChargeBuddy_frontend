@@ -1,10 +1,13 @@
 import 'dart:ffi';
 
+import 'package:drift/drift.dart';
+import 'package:ev_charge/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/form_input_fields.dart';
-
+import 'package:ev_charge/core/database.dart';
 
 class EVForm extends StatefulWidget {
   const EVForm({super.key});
@@ -52,19 +55,30 @@ class EVFormState extends State<EVForm> {
                   },
                   child: const Text ('Cancel')),
                 ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                
+
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
 
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  final db = ProviderScope.containerOf(context).read(dbProvider);
+                  await db.into(db.eVCarModels).insert(EVCarModelsCompanion.insert(
+                    modelName: modelNameController.text,
+                    modelYear: int.parse(modelYearController.text),
+                    batteryCapacity: double.parse(batteryCapacityController.text),
+                    maxChargingPower: double.parse(maxChargingPowerController.text),
+                  ));
+
+                  final models = await db.select(db.eVCarModels).get();
+                  print(models);
+
+                  if (context.mounted){
+                    ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Added: "${modelNameController.text}"')),
                   );
-                  
-                  context.pop();
-                }
-                
+                    context.pop();
+                  }
+                }                
               },
               child: const Text('Submit'),
             ),
