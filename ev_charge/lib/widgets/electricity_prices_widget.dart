@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:ev_charge/core/get_electricity_prices.dart';
 import 'package:ev_charge/viewmodels/electricity_prices.dart';
-import 'package:http/http.dart' as http; // Import http
+import 'package:http/http.dart' as http;
 
 class ElectricityPricesWidget extends StatefulWidget {
   const ElectricityPricesWidget({super.key});
@@ -58,6 +58,9 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
 
         final prices = snapshot.data!.reversed.toList();
 
+        final minPrice = prices.map((e) => e.price).reduce((a, b) => a < b ? a : b);
+        final maxPrice = prices.map((e) => e.price).reduce((a, b) => a > b ? a : b);
+
         return Column(
           children: [
             // Bar Chart
@@ -78,14 +81,8 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                       tooltipMargin: 1,
                     ),
                   ),
-                  maxY:
-                      prices
-                          .map(
-                            (e) => e.price,
-                          ) // makes a list of only the prices
-                          .reduce((a, b) => a > b ? a : b) +
-                      100, // finds the maximum price and adds 5 to it
-                  minY: 0,
+                  maxY: maxPrice+100,
+                  minY: minPrice < 0 ? minPrice - 100 : 0,
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: true),
                   titlesData: FlTitlesData(
@@ -129,3 +126,5 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
     );
   }
 }
+
+
