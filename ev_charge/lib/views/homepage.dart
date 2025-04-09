@@ -74,22 +74,18 @@ class _HomePageState extends State<HomePage> {
               );
             }
             if (vm.evs.isEmpty && !vm.loading && !vm.isError) {
-              Card(
-                elevation: 4,
-                margin: const EdgeInsets.all(16),
-                clipBehavior: Clip.hardEdge,
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    children: [
-                      Text("No cars in db"),
-                      ElevatedButton.icon(
-                        onPressed: () => context.go("/addcar"),
-                        label: Text("Add car"),
-                        icon: Icon(Icons.add),
-                      ),
-                    ],
-                  ),
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("No cars in db"),
+                    SizedBox(height: 8),
+                    ElevatedButton.icon(
+                      onPressed: () => context.go("/addcar"), // TODO
+                      label: Text("Add car"),
+                      icon: Icon(Icons.add),
+                    ),
+                  ],
                 ),
               );
             }
