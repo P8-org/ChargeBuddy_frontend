@@ -29,13 +29,17 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
       int index = entry.key;
       ElectricityPrices data = entry.value;
 
+      final totalChartWidth = MediaQuery.of(context).size.width;
+      final spacing = 4.0;
+      final barWidth = (totalChartWidth / prices.length) - spacing;
+
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
             toY: data.price,
             color: data.barColor,
-            width: 12,
+            width: barWidth.clamp(2.0, 20.0),
             borderRadius: BorderRadius.zero,
           ),
         ],
