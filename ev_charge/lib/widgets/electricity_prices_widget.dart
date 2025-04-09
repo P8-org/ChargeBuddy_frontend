@@ -67,6 +67,17 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
               height: MediaQuery.of(context).size.height * 0.25,
               child: BarChart(
                 BarChartData(
+                  barTouchData: BarTouchData(
+                    enabled: true,
+                    touchTooltipData: BarTouchTooltipData(
+                      direction: TooltipDirection.auto,
+                      tooltipHorizontalAlignment: FLHorizontalAlignment.center,
+                      fitInsideHorizontally: true,
+                      fitInsideVertically: true,
+                      tooltipPadding: EdgeInsets.all(8.0),
+                      tooltipMargin: 1,
+                    ),
+                  ),
                   maxY:
                       prices
                           .map(
