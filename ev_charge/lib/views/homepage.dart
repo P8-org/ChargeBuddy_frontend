@@ -6,29 +6,6 @@ import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  /*final List<ElectricityPrices> electricityPrices = List.generate(24, (index) {
-    return ElectricityPrices(
-      hour: '$index - ${index + 1}',
-      price: (10 + index).toDouble(),
-      barColor: Colors.blue,
-    );
-  });
-
-  List<BarChartGroupData> getBarChartData() {
-    return electricityPrices.asMap().entries.map((entry) {
-      int index = entry.key;
-      ElectricityPrices data = entry.value;
-
-      return BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(toY: data.price, color: data.barColor, width: 12),
-        ],
-      );
-    }).toList();
-  }
-   */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
