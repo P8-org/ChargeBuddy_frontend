@@ -17,27 +17,30 @@ class UserEVs extends Table {
   late final carModelId = integer().references(EVCarModels, #id)();
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
+  late final batteryCapacity = real()();
+  late final maxChargingPower = real()();
+  late final currentChargingPower = real()();
 }
 
 class Constraints extends Table {
   late final id = integer().autoIncrement()();
   late final userCarModelId = integer().references(UserEVs, #id)();
 
-
   // The day of the week, 0 is Monday, 6 is Sunday
-  late final Column<int> dayOfWeek = integer().check(dayOfWeek.isBetweenValues(0, 6))();
+  late final Column<int> dayOfWeek =
+      integer().check(dayOfWeek.isBetweenValues(0, 6))();
 
   // Stored as minutes since midnight: 0 = 00:00, 60 = 01:00, ..., 1380 = 23:00
   // Displayed in UI through TimeOfDay.fromMinutes(startMinutes)
   // Might be changed depending on back-end requirements
-  late final Column<int> startMinutes = integer().check(startMinutes.isBetweenValues(0, 1440))();
-  late final Column<int> endMinutes = integer().check(endMinutes.isBetweenValues(0, 1440))();
+  late final Column<int> startMinutes =
+      integer().check(startMinutes.isBetweenValues(0, 1440))();
+  late final Column<int> endMinutes =
+      integer().check(endMinutes.isBetweenValues(0, 1440))();
 
   // Optional: Prevent inverted ranges
   @override
-  List<String> get customConstraints => [
-    'CHECK (start_minutes < end_minutes)'
-  ];
+  List<String> get customConstraints => ['CHECK (start_minutes < end_minutes)'];
 }
 
 class Schedules extends Table {
@@ -48,12 +51,12 @@ class Schedules extends Table {
   late final chargeKwh = real()();
 
   /// The hour offset from [createdAt], e.g. 0 = current hour, 1 = +1h
-  late final Column<int> chargeHour = integer().check(chargeHour.isBetweenValues(0, 24))();
+  late final Column<int> chargeHour =
+      integer().check(chargeHour.isBetweenValues(0, 24))();
 
   /// When this schedule was generated (e.g., by API call)
   late final createdAt = dateTime().withDefault(currentDateAndTime)();
 }
-
 
 @DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedules])
 class AppDatabase extends _$AppDatabase {
@@ -63,7 +66,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(

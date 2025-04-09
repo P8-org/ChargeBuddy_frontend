@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 
 import 'package:ev_charge/core/database.dart'; // Update the import path
@@ -35,6 +34,9 @@ void main() {
             carModelId: modelId,
             userSetName: 'Test Car',
             currentCharge: 40.0,
+            batteryCapacity: 85.0,
+            maxChargingPower: 250.0,
+            currentChargingPower: 2000,
           ),
         );
 
