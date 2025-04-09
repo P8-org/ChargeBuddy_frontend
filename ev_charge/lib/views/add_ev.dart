@@ -58,9 +58,10 @@ class EVFormState extends State<EVForm> {
               onPressed: () async {
                 
                 // Validate returns true if the form is valid, or false otherwise.
+                  final db = ProviderScope.containerOf(context).read(dbProvider);
+                  print(await db.select(db.eVCarModels).get());
                 if (_formKey.currentState!.validate()) {
 
-                  final db = ProviderScope.containerOf(context).read(dbProvider);
 
                   await db.into(db.eVCarModels).insert(EVCarModelsCompanion.insert(
                     modelName: modelNameController.text,
@@ -69,7 +70,6 @@ class EVFormState extends State<EVForm> {
                     maxChargingPower: double.parse(maxChargingPowerController.text),
                   ));
 
-                  print(await db.select(db.eVCarModels).get());
 
                   if (context.mounted){
                     ScaffoldMessenger.of(context).showSnackBar(
