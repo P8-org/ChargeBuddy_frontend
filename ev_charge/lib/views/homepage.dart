@@ -1,86 +1,30 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/core/models.dart';
+import 'package:ev_charge/viewmodels/home_page_vm.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
 
-// final List<UserEV> evsList = List.from([
-//   UserEV(
-//     id: 0,
-//     carModelId: 0,
-//     userSetName: "Renault 5",
-//     currentCharge: 31.45,
-//     batteryCapacity: 52,
-//     maxChargingPower: 100,
-//     currentChargingPower: 0,
-//   ),
-//   UserEV(
-//     id: 1,
-//     carModelId: 1,
-//     userSetName: "BMW i4",
-//     currentCharge: 1.231,
-//     batteryCapacity: 83.9,
-//     maxChargingPower: 4000,
-//     currentChargingPower: 4000,
-//   ),
-//   UserEV(
-//     id: 2,
-//     carModelId: 2,
-//     userSetName: "Volvo EX30",
-//     currentCharge: 50,
-//     batteryCapacity: 69,
-//     maxChargingPower: 134,
-//     currentChargingPower: 0,
-//   ),
-// ]);
-
 class HomePage extends StatefulWidget {
-  HomePage({super.key, BackendService? backendService})
-    : backendService = backendService ?? BackendService();
-
-  final BackendService backendService;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<UserEV> _evs = List.empty();
+  late HomePageVM vm = HomePageVM();
   Timer? _timer;
-  bool _isLoading = false;
-  bool _isError = false;
-  String _errorMessage = "";
-
-  Future<void> loadEvs() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      var evs = await widget.backendService.getEvs();
-      setState(() {
-        _evs = evs;
-        _isError = false;
-      });
-    } catch (e) {
-      _isError = true;
-      _errorMessage = e.toString();
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
 
   @override
   void initState() {
     super.initState();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        for (var ev in _evs) {
+        for (var ev in vm.evs) {
           ev.currentCharge = min(
             ev.carModel.batteryCapacity,
             ev.currentCharge + ev.currentChargingPower / 60 / 60,
@@ -88,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         }
       });
     });
-    loadEvs();
+    vm.getEvs();
   }
 
   @override
@@ -113,19 +57,23 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Center(
-        child: Builder(
-          builder: (context) {
-            if (_isError) {
+        child: ListenableBuilder(
+          listenable: vm,
+          builder: (context, child) {
+            if (vm.isError) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(_errorMessage),
+                  Text(vm.errorMessage),
                   Padding(padding: EdgeInsets.all(16)),
-                  ElevatedButton(onPressed: loadEvs, child: Text("Try again")),
+                  ElevatedButton(
+                    onPressed: vm.getEvs,
+                    child: Text("Try again"),
+                  ),
                 ],
               );
             }
-            if (_evs.isEmpty && !_isLoading && !_isError) {
+            if (vm.evs.isEmpty && !vm.loading && !vm.isError) {
               Card(
                 elevation: 4,
                 margin: const EdgeInsets.all(16),
@@ -136,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Text("No cars in db"),
                       ElevatedButton.icon(
-                        onPressed: () => context.push("/addcar"),
+                        onPressed: () => context.go("/addcar"),
                         label: Text("Add car"),
                         icon: Icon(Icons.add),
                       ),
@@ -146,9 +94,9 @@ class _HomePageState extends State<HomePage> {
               );
             }
             return ListView.builder(
-              itemCount: _evs.length,
+              itemCount: vm.evs.length,
               itemBuilder: (context, index) {
-                return EvCard(ev: _evs[index]);
+                return EvCard(ev: vm.evs[index]);
               },
             );
           },
@@ -192,10 +140,7 @@ class EvCard extends StatelessWidget {
                   Text(
                     "${ev.currentCharge.toStringAsFixed(1)} / ${ev.carModel.batteryCapacity.toStringAsFixed(1)} kWh",
                   ),
-                  Text("Current Charging Speed: ${ev.currentChargingPower} kW"),
-                  Text(
-                    "Max Charging Speed: ${ev.carModel.maxChargingPower} kW",
-                  ),
+                  Text("Charging Speed: ${ev.currentChargingPower} kW"),
                 ],
               ),
               Column(

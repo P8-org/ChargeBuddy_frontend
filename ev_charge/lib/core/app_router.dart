@@ -30,7 +30,7 @@ final GoRouter router = GoRouter(
           path: 'car/:id',
           builder: (context, state) {
             var id = int.parse(state.pathParameters["id"]!);
-            return EvPage(id);
+            return EvPage(id: id);
           },
         ),
       ],
