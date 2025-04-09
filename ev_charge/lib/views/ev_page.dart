@@ -1,6 +1,7 @@
 import 'package:ev_charge/viewmodels/ev_page_vm.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/bottom_navbar.dart';
 
@@ -27,12 +28,20 @@ class _EvPageState extends State<EvPage> {
       listenable: vm,
       builder: (context, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Ev details')),
+          appBar: AppBar(
+            title: const Text('Ev details'),
+            actions: [
+              IconButton(
+                onPressed: () => vm.deleteEv(onSuccess: context.pop),
+                icon: Icon(Icons.delete_forever_rounded),
+              ),
+            ],
+          ),
           body: Center(
             child: Builder(
               builder: (context) {
                 if (vm.loading || vm.ev == null) {
-                  return CircularProgressIndicator();
+                  return SizedBox();
                 }
                 return Builder(
                   builder: (context) {
@@ -44,7 +53,7 @@ class _EvPageState extends State<EvPage> {
                     return Column(
                       spacing: 16,
                       children: [
-                        SizedBox(height: 32),
+                        SizedBox(height: 8),
                         Text(
                           ev.userSetName,
                           style: Theme.of(context).textTheme.headlineLarge,

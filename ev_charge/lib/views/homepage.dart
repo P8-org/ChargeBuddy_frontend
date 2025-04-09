@@ -80,6 +80,11 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text("No cars in db"),
                     SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: vm.getEvs,
+                      child: Text("Refresh"),
+                    ),
+                    SizedBox(height: 8),
                     ElevatedButton.icon(
                       onPressed: () => context.go("/addcar"), // TODO
                       label: Text("Add car"),
@@ -89,11 +94,14 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             }
-            return ListView.builder(
-              itemCount: vm.evs.length,
-              itemBuilder: (context, index) {
-                return EvCard(ev: vm.evs[index]);
-              },
+            return RefreshIndicator(
+              onRefresh: () async => await vm.getEvs(),
+              child: ListView.builder(
+                itemCount: vm.evs.length,
+                itemBuilder: (context, index) {
+                  return EvCard(ev: vm.evs[index]);
+                },
+              ),
             );
           },
         ),

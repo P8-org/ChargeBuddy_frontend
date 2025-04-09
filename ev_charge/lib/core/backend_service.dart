@@ -31,4 +31,12 @@ class BackendService {
     final jsonData = jsonDecode(response.body);
     return UserEV.fromJson(jsonData);
   }
+
+  Future<void> deleteEvById(int id) async {
+    final uri = Uri.parse("$baseUrl/evs/$id");
+    final response = await client.delete(uri);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
 }

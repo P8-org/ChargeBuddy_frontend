@@ -33,4 +33,19 @@ class EvPageVM extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> deleteEv({Function? onSuccess}) async {
+    try {
+      await _backendService.deleteEvById(id);
+      _isError = false;
+      if (onSuccess != null) {
+        onSuccess();
+      }
+    } catch (e) {
+      _isError = true;
+      _errorMessage = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
 }
