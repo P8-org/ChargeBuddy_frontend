@@ -20,7 +20,7 @@ void main() {
       mockClient = MockClient();
       service = ElectricityPricesService(mockClient);
     });
-    final url = getBaseUrl() + '/power';
+    final url = '${getBaseUrl()}/power';
     test(
       'return electricity prices if the http call completes successfully',
       () async {

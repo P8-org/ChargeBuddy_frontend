@@ -8,7 +8,7 @@ class ElectricityPricesService {
   ElectricityPricesService(this.client);
 
   Future<List<ElectricityPrices>> fetchElectricityPrices() async {
-    final url = getBaseUrl() + '/power';
+    final url = '${getBaseUrl()}/power';
     final response = await client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
