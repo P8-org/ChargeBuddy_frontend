@@ -62,8 +62,12 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
 
         final prices = snapshot.data!.reversed.toList();
 
-        final minPrice = prices.map((e) => e.price).reduce((a, b) => a < b ? a : b);
-        final maxPrice = prices.map((e) => e.price).reduce((a, b) => a > b ? a : b);
+        final minPrice = prices
+            .map((e) => e.price)
+            .reduce((a, b) => a < b ? a : b);
+        final maxPrice = prices
+            .map((e) => e.price)
+            .reduce((a, b) => a > b ? a : b);
 
         return Column(
           children: [
@@ -85,7 +89,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                       tooltipMargin: 1,
                     ),
                   ),
-                  maxY: maxPrice+100,
+                  maxY: maxPrice + 100,
                   minY: minPrice < 0 ? minPrice - 100 : 0,
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: true),
@@ -130,5 +134,3 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
     );
   }
 }
-
-

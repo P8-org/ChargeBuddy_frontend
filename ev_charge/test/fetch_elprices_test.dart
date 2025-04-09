@@ -26,10 +26,7 @@ void main() {
       () async {
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
-        when(
-
-          mockClient.get(Uri.parse(url)),
-        ).thenAnswer(
+        when(mockClient.get(Uri.parse(url))).thenAnswer(
           (_) async => http.Response(
             '[{"HourDK": "2025-04-01T00:00:00", "SpotPriceDKK": 50.0}, '
             '{"HourDK": "2025-04-01T01:00:00", "SpotPriceDKK": 45.0}]',
