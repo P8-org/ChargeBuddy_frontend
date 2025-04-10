@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:ev_charge/core/models.dart';
 import 'package:ev_charge/viewmodels/home_page_vm.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
@@ -17,28 +14,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late HomePageVM vm = HomePageVM();
-  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        for (var ev in vm.evs) {
-          ev.currentCharge = min(
-            ev.carModel.batteryCapacity,
-            ev.currentCharge + ev.currentChargingPower / 60 / 60,
-          ); // convert kw to kwh / second
-        }
-      });
-    });
     vm.getEvs();
   }
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  void didUpdateWidget(covariant HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    vm.getEvs(); // to refresh data when navigating back to homepage
   }
 
   @override

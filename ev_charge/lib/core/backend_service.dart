@@ -10,7 +10,7 @@ class BackendService {
 
   BackendService({Client? client, String? baseUrl})
     : client = client ?? Client(),
-      baseUrl = baseUrl ?? "http://192.168.7.243:8000";
+      baseUrl = baseUrl ?? "http://192.168.0.197:8000";
 
   Future<List<UserEV>> getEvs() async {
     final uri = Uri.parse("$baseUrl/evs");
