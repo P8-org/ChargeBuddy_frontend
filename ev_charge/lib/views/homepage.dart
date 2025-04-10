@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
+import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.account_circle), // change to user
+            icon: const Icon(Icons.account_circle),
             tooltip: 'Profile',
             onPressed: () {
               context.go('/settings');
@@ -21,14 +22,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            context.go('/infopage');
-          },
-          child: const Text('Go to Info Page'),
-        ),
-      ),
+      body: const ElectricityPricesWidget(),
       bottomNavigationBar: const BottomNavBar(),
     );
   }
