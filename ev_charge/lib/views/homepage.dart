@@ -4,6 +4,7 @@ import 'package:ev_charge/widgets/battery_circle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
+import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Home Page'),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.account_circle), // change to user
+            icon: const Icon(Icons.account_circle),
             tooltip: 'Profile',
             onPressed: () {
               context.go('/settings');
