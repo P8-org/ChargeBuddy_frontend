@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ev_charge/core/models.dart';
+import 'package:ev_charge/core/platform_helper.dart';
 import 'package:http/http.dart';
 
 class BackendService {
@@ -10,7 +11,7 @@ class BackendService {
 
   BackendService({Client? client, String? baseUrl})
     : client = client ?? Client(),
-      baseUrl = baseUrl ?? "http://192.168.0.197:8000";
+      baseUrl = baseUrl ?? getBaseUrl();
 
   Future<List<UserEV>> getEvs() async {
     final uri = Uri.parse("$baseUrl/evs");
