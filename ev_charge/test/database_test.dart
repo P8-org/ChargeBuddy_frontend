@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
 
-import 'package:ev_charge/core/database.dart'; // Update the import path
+import 'package:ev_charge/database/database.dart'; // Update the import path
 
 void main() {
   late AppDatabase db;
