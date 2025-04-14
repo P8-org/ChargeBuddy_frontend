@@ -97,6 +97,18 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                     maxY: maxPrice + 100,
                     minY: minPrice < 0 ? minPrice - 100 : 0,
                     gridData: FlGridData(show: false),
+                    extraLinesData:
+                        minPrice < 0
+                            ? ExtraLinesData(
+                              horizontalLines: [
+                                HorizontalLine(
+                                  y: 0,
+                                  color: Colors.grey,
+                                  strokeWidth: 1.5,
+                                ),
+                              ],
+                            )
+                            : ExtraLinesData(),
                     borderData: FlBorderData(show: true),
                     titlesData: FlTitlesData(
                       rightTitles: AxisTitles(
