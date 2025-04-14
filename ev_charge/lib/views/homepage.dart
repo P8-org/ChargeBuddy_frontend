@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late HomePageVM vm = HomePageVM();
+  final HomePageVM vm = HomePageVM();
 
   @override
   void initState() {
