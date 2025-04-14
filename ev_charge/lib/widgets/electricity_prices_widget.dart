@@ -85,6 +85,29 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                     barTouchData: BarTouchData(
                       enabled: true,
                       touchTooltipData: BarTouchTooltipData(
+                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                          final hour = prices[group.x].hour;
+                          final price = rod.toY;
+
+                          return BarTooltipItem(
+                            '$hour:00\n',
+                            const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: '${price.toStringAsFixed(1)} kr',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                         direction: TooltipDirection.auto,
                         tooltipHorizontalAlignment:
                             FLHorizontalAlignment.center,
