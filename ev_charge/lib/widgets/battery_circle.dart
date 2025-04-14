@@ -29,6 +29,7 @@ class BatteryLevelCircle extends StatelessWidget {
           child: CircularProgressIndicator(
             value: limitValue ?? 0,
             strokeWidth: strokeWidth,
+            // ignore: deprecated_member_use
             year2023: false,
             trackGap: 0,
             color: Theme.of(context).hintColor.withAlpha(75),
@@ -40,6 +41,7 @@ class BatteryLevelCircle extends StatelessWidget {
           child: CircularProgressIndicator(
             value: value,
             strokeWidth: strokeWidth,
+            // ignore: deprecated_member_use
             year2023: false,
             trackGap: 0,
             backgroundColor: Colors.transparent,
