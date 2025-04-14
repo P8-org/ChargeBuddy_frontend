@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 8),
                     ElevatedButton.icon(
-                      onPressed: () => context.go("/addcar"), // TODO
+                      onPressed: () => context.go("/add_car"), // TODO
                       label: Text("Add car"),
                       icon: Icon(Icons.add),
                     ),

@@ -17,7 +17,6 @@ class UserEVs extends Table {
   late final carModelId = integer().references(EVCarModels, #id)();
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
-  late final batteryCapacity = real()();
   late final maxChargingPower = real()();
   late final currentChargingPower = real()();
 }
@@ -66,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
