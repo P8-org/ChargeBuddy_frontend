@@ -22,7 +22,7 @@ void main() {
         .insert(
           EVCarModelsCompanion.insert(
             modelName: 'Model X',
-            modelYear: const Value(2023),
+            modelYear: 2023,
             batteryCapacity: 85.0,
             maxChargingPower: 250.0,
           ),

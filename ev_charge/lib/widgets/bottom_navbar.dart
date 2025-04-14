@@ -12,7 +12,8 @@ class BottomNavBar extends StatelessWidget {
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
     for (int i = 0; i < navItems.length; i++) {
-      if (location == navItems[i].route || location.startsWith('${navItems[i].route}/')) {
+      if (location == navItems[i].route ||
+          location.startsWith('${navItems[i].route}/')) {
         return i;
       }
     }
@@ -26,12 +27,13 @@ class BottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: selectedIndex,
       onTap: (index) => context.go(navItems[index].route),
-      items: navItems.map((item) {
-        return BottomNavigationBarItem(
-          icon: Icon(item.icon),
-          label: item.label,
-        );
-      }).toList(),
+      items:
+          navItems.map((item) {
+            return BottomNavigationBarItem(
+              icon: Icon(item.icon),
+              label: item.label,
+            );
+          }).toList(),
     );
   }
 }
@@ -41,9 +43,5 @@ class NavItem {
   final String label;
   final IconData icon;
 
-  const NavItem({
-    required this.route,
-    required this.label,
-    required this.icon,
-  });
+  const NavItem({required this.route, required this.label, required this.icon});
 }
