@@ -24,22 +24,23 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
     futureElectricityPrices = service.fetchElectricityPrices();
   }
 
-  List<BarChartGroupData> getBarChartData(List<ElectricityPrices> prices) {
+  List<BarChartGroupData> getBarChartData(
+    List<ElectricityPrices> prices,
+    double barsWidth,
+    double barsSpace,
+  ) {
     return prices.asMap().entries.map((entry) {
       int index = entry.key;
       ElectricityPrices data = entry.value;
 
-      final totalChartWidth = MediaQuery.of(context).size.width;
-      final spacing = 4.0;
-      final barWidth = (totalChartWidth / prices.length) - spacing;
-
       return BarChartGroupData(
         x: index,
+        barsSpace: barsSpace,
         barRods: [
           BarChartRodData(
             toY: data.price,
             color: data.barColor,
-            width: barWidth.clamp(2.0, 20.0),
+            width: barsWidth.clamp(2.0, 20.0),
             borderRadius: BorderRadius.zero,
           ),
         ],
@@ -69,66 +70,71 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
             .map((e) => e.price)
             .reduce((a, b) => a > b ? a : b);
 
-        return Column(
-          children: [
-            // Bar Chart
-            Container(
-              margin: const EdgeInsets.all(16.0),
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.25,
-              child: BarChart(
-                BarChartData(
-                  barTouchData: BarTouchData(
-                    enabled: true,
-                    touchTooltipData: BarTouchTooltipData(
-                      direction: TooltipDirection.auto,
-                      tooltipHorizontalAlignment: FLHorizontalAlignment.center,
-                      fitInsideHorizontally: true,
-                      fitInsideVertically: true,
-                      tooltipPadding: EdgeInsets.all(8.0),
-                      tooltipMargin: 1,
-                    ),
-                  ),
-                  maxY: maxPrice + 100,
-                  minY: minPrice < 0 ? minPrice - 100 : 0,
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(show: true),
-                  titlesData: FlTitlesData(
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 50,
-                        getTitlesWidget: (value, meta) {
-                          return Text('${value.toInt()}');
-                        },
-                      ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          int hourIndex = value.toInt();
+        return AspectRatio(
+          aspectRatio: 1.66,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final barsSpace = 4.0 * constraints.maxWidth / 400;
+                final barsWidth = 8.0 * constraints.maxWidth / 400;
 
-                          if (hourIndex % 3 == 0) {
-                            return Text('${prices[hourIndex].hour}');
-                          } else {
-                            return const Text('');
-                          }
-                        },
+                return BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.center,
+                    barTouchData: BarTouchData(
+                      enabled: true,
+                      touchTooltipData: BarTouchTooltipData(
+                        direction: TooltipDirection.auto,
+                        tooltipHorizontalAlignment:
+                            FLHorizontalAlignment.center,
+                        fitInsideHorizontally: true,
+                        fitInsideVertically: true,
+                        tooltipPadding: const EdgeInsets.all(8.0),
+                        tooltipMargin: 1,
                       ),
                     ),
+                    maxY: maxPrice + 100,
+                    minY: minPrice < 0 ? minPrice - 100 : 0,
+                    gridData: FlGridData(show: false),
+                    borderData: FlBorderData(show: true),
+                    titlesData: FlTitlesData(
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 50,
+                          getTitlesWidget: (value, meta) {
+                            return Text('${value.toInt()}');
+                          },
+                        ),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            int hourIndex = value.toInt();
+                            if (hourIndex % 3 == 0 &&
+                                hourIndex < prices.length) {
+                              return Text('${prices[hourIndex].hour}');
+                            } else {
+                              return const Text('');
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    barGroups: getBarChartData(prices, barsWidth, barsSpace),
                   ),
-                  barGroups: getBarChartData(prices),
-                ),
-              ),
+                );
+              },
             ),
-          ],
+          ),
         );
       },
     );
