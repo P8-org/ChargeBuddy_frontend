@@ -34,8 +34,6 @@ void main() {
             carModelId: modelId,
             userSetName: 'Test Car',
             currentCharge: 40.0,
-            maxChargingPower: 250.0,
-            currentChargingPower: 2000,
           ),
         );
 
