@@ -1,3 +1,4 @@
+import 'package:ev_charge/views/ev_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../views/homepage.dart';
@@ -11,7 +12,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return  HomePage();
+        return HomePage();
       },
       routes: <RouteBase>[
         GoRoute(
@@ -31,7 +32,14 @@ final GoRouter router = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             return const AddEv();
           }
-        )
+        ),
+        GoRoute(
+          path: 'car/:id',
+          builder: (context, state) {
+            var id = int.parse(state.pathParameters["id"]!);
+            return EvPage(id: id);
+          },
+        ),
       ],
     ),
   ],
