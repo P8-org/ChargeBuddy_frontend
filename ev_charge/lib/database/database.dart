@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
@@ -66,14 +67,24 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(
-      name: 'chargeBuddy_database',
-      native: const DriftNativeOptions(
-        // By default, `driftDatabase` from `package:drift_flutter` stores the
-        // database files in `getApplicationDocumentsDirectory()`.
-        databaseDirectory: getApplicationSupportDirectory,
-      ),
-      // If you need web support, see https://drift.simonbinder.eu/platforms/web/
-    );
+    if (kIsWeb) {
+      return driftDatabase(
+        name: 'ev_charge_db',
+        web: DriftWebOptions(
+          sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+          driftWorker: Uri.parse('drift_worker.dart.js'),
+        ),
+      );
+    } else {
+      return driftDatabase(
+        name: 'chargeBuddy_database',
+        native: const DriftNativeOptions(
+          // By default, `driftDatabase` from `package:drift_flutter` stores the
+          // database files in `getApplicationDocumentsDirectory()`.
+          databaseDirectory: getApplicationSupportDirectory,
+        ),
+        // If you need web support, see https://drift.simonbinder.eu/platforms/web/
+      );
+    }
   }
 }
