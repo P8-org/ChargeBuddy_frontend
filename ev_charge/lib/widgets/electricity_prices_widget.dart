@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:ev_charge/core/get_electricity_prices.dart';
 import 'package:ev_charge/viewmodels/electricity_prices.dart';
 import 'package:http/http.dart' as http;
+import 'dart:math';
 
 class ElectricityPricesWidget extends StatefulWidget {
   const ElectricityPricesWidget({super.key});
@@ -61,14 +62,17 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
           return const Center(child: Text("No data available"));
         }
 
-        final prices = snapshot.data!.reversed.toList();
+        final prices = snapshot.data!.toList();
 
-        final minPrice = prices
-            .map((e) => e.price)
-            .reduce((a, b) => a < b ? a : b);
-        final maxPrice = prices
-            .map((e) => e.price)
-            .reduce((a, b) => a > b ? a : b);
+        final minPrice = prices.map((e) => e.price).reduce(min);
+        final maxPrice = prices.map((e) => e.price).reduce(max);
+
+        double formatPrice(double price) {
+          return double.parse(price.toStringAsFixed(3));
+        }
+
+        final chartMinY = minPrice < 0 ? formatPrice(minPrice - 0.1) : 0.0;
+        final chartMaxY = formatPrice(maxPrice + 0.1);
 
         return AspectRatio(
           aspectRatio: 1.66,
@@ -98,7 +102,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                             ),
                             children: [
                               TextSpan(
-                                text: '${price.toStringAsFixed(1)} kr',
+                                text: '${price.toStringAsPrecision(3)} kr',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
@@ -117,8 +121,8 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                         tooltipMargin: 1,
                       ),
                     ),
-                    maxY: maxPrice + 100,
-                    minY: minPrice < 0 ? minPrice - 100 : 0,
+                    maxY: chartMaxY,
+                    minY: chartMinY,
                     gridData: FlGridData(show: false),
                     extraLinesData:
                         minPrice < 0
@@ -145,7 +149,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                           showTitles: true,
                           reservedSize: 50,
                           getTitlesWidget: (value, meta) {
-                            return Text('${value.toInt()}');
+                            return Text('${value.toDouble()}');
                           },
                         ),
                       ),
