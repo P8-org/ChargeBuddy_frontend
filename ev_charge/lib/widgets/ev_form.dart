@@ -46,6 +46,7 @@ class EVFormState extends State<EVForm> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(foregroundColor: Colors.red),
                   onPressed: () {
                     context.pop();
                   },
