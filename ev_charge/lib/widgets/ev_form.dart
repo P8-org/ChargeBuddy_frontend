@@ -2,7 +2,7 @@ import 'package:ev_charge/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ev_charge/widgets/form_input_fields.dart';
+import 'package:ev_charge/widgets/form_helper.dart';
 import 'package:ev_charge/core/database.dart';
 
 class EVForm extends StatefulWidget {
@@ -35,11 +35,11 @@ class EVFormState extends State<EVForm> {
       child: ListView(
         padding: const EdgeInsets.all(8),
         children: <Widget>[
-          formInputField("Model", modelNameController, stringValidator()),
-          formInputField("Model Year", modelYearController, intValidator()),
-          formInputField("Custom Name", userSetNameController, null), // TODO: Not used for anything currently
-          formInputField("Battery Capacity (kWh)", batteryCapacityController, doubleValidator()),
-          formInputField("Maximum Charging Power (kW)", maxChargingPowerController, doubleValidator()),
+          FormHelper.inputField("Model", modelNameController, FormHelper.stringValidator()),
+          FormHelper.inputField("Model Year", modelYearController, FormHelper.intValidator()),
+          FormHelper.inputField("Custom Name", userSetNameController, null), // TODO: Not used for anything currently
+          FormHelper.inputField("Battery Capacity (kWh)", batteryCapacityController, FormHelper.doubleValidator()),
+          FormHelper.inputField("Maximum Charging Power (kW)", maxChargingPowerController, FormHelper.doubleValidator()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Row(

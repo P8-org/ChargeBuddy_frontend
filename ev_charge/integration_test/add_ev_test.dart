@@ -22,7 +22,7 @@ void main() {
     await db.close();
   });
 
-  testWidgets('Add EV test (Hardcoded form entires)', (WidgetTester tester) async {
+  testWidgets('Add EV test', (WidgetTester tester) async {
     
     router.go('/add_ev');
     
