@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/charging_constraints_widget.dart';
+import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -50,6 +51,6 @@ class HomePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: const BottomNavBar(),
-    ); 
+    );
   }
 }
