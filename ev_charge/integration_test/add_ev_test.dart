@@ -1,24 +1,16 @@
-import 'package:ev_charge/views/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:ev_charge/main.dart';
-
-import 'package:ev_charge/views/add_ev.dart';
-import 'package:ev_charge/core/app_router.dart';
-import 'package:ev_charge/main.dart';
-import 'package:go_router/go_router.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:ev_charge/core/database.dart';
 import 'package:drift/native.dart';
 
-import 'dart:developer';
-import 'package:integration_test/integration_test.dart';
+import 'package:ev_charge/main.dart';
+import 'package:ev_charge/core/app_router.dart';
 
 void main() {
   
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
   late AppDatabase db;
 
   setUp(() {
@@ -30,7 +22,7 @@ void main() {
     await db.close();
   });
 
-  testWidgets('Add EV test', (WidgetTester tester) async {
+  testWidgets('Add EV test (Hardcoded form entires)', (WidgetTester tester) async {
     
     router.go('/add_ev');
     
@@ -38,6 +30,7 @@ void main() {
 
     final formTextFields = ['Model', 'Model Year', 'Battery Capacity (kWh)', 'Maximum Charging Power (kW)'];
     var formLocations = <Finder>[];
+
     for (final element in formTextFields) {
       formLocations.add(find.ancestor(
       of: find.text(element),
@@ -49,8 +42,6 @@ void main() {
       await tester.enterText(location, '123');
       await tester.pump();
     }
-
-    await tester.pump();
 
     await tester.tap(find.ancestor(
       of: find.text('Submit'),
