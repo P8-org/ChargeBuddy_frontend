@@ -5,15 +5,15 @@ import 'package:go_router/go_router.dart';
 
 import '../widgets/bottom_navbar.dart';
 
-class EvPage extends StatefulWidget {
-  const EvPage({super.key, required this.id});
+class EvDetailsPage extends StatefulWidget {
+  const EvDetailsPage({super.key, required this.id});
   final int id;
 
   @override
-  State<EvPage> createState() => _EvPageState();
+  State<EvDetailsPage> createState() => _EvDetailsPageState();
 }
 
-class _EvPageState extends State<EvPage> {
+class _EvDetailsPageState extends State<EvDetailsPage> {
   late EvPageVM vm = EvPageVM(id: widget.id);
 
   @override
@@ -29,7 +29,7 @@ class _EvPageState extends State<EvPage> {
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Ev details'),
+            title: const Text('EV Details'),
             actions: [
               IconButton(
                 onPressed: () => vm.deleteEv(onSuccess: context.pop),
