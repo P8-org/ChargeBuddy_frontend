@@ -21,7 +21,6 @@ class Settings extends StatelessWidget {
             },
             child: const Text('Go Back'),
           ),
-          const ElectricityPricesWidget(),
         ],
       ),
       bottomNavigationBar: const BottomNavBar(),

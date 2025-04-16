@@ -1,5 +1,6 @@
 import 'package:ev_charge/viewmodels/ev_page_vm.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
+import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,7 +38,7 @@ class _EvDetailsPageState extends State<EvDetailsPage> {
               ),
             ],
           ),
-          body: Center(
+          body: SingleChildScrollView(
             child: Builder(
               builder: (context) {
                 if (vm.loading || vm.ev == null) {
@@ -126,6 +127,7 @@ class _EvDetailsPageState extends State<EvDetailsPage> {
                           },
                           child: Text("Schedule charging"),
                         ),
+                        ElectricityPricesWidget(),
                       ],
                     );
                   },
