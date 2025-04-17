@@ -6,35 +6,47 @@ import 'package:path_provider/path_provider.dart';
 part 'database.g.dart';
 
 class EVCarModels extends Table {
-  late final id = integer().autoIncrement()();
+  late final id = integer()();
   late final modelName = text().withLength(min: 3, max: 64)();
   late final modelYear = integer()();
   late final batteryCapacity = real()();
   late final maxChargingPower = real()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 class UserEVs extends Table {
-  late final id = integer().autoIncrement()();
+  late final id = integer()();
   late final carModelId = integer().references(EVCarModels, #id)();
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 class Constraints extends Table {
-  late final id = integer().autoIncrement()();
+  late final id = integer()();
   late final userEvId = integer().references(UserEVs, #id)();
   late final chargedBy = dateTime()();
   late final minPercentage = real()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 class Schedules extends Table {
-  late final id = integer().autoIncrement()();
+  late final id = integer()();
   late final userEvId = integer().references(UserEVs, #id)();
 
   late final start = dateTime()();
   late final end = dateTime()();
 
   late final scheduleData = text()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 @DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedules])

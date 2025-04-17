@@ -15,12 +15,8 @@ class $EVCarModelsTable extends EVCarModels
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _modelNameMeta = const VerificationMeta(
     'modelName',
@@ -388,12 +384,8 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _carModelIdMeta = const VerificationMeta(
     'carModelId',
@@ -718,12 +710,8 @@ class $ConstraintsTable extends Constraints
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _userEvIdMeta = const VerificationMeta(
     'userEvId',
@@ -1036,12 +1024,8 @@ class $SchedulesTable extends Schedules
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _userEvIdMeta = const VerificationMeta(
     'userEvId',
