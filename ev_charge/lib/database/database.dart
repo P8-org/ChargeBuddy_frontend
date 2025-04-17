@@ -8,7 +8,7 @@ part 'database.g.dart';
 class EVCarModels extends Table {
   late final id = integer().autoIncrement()();
   late final modelName = text().withLength(min: 3, max: 64)();
-  late final modelYear = integer().nullable()();
+  late final modelYear = integer()();
   late final batteryCapacity = real()();
   late final maxChargingPower = real()();
 }
