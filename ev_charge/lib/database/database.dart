@@ -22,38 +22,19 @@ class UserEVs extends Table {
 
 class Constraints extends Table {
   late final id = integer().autoIncrement()();
-  late final userCarModelId = integer().references(UserEVs, #id)();
-
-  // The day of the week, 0 is Monday, 6 is Sunday
-  late final Column<int> dayOfWeek =
-      integer().check(dayOfWeek.isBetweenValues(0, 6))();
-
-  // Stored as minutes since midnight: 0 = 00:00, 60 = 01:00, ..., 1380 = 23:00
-  // Displayed in UI through TimeOfDay.fromMinutes(startMinutes)
-  // Might be changed depending on back-end requirements
-  late final Column<int> startMinutes =
-      integer().check(startMinutes.isBetweenValues(0, 1440))();
-  late final Column<int> endMinutes =
-      integer().check(endMinutes.isBetweenValues(0, 1440))();
-
-  // Optional: Prevent inverted ranges
-  @override
-  List<String> get customConstraints => ['CHECK (start_minutes < end_minutes)'];
+  late final userEvId = integer().references(UserEVs, #id)();
+  late final chargedBy = dateTime()();
+  late final minPercentage = real()();
 }
 
 class Schedules extends Table {
   late final id = integer().autoIncrement()();
   late final userEvId = integer().references(UserEVs, #id)();
 
-  /// Amount of energy needed (in kWh) for this hour
-  late final chargeKwh = real()();
+  late final start = dateTime()();
+  late final end = dateTime()();
 
-  /// The hour offset from [createdAt], e.g. 0 = current hour, 1 = +1h
-  late final Column<int> chargeHour =
-      integer().check(chargeHour.isBetweenValues(0, 24))();
-
-  /// When this schedule was generated (e.g., by API call)
-  late final createdAt = dateTime().withDefault(currentDateAndTime)();
+  late final scheduleData = text()();
 }
 
 @DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedules])

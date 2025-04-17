@@ -725,12 +725,12 @@ class $ConstraintsTable extends Constraints
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _userCarModelIdMeta = const VerificationMeta(
-    'userCarModelId',
+  static const VerificationMeta _userEvIdMeta = const VerificationMeta(
+    'userEvId',
   );
   @override
-  late final GeneratedColumn<int> userCarModelId = GeneratedColumn<int>(
-    'user_car_model_id',
+  late final GeneratedColumn<int> userEvId = GeneratedColumn<int>(
+    'user_ev_id',
     aliasedName,
     false,
     type: DriftSqlType.int,
@@ -739,49 +739,34 @@ class $ConstraintsTable extends Constraints
       'REFERENCES user_e_vs (id)',
     ),
   );
-  static const VerificationMeta _dayOfWeekMeta = const VerificationMeta(
-    'dayOfWeek',
+  static const VerificationMeta _chargedByMeta = const VerificationMeta(
+    'chargedBy',
   );
   @override
-  late final GeneratedColumn<int> dayOfWeek = GeneratedColumn<int>(
-    'day_of_week',
+  late final GeneratedColumn<DateTime> chargedBy = GeneratedColumn<DateTime>(
+    'charged_by',
     aliasedName,
     false,
-    check: () => ComparableExpr(dayOfWeek).isBetweenValues(0, 6),
-    type: DriftSqlType.int,
+    type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _startMinutesMeta = const VerificationMeta(
-    'startMinutes',
+  static const VerificationMeta _minPercentageMeta = const VerificationMeta(
+    'minPercentage',
   );
   @override
-  late final GeneratedColumn<int> startMinutes = GeneratedColumn<int>(
-    'start_minutes',
+  late final GeneratedColumn<double> minPercentage = GeneratedColumn<double>(
+    'min_percentage',
     aliasedName,
     false,
-    check: () => ComparableExpr(startMinutes).isBetweenValues(0, 1440),
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _endMinutesMeta = const VerificationMeta(
-    'endMinutes',
-  );
-  @override
-  late final GeneratedColumn<int> endMinutes = GeneratedColumn<int>(
-    'end_minutes',
-    aliasedName,
-    false,
-    check: () => ComparableExpr(endMinutes).isBetweenValues(0, 1440),
-    type: DriftSqlType.int,
+    type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    userCarModelId,
-    dayOfWeek,
-    startMinutes,
-    endMinutes,
+    userEvId,
+    chargedBy,
+    minPercentage,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -798,43 +783,32 @@ class $ConstraintsTable extends Constraints
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('user_car_model_id')) {
+    if (data.containsKey('user_ev_id')) {
       context.handle(
-        _userCarModelIdMeta,
-        userCarModelId.isAcceptableOrUnknown(
-          data['user_car_model_id']!,
-          _userCarModelIdMeta,
+        _userEvIdMeta,
+        userEvId.isAcceptableOrUnknown(data['user_ev_id']!, _userEvIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userEvIdMeta);
+    }
+    if (data.containsKey('charged_by')) {
+      context.handle(
+        _chargedByMeta,
+        chargedBy.isAcceptableOrUnknown(data['charged_by']!, _chargedByMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_chargedByMeta);
+    }
+    if (data.containsKey('min_percentage')) {
+      context.handle(
+        _minPercentageMeta,
+        minPercentage.isAcceptableOrUnknown(
+          data['min_percentage']!,
+          _minPercentageMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_userCarModelIdMeta);
-    }
-    if (data.containsKey('day_of_week')) {
-      context.handle(
-        _dayOfWeekMeta,
-        dayOfWeek.isAcceptableOrUnknown(data['day_of_week']!, _dayOfWeekMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_dayOfWeekMeta);
-    }
-    if (data.containsKey('start_minutes')) {
-      context.handle(
-        _startMinutesMeta,
-        startMinutes.isAcceptableOrUnknown(
-          data['start_minutes']!,
-          _startMinutesMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_startMinutesMeta);
-    }
-    if (data.containsKey('end_minutes')) {
-      context.handle(
-        _endMinutesMeta,
-        endMinutes.isAcceptableOrUnknown(data['end_minutes']!, _endMinutesMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_endMinutesMeta);
+      context.missing(_minPercentageMeta);
     }
     return context;
   }
@@ -850,25 +824,20 @@ class $ConstraintsTable extends Constraints
             DriftSqlType.int,
             data['${effectivePrefix}id'],
           )!,
-      userCarModelId:
+      userEvId:
           attachedDatabase.typeMapping.read(
             DriftSqlType.int,
-            data['${effectivePrefix}user_car_model_id'],
+            data['${effectivePrefix}user_ev_id'],
           )!,
-      dayOfWeek:
+      chargedBy:
           attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}day_of_week'],
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}charged_by'],
           )!,
-      startMinutes:
+      minPercentage:
           attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}start_minutes'],
-          )!,
-      endMinutes:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}end_minutes'],
+            DriftSqlType.double,
+            data['${effectivePrefix}min_percentage'],
           )!,
     );
   }
@@ -881,35 +850,31 @@ class $ConstraintsTable extends Constraints
 
 class Constraint extends DataClass implements Insertable<Constraint> {
   final int id;
-  final int userCarModelId;
-  final int dayOfWeek;
-  final int startMinutes;
-  final int endMinutes;
+  final int userEvId;
+  final DateTime chargedBy;
+  final double minPercentage;
   const Constraint({
     required this.id,
-    required this.userCarModelId,
-    required this.dayOfWeek,
-    required this.startMinutes,
-    required this.endMinutes,
+    required this.userEvId,
+    required this.chargedBy,
+    required this.minPercentage,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['user_car_model_id'] = Variable<int>(userCarModelId);
-    map['day_of_week'] = Variable<int>(dayOfWeek);
-    map['start_minutes'] = Variable<int>(startMinutes);
-    map['end_minutes'] = Variable<int>(endMinutes);
+    map['user_ev_id'] = Variable<int>(userEvId);
+    map['charged_by'] = Variable<DateTime>(chargedBy);
+    map['min_percentage'] = Variable<double>(minPercentage);
     return map;
   }
 
   ConstraintsCompanion toCompanion(bool nullToAbsent) {
     return ConstraintsCompanion(
       id: Value(id),
-      userCarModelId: Value(userCarModelId),
-      dayOfWeek: Value(dayOfWeek),
-      startMinutes: Value(startMinutes),
-      endMinutes: Value(endMinutes),
+      userEvId: Value(userEvId),
+      chargedBy: Value(chargedBy),
+      minPercentage: Value(minPercentage),
     );
   }
 
@@ -920,10 +885,9 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Constraint(
       id: serializer.fromJson<int>(json['id']),
-      userCarModelId: serializer.fromJson<int>(json['userCarModelId']),
-      dayOfWeek: serializer.fromJson<int>(json['dayOfWeek']),
-      startMinutes: serializer.fromJson<int>(json['startMinutes']),
-      endMinutes: serializer.fromJson<int>(json['endMinutes']),
+      userEvId: serializer.fromJson<int>(json['userEvId']),
+      chargedBy: serializer.fromJson<DateTime>(json['chargedBy']),
+      minPercentage: serializer.fromJson<double>(json['minPercentage']),
     );
   }
   @override
@@ -931,40 +895,32 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'userCarModelId': serializer.toJson<int>(userCarModelId),
-      'dayOfWeek': serializer.toJson<int>(dayOfWeek),
-      'startMinutes': serializer.toJson<int>(startMinutes),
-      'endMinutes': serializer.toJson<int>(endMinutes),
+      'userEvId': serializer.toJson<int>(userEvId),
+      'chargedBy': serializer.toJson<DateTime>(chargedBy),
+      'minPercentage': serializer.toJson<double>(minPercentage),
     };
   }
 
   Constraint copyWith({
     int? id,
-    int? userCarModelId,
-    int? dayOfWeek,
-    int? startMinutes,
-    int? endMinutes,
+    int? userEvId,
+    DateTime? chargedBy,
+    double? minPercentage,
   }) => Constraint(
     id: id ?? this.id,
-    userCarModelId: userCarModelId ?? this.userCarModelId,
-    dayOfWeek: dayOfWeek ?? this.dayOfWeek,
-    startMinutes: startMinutes ?? this.startMinutes,
-    endMinutes: endMinutes ?? this.endMinutes,
+    userEvId: userEvId ?? this.userEvId,
+    chargedBy: chargedBy ?? this.chargedBy,
+    minPercentage: minPercentage ?? this.minPercentage,
   );
   Constraint copyWithCompanion(ConstraintsCompanion data) {
     return Constraint(
       id: data.id.present ? data.id.value : this.id,
-      userCarModelId:
-          data.userCarModelId.present
-              ? data.userCarModelId.value
-              : this.userCarModelId,
-      dayOfWeek: data.dayOfWeek.present ? data.dayOfWeek.value : this.dayOfWeek,
-      startMinutes:
-          data.startMinutes.present
-              ? data.startMinutes.value
-              : this.startMinutes,
-      endMinutes:
-          data.endMinutes.present ? data.endMinutes.value : this.endMinutes,
+      userEvId: data.userEvId.present ? data.userEvId.value : this.userEvId,
+      chargedBy: data.chargedBy.present ? data.chargedBy.value : this.chargedBy,
+      minPercentage:
+          data.minPercentage.present
+              ? data.minPercentage.value
+              : this.minPercentage,
     );
   }
 
@@ -972,80 +928,69 @@ class Constraint extends DataClass implements Insertable<Constraint> {
   String toString() {
     return (StringBuffer('Constraint(')
           ..write('id: $id, ')
-          ..write('userCarModelId: $userCarModelId, ')
-          ..write('dayOfWeek: $dayOfWeek, ')
-          ..write('startMinutes: $startMinutes, ')
-          ..write('endMinutes: $endMinutes')
+          ..write('userEvId: $userEvId, ')
+          ..write('chargedBy: $chargedBy, ')
+          ..write('minPercentage: $minPercentage')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, userCarModelId, dayOfWeek, startMinutes, endMinutes);
+  int get hashCode => Object.hash(id, userEvId, chargedBy, minPercentage);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Constraint &&
           other.id == this.id &&
-          other.userCarModelId == this.userCarModelId &&
-          other.dayOfWeek == this.dayOfWeek &&
-          other.startMinutes == this.startMinutes &&
-          other.endMinutes == this.endMinutes);
+          other.userEvId == this.userEvId &&
+          other.chargedBy == this.chargedBy &&
+          other.minPercentage == this.minPercentage);
 }
 
 class ConstraintsCompanion extends UpdateCompanion<Constraint> {
   final Value<int> id;
-  final Value<int> userCarModelId;
-  final Value<int> dayOfWeek;
-  final Value<int> startMinutes;
-  final Value<int> endMinutes;
+  final Value<int> userEvId;
+  final Value<DateTime> chargedBy;
+  final Value<double> minPercentage;
   const ConstraintsCompanion({
     this.id = const Value.absent(),
-    this.userCarModelId = const Value.absent(),
-    this.dayOfWeek = const Value.absent(),
-    this.startMinutes = const Value.absent(),
-    this.endMinutes = const Value.absent(),
+    this.userEvId = const Value.absent(),
+    this.chargedBy = const Value.absent(),
+    this.minPercentage = const Value.absent(),
   });
   ConstraintsCompanion.insert({
     this.id = const Value.absent(),
-    required int userCarModelId,
-    required int dayOfWeek,
-    required int startMinutes,
-    required int endMinutes,
-  }) : userCarModelId = Value(userCarModelId),
-       dayOfWeek = Value(dayOfWeek),
-       startMinutes = Value(startMinutes),
-       endMinutes = Value(endMinutes);
+    required int userEvId,
+    required DateTime chargedBy,
+    required double minPercentage,
+  }) : userEvId = Value(userEvId),
+       chargedBy = Value(chargedBy),
+       minPercentage = Value(minPercentage);
   static Insertable<Constraint> custom({
     Expression<int>? id,
-    Expression<int>? userCarModelId,
-    Expression<int>? dayOfWeek,
-    Expression<int>? startMinutes,
-    Expression<int>? endMinutes,
+    Expression<int>? userEvId,
+    Expression<DateTime>? chargedBy,
+    Expression<double>? minPercentage,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (userCarModelId != null) 'user_car_model_id': userCarModelId,
-      if (dayOfWeek != null) 'day_of_week': dayOfWeek,
-      if (startMinutes != null) 'start_minutes': startMinutes,
-      if (endMinutes != null) 'end_minutes': endMinutes,
+      if (userEvId != null) 'user_ev_id': userEvId,
+      if (chargedBy != null) 'charged_by': chargedBy,
+      if (minPercentage != null) 'min_percentage': minPercentage,
     });
   }
 
   ConstraintsCompanion copyWith({
     Value<int>? id,
-    Value<int>? userCarModelId,
-    Value<int>? dayOfWeek,
-    Value<int>? startMinutes,
-    Value<int>? endMinutes,
+    Value<int>? userEvId,
+    Value<DateTime>? chargedBy,
+    Value<double>? minPercentage,
   }) {
     return ConstraintsCompanion(
       id: id ?? this.id,
-      userCarModelId: userCarModelId ?? this.userCarModelId,
-      dayOfWeek: dayOfWeek ?? this.dayOfWeek,
-      startMinutes: startMinutes ?? this.startMinutes,
-      endMinutes: endMinutes ?? this.endMinutes,
+      userEvId: userEvId ?? this.userEvId,
+      chargedBy: chargedBy ?? this.chargedBy,
+      minPercentage: minPercentage ?? this.minPercentage,
     );
   }
 
@@ -1055,17 +1000,14 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (userCarModelId.present) {
-      map['user_car_model_id'] = Variable<int>(userCarModelId.value);
+    if (userEvId.present) {
+      map['user_ev_id'] = Variable<int>(userEvId.value);
     }
-    if (dayOfWeek.present) {
-      map['day_of_week'] = Variable<int>(dayOfWeek.value);
+    if (chargedBy.present) {
+      map['charged_by'] = Variable<DateTime>(chargedBy.value);
     }
-    if (startMinutes.present) {
-      map['start_minutes'] = Variable<int>(startMinutes.value);
-    }
-    if (endMinutes.present) {
-      map['end_minutes'] = Variable<int>(endMinutes.value);
+    if (minPercentage.present) {
+      map['min_percentage'] = Variable<double>(minPercentage.value);
     }
     return map;
   }
@@ -1074,10 +1016,9 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
   String toString() {
     return (StringBuffer('ConstraintsCompanion(')
           ..write('id: $id, ')
-          ..write('userCarModelId: $userCarModelId, ')
-          ..write('dayOfWeek: $dayOfWeek, ')
-          ..write('startMinutes: $startMinutes, ')
-          ..write('endMinutes: $endMinutes')
+          ..write('userEvId: $userEvId, ')
+          ..write('chargedBy: $chargedBy, ')
+          ..write('minPercentage: $minPercentage')
           ..write(')'))
         .toString();
   }
@@ -1116,48 +1057,42 @@ class $SchedulesTable extends Schedules
       'REFERENCES user_e_vs (id)',
     ),
   );
-  static const VerificationMeta _chargeKwhMeta = const VerificationMeta(
-    'chargeKwh',
-  );
+  static const VerificationMeta _startMeta = const VerificationMeta('start');
   @override
-  late final GeneratedColumn<double> chargeKwh = GeneratedColumn<double>(
-    'charge_kwh',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _chargeHourMeta = const VerificationMeta(
-    'chargeHour',
-  );
-  @override
-  late final GeneratedColumn<int> chargeHour = GeneratedColumn<int>(
-    'charge_hour',
-    aliasedName,
-    false,
-    check: () => ComparableExpr(chargeHour).isBetweenValues(0, 24),
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
+  late final GeneratedColumn<DateTime> start = GeneratedColumn<DateTime>(
+    'start',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endMeta = const VerificationMeta('end');
+  @override
+  late final GeneratedColumn<DateTime> end = GeneratedColumn<DateTime>(
+    'end',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _scheduleDataMeta = const VerificationMeta(
+    'scheduleData',
+  );
+  @override
+  late final GeneratedColumn<String> scheduleData = GeneratedColumn<String>(
+    'schedule_data',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     userEvId,
-    chargeKwh,
-    chargeHour,
-    createdAt,
+    start,
+    end,
+    scheduleData,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1182,27 +1117,32 @@ class $SchedulesTable extends Schedules
     } else if (isInserting) {
       context.missing(_userEvIdMeta);
     }
-    if (data.containsKey('charge_kwh')) {
+    if (data.containsKey('start')) {
       context.handle(
-        _chargeKwhMeta,
-        chargeKwh.isAcceptableOrUnknown(data['charge_kwh']!, _chargeKwhMeta),
+        _startMeta,
+        start.isAcceptableOrUnknown(data['start']!, _startMeta),
       );
     } else if (isInserting) {
-      context.missing(_chargeKwhMeta);
+      context.missing(_startMeta);
     }
-    if (data.containsKey('charge_hour')) {
+    if (data.containsKey('end')) {
       context.handle(
-        _chargeHourMeta,
-        chargeHour.isAcceptableOrUnknown(data['charge_hour']!, _chargeHourMeta),
+        _endMeta,
+        end.isAcceptableOrUnknown(data['end']!, _endMeta),
       );
     } else if (isInserting) {
-      context.missing(_chargeHourMeta);
+      context.missing(_endMeta);
     }
-    if (data.containsKey('created_at')) {
+    if (data.containsKey('schedule_data')) {
       context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+        _scheduleDataMeta,
+        scheduleData.isAcceptableOrUnknown(
+          data['schedule_data']!,
+          _scheduleDataMeta,
+        ),
       );
+    } else if (isInserting) {
+      context.missing(_scheduleDataMeta);
     }
     return context;
   }
@@ -1223,20 +1163,20 @@ class $SchedulesTable extends Schedules
             DriftSqlType.int,
             data['${effectivePrefix}user_ev_id'],
           )!,
-      chargeKwh:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.double,
-            data['${effectivePrefix}charge_kwh'],
-          )!,
-      chargeHour:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}charge_hour'],
-          )!,
-      createdAt:
+      start:
           attachedDatabase.typeMapping.read(
             DriftSqlType.dateTime,
-            data['${effectivePrefix}created_at'],
+            data['${effectivePrefix}start'],
+          )!,
+      end:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}end'],
+          )!,
+      scheduleData:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}schedule_data'],
           )!,
     );
   }
@@ -1250,30 +1190,24 @@ class $SchedulesTable extends Schedules
 class Schedule extends DataClass implements Insertable<Schedule> {
   final int id;
   final int userEvId;
-
-  /// Amount of energy needed (in kWh) for this hour
-  final double chargeKwh;
-
-  /// The hour offset from [createdAt], e.g. 0 = current hour, 1 = +1h
-  final int chargeHour;
-
-  /// When this schedule was generated (e.g., by API call)
-  final DateTime createdAt;
+  final DateTime start;
+  final DateTime end;
+  final String scheduleData;
   const Schedule({
     required this.id,
     required this.userEvId,
-    required this.chargeKwh,
-    required this.chargeHour,
-    required this.createdAt,
+    required this.start,
+    required this.end,
+    required this.scheduleData,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['user_ev_id'] = Variable<int>(userEvId);
-    map['charge_kwh'] = Variable<double>(chargeKwh);
-    map['charge_hour'] = Variable<int>(chargeHour);
-    map['created_at'] = Variable<DateTime>(createdAt);
+    map['start'] = Variable<DateTime>(start);
+    map['end'] = Variable<DateTime>(end);
+    map['schedule_data'] = Variable<String>(scheduleData);
     return map;
   }
 
@@ -1281,9 +1215,9 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     return SchedulesCompanion(
       id: Value(id),
       userEvId: Value(userEvId),
-      chargeKwh: Value(chargeKwh),
-      chargeHour: Value(chargeHour),
-      createdAt: Value(createdAt),
+      start: Value(start),
+      end: Value(end),
+      scheduleData: Value(scheduleData),
     );
   }
 
@@ -1295,9 +1229,9 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     return Schedule(
       id: serializer.fromJson<int>(json['id']),
       userEvId: serializer.fromJson<int>(json['userEvId']),
-      chargeKwh: serializer.fromJson<double>(json['chargeKwh']),
-      chargeHour: serializer.fromJson<int>(json['chargeHour']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      start: serializer.fromJson<DateTime>(json['start']),
+      end: serializer.fromJson<DateTime>(json['end']),
+      scheduleData: serializer.fromJson<String>(json['scheduleData']),
     );
   }
   @override
@@ -1306,33 +1240,35 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'userEvId': serializer.toJson<int>(userEvId),
-      'chargeKwh': serializer.toJson<double>(chargeKwh),
-      'chargeHour': serializer.toJson<int>(chargeHour),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'start': serializer.toJson<DateTime>(start),
+      'end': serializer.toJson<DateTime>(end),
+      'scheduleData': serializer.toJson<String>(scheduleData),
     };
   }
 
   Schedule copyWith({
     int? id,
     int? userEvId,
-    double? chargeKwh,
-    int? chargeHour,
-    DateTime? createdAt,
+    DateTime? start,
+    DateTime? end,
+    String? scheduleData,
   }) => Schedule(
     id: id ?? this.id,
     userEvId: userEvId ?? this.userEvId,
-    chargeKwh: chargeKwh ?? this.chargeKwh,
-    chargeHour: chargeHour ?? this.chargeHour,
-    createdAt: createdAt ?? this.createdAt,
+    start: start ?? this.start,
+    end: end ?? this.end,
+    scheduleData: scheduleData ?? this.scheduleData,
   );
   Schedule copyWithCompanion(SchedulesCompanion data) {
     return Schedule(
       id: data.id.present ? data.id.value : this.id,
       userEvId: data.userEvId.present ? data.userEvId.value : this.userEvId,
-      chargeKwh: data.chargeKwh.present ? data.chargeKwh.value : this.chargeKwh,
-      chargeHour:
-          data.chargeHour.present ? data.chargeHour.value : this.chargeHour,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      start: data.start.present ? data.start.value : this.start,
+      end: data.end.present ? data.end.value : this.end,
+      scheduleData:
+          data.scheduleData.present
+              ? data.scheduleData.value
+              : this.scheduleData,
     );
   }
 
@@ -1341,78 +1277,78 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     return (StringBuffer('Schedule(')
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
-          ..write('chargeKwh: $chargeKwh, ')
-          ..write('chargeHour: $chargeHour, ')
-          ..write('createdAt: $createdAt')
+          ..write('start: $start, ')
+          ..write('end: $end, ')
+          ..write('scheduleData: $scheduleData')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, userEvId, chargeKwh, chargeHour, createdAt);
+  int get hashCode => Object.hash(id, userEvId, start, end, scheduleData);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Schedule &&
           other.id == this.id &&
           other.userEvId == this.userEvId &&
-          other.chargeKwh == this.chargeKwh &&
-          other.chargeHour == this.chargeHour &&
-          other.createdAt == this.createdAt);
+          other.start == this.start &&
+          other.end == this.end &&
+          other.scheduleData == this.scheduleData);
 }
 
 class SchedulesCompanion extends UpdateCompanion<Schedule> {
   final Value<int> id;
   final Value<int> userEvId;
-  final Value<double> chargeKwh;
-  final Value<int> chargeHour;
-  final Value<DateTime> createdAt;
+  final Value<DateTime> start;
+  final Value<DateTime> end;
+  final Value<String> scheduleData;
   const SchedulesCompanion({
     this.id = const Value.absent(),
     this.userEvId = const Value.absent(),
-    this.chargeKwh = const Value.absent(),
-    this.chargeHour = const Value.absent(),
-    this.createdAt = const Value.absent(),
+    this.start = const Value.absent(),
+    this.end = const Value.absent(),
+    this.scheduleData = const Value.absent(),
   });
   SchedulesCompanion.insert({
     this.id = const Value.absent(),
     required int userEvId,
-    required double chargeKwh,
-    required int chargeHour,
-    this.createdAt = const Value.absent(),
+    required DateTime start,
+    required DateTime end,
+    required String scheduleData,
   }) : userEvId = Value(userEvId),
-       chargeKwh = Value(chargeKwh),
-       chargeHour = Value(chargeHour);
+       start = Value(start),
+       end = Value(end),
+       scheduleData = Value(scheduleData);
   static Insertable<Schedule> custom({
     Expression<int>? id,
     Expression<int>? userEvId,
-    Expression<double>? chargeKwh,
-    Expression<int>? chargeHour,
-    Expression<DateTime>? createdAt,
+    Expression<DateTime>? start,
+    Expression<DateTime>? end,
+    Expression<String>? scheduleData,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (userEvId != null) 'user_ev_id': userEvId,
-      if (chargeKwh != null) 'charge_kwh': chargeKwh,
-      if (chargeHour != null) 'charge_hour': chargeHour,
-      if (createdAt != null) 'created_at': createdAt,
+      if (start != null) 'start': start,
+      if (end != null) 'end': end,
+      if (scheduleData != null) 'schedule_data': scheduleData,
     });
   }
 
   SchedulesCompanion copyWith({
     Value<int>? id,
     Value<int>? userEvId,
-    Value<double>? chargeKwh,
-    Value<int>? chargeHour,
-    Value<DateTime>? createdAt,
+    Value<DateTime>? start,
+    Value<DateTime>? end,
+    Value<String>? scheduleData,
   }) {
     return SchedulesCompanion(
       id: id ?? this.id,
       userEvId: userEvId ?? this.userEvId,
-      chargeKwh: chargeKwh ?? this.chargeKwh,
-      chargeHour: chargeHour ?? this.chargeHour,
-      createdAt: createdAt ?? this.createdAt,
+      start: start ?? this.start,
+      end: end ?? this.end,
+      scheduleData: scheduleData ?? this.scheduleData,
     );
   }
 
@@ -1425,14 +1361,14 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     if (userEvId.present) {
       map['user_ev_id'] = Variable<int>(userEvId.value);
     }
-    if (chargeKwh.present) {
-      map['charge_kwh'] = Variable<double>(chargeKwh.value);
+    if (start.present) {
+      map['start'] = Variable<DateTime>(start.value);
     }
-    if (chargeHour.present) {
-      map['charge_hour'] = Variable<int>(chargeHour.value);
+    if (end.present) {
+      map['end'] = Variable<DateTime>(end.value);
     }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+    if (scheduleData.present) {
+      map['schedule_data'] = Variable<String>(scheduleData.value);
     }
     return map;
   }
@@ -1442,9 +1378,9 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     return (StringBuffer('SchedulesCompanion(')
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
-          ..write('chargeKwh: $chargeKwh, ')
-          ..write('chargeHour: $chargeHour, ')
-          ..write('createdAt: $createdAt')
+          ..write('start: $start, ')
+          ..write('end: $end, ')
+          ..write('scheduleData: $scheduleData')
           ..write(')'))
         .toString();
   }
@@ -1816,17 +1752,14 @@ final class $$UserEVsTableReferences
   static MultiTypedResultKey<$ConstraintsTable, List<Constraint>>
   _constraintsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.constraints,
-    aliasName: $_aliasNameGenerator(
-      db.userEVs.id,
-      db.constraints.userCarModelId,
-    ),
+    aliasName: $_aliasNameGenerator(db.userEVs.id, db.constraints.userEvId),
   );
 
   $$ConstraintsTableProcessedTableManager get constraintsRefs {
     final manager = $$ConstraintsTableTableManager(
       $_db,
       $_db.constraints,
-    ).filter((f) => f.userCarModelId.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.userEvId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_constraintsRefsTable($_db));
     return ProcessedTableManager(
@@ -1907,7 +1840,7 @@ class $$UserEVsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.constraints,
-      getReferencedColumn: (t) => t.userCarModelId,
+      getReferencedColumn: (t) => t.userEvId,
       builder:
           (
             joinBuilder, {
@@ -2051,7 +1984,7 @@ class $$UserEVsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.constraints,
-      getReferencedColumn: (t) => t.userCarModelId,
+      getReferencedColumn: (t) => t.userEvId,
       builder:
           (
             joinBuilder, {
@@ -2222,7 +2155,7 @@ class $$UserEVsTableTableManager
                               ).constraintsRefs,
                       referencedItemsForCurrentItem:
                           (item, referencedItems) => referencedItems.where(
-                            (e) => e.userCarModelId == item.id,
+                            (e) => e.userEvId == item.id,
                           ),
                       typedResults: items,
                     ),
@@ -2273,37 +2206,35 @@ typedef $$UserEVsTableProcessedTableManager =
 typedef $$ConstraintsTableCreateCompanionBuilder =
     ConstraintsCompanion Function({
       Value<int> id,
-      required int userCarModelId,
-      required int dayOfWeek,
-      required int startMinutes,
-      required int endMinutes,
+      required int userEvId,
+      required DateTime chargedBy,
+      required double minPercentage,
     });
 typedef $$ConstraintsTableUpdateCompanionBuilder =
     ConstraintsCompanion Function({
       Value<int> id,
-      Value<int> userCarModelId,
-      Value<int> dayOfWeek,
-      Value<int> startMinutes,
-      Value<int> endMinutes,
+      Value<int> userEvId,
+      Value<DateTime> chargedBy,
+      Value<double> minPercentage,
     });
 
 final class $$ConstraintsTableReferences
     extends BaseReferences<_$AppDatabase, $ConstraintsTable, Constraint> {
   $$ConstraintsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $UserEVsTable _userCarModelIdTable(_$AppDatabase db) =>
+  static $UserEVsTable _userEvIdTable(_$AppDatabase db) =>
       db.userEVs.createAlias(
-        $_aliasNameGenerator(db.constraints.userCarModelId, db.userEVs.id),
+        $_aliasNameGenerator(db.constraints.userEvId, db.userEVs.id),
       );
 
-  $$UserEVsTableProcessedTableManager get userCarModelId {
-    final $_column = $_itemColumn<int>('user_car_model_id')!;
+  $$UserEVsTableProcessedTableManager get userEvId {
+    final $_column = $_itemColumn<int>('user_ev_id')!;
 
     final manager = $$UserEVsTableTableManager(
       $_db,
       $_db.userEVs,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_userCarModelIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_userEvIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -2325,25 +2256,20 @@ class $$ConstraintsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get dayOfWeek => $composableBuilder(
-    column: $table.dayOfWeek,
+  ColumnFilters<DateTime> get chargedBy => $composableBuilder(
+    column: $table.chargedBy,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get startMinutes => $composableBuilder(
-    column: $table.startMinutes,
+  ColumnFilters<double> get minPercentage => $composableBuilder(
+    column: $table.minPercentage,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get endMinutes => $composableBuilder(
-    column: $table.endMinutes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  $$UserEVsTableFilterComposer get userCarModelId {
+  $$UserEVsTableFilterComposer get userEvId {
     final $$UserEVsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.userCarModelId,
+      getCurrentColumn: (t) => t.userEvId,
       referencedTable: $db.userEVs,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -2378,25 +2304,20 @@ class $$ConstraintsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get dayOfWeek => $composableBuilder(
-    column: $table.dayOfWeek,
+  ColumnOrderings<DateTime> get chargedBy => $composableBuilder(
+    column: $table.chargedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get startMinutes => $composableBuilder(
-    column: $table.startMinutes,
+  ColumnOrderings<double> get minPercentage => $composableBuilder(
+    column: $table.minPercentage,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get endMinutes => $composableBuilder(
-    column: $table.endMinutes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  $$UserEVsTableOrderingComposer get userCarModelId {
+  $$UserEVsTableOrderingComposer get userEvId {
     final $$UserEVsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.userCarModelId,
+      getCurrentColumn: (t) => t.userEvId,
       referencedTable: $db.userEVs,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -2429,23 +2350,18 @@ class $$ConstraintsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get dayOfWeek =>
-      $composableBuilder(column: $table.dayOfWeek, builder: (column) => column);
+  GeneratedColumn<DateTime> get chargedBy =>
+      $composableBuilder(column: $table.chargedBy, builder: (column) => column);
 
-  GeneratedColumn<int> get startMinutes => $composableBuilder(
-    column: $table.startMinutes,
+  GeneratedColumn<double> get minPercentage => $composableBuilder(
+    column: $table.minPercentage,
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get endMinutes => $composableBuilder(
-    column: $table.endMinutes,
-    builder: (column) => column,
-  );
-
-  $$UserEVsTableAnnotationComposer get userCarModelId {
+  $$UserEVsTableAnnotationComposer get userEvId {
     final $$UserEVsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.userCarModelId,
+      getCurrentColumn: (t) => t.userEvId,
       referencedTable: $db.userEVs,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -2479,7 +2395,7 @@ class $$ConstraintsTableTableManager
           $$ConstraintsTableUpdateCompanionBuilder,
           (Constraint, $$ConstraintsTableReferences),
           Constraint,
-          PrefetchHooks Function({bool userCarModelId})
+          PrefetchHooks Function({bool userEvId})
         > {
   $$ConstraintsTableTableManager(_$AppDatabase db, $ConstraintsTable table)
     : super(
@@ -2496,30 +2412,26 @@ class $$ConstraintsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> userCarModelId = const Value.absent(),
-                Value<int> dayOfWeek = const Value.absent(),
-                Value<int> startMinutes = const Value.absent(),
-                Value<int> endMinutes = const Value.absent(),
+                Value<int> userEvId = const Value.absent(),
+                Value<DateTime> chargedBy = const Value.absent(),
+                Value<double> minPercentage = const Value.absent(),
               }) => ConstraintsCompanion(
                 id: id,
-                userCarModelId: userCarModelId,
-                dayOfWeek: dayOfWeek,
-                startMinutes: startMinutes,
-                endMinutes: endMinutes,
+                userEvId: userEvId,
+                chargedBy: chargedBy,
+                minPercentage: minPercentage,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int userCarModelId,
-                required int dayOfWeek,
-                required int startMinutes,
-                required int endMinutes,
+                required int userEvId,
+                required DateTime chargedBy,
+                required double minPercentage,
               }) => ConstraintsCompanion.insert(
                 id: id,
-                userCarModelId: userCarModelId,
-                dayOfWeek: dayOfWeek,
-                startMinutes: startMinutes,
-                endMinutes: endMinutes,
+                userEvId: userEvId,
+                chargedBy: chargedBy,
+                minPercentage: minPercentage,
               ),
           withReferenceMapper:
               (p0) =>
@@ -2531,7 +2443,7 @@ class $$ConstraintsTableTableManager
                         ),
                       )
                       .toList(),
-          prefetchHooksCallback: ({userCarModelId = false}) {
+          prefetchHooksCallback: ({userEvId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -2550,16 +2462,16 @@ class $$ConstraintsTableTableManager
                   dynamic
                 >
               >(state) {
-                if (userCarModelId) {
+                if (userEvId) {
                   state =
                       state.withJoin(
                             currentTable: table,
-                            currentColumn: table.userCarModelId,
+                            currentColumn: table.userEvId,
                             referencedTable: $$ConstraintsTableReferences
-                                ._userCarModelIdTable(db),
+                                ._userEvIdTable(db),
                             referencedColumn:
                                 $$ConstraintsTableReferences
-                                    ._userCarModelIdTable(db)
+                                    ._userEvIdTable(db)
                                     .id,
                           )
                           as T;
@@ -2588,23 +2500,23 @@ typedef $$ConstraintsTableProcessedTableManager =
       $$ConstraintsTableUpdateCompanionBuilder,
       (Constraint, $$ConstraintsTableReferences),
       Constraint,
-      PrefetchHooks Function({bool userCarModelId})
+      PrefetchHooks Function({bool userEvId})
     >;
 typedef $$SchedulesTableCreateCompanionBuilder =
     SchedulesCompanion Function({
       Value<int> id,
       required int userEvId,
-      required double chargeKwh,
-      required int chargeHour,
-      Value<DateTime> createdAt,
+      required DateTime start,
+      required DateTime end,
+      required String scheduleData,
     });
 typedef $$SchedulesTableUpdateCompanionBuilder =
     SchedulesCompanion Function({
       Value<int> id,
       Value<int> userEvId,
-      Value<double> chargeKwh,
-      Value<int> chargeHour,
-      Value<DateTime> createdAt,
+      Value<DateTime> start,
+      Value<DateTime> end,
+      Value<String> scheduleData,
     });
 
 final class $$SchedulesTableReferences
@@ -2643,18 +2555,18 @@ class $$SchedulesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get chargeKwh => $composableBuilder(
-    column: $table.chargeKwh,
+  ColumnFilters<DateTime> get start => $composableBuilder(
+    column: $table.start,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get chargeHour => $composableBuilder(
-    column: $table.chargeHour,
+  ColumnFilters<DateTime> get end => $composableBuilder(
+    column: $table.end,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
+  ColumnFilters<String> get scheduleData => $composableBuilder(
+    column: $table.scheduleData,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2696,18 +2608,18 @@ class $$SchedulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get chargeKwh => $composableBuilder(
-    column: $table.chargeKwh,
+  ColumnOrderings<DateTime> get start => $composableBuilder(
+    column: $table.start,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get chargeHour => $composableBuilder(
-    column: $table.chargeHour,
+  ColumnOrderings<DateTime> get end => $composableBuilder(
+    column: $table.end,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
+  ColumnOrderings<String> get scheduleData => $composableBuilder(
+    column: $table.scheduleData,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2747,16 +2659,16 @@ class $$SchedulesTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<double> get chargeKwh =>
-      $composableBuilder(column: $table.chargeKwh, builder: (column) => column);
+  GeneratedColumn<DateTime> get start =>
+      $composableBuilder(column: $table.start, builder: (column) => column);
 
-  GeneratedColumn<int> get chargeHour => $composableBuilder(
-    column: $table.chargeHour,
+  GeneratedColumn<DateTime> get end =>
+      $composableBuilder(column: $table.end, builder: (column) => column);
+
+  GeneratedColumn<String> get scheduleData => $composableBuilder(
+    column: $table.scheduleData,
     builder: (column) => column,
   );
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   $$UserEVsTableAnnotationComposer get userEvId {
     final $$UserEVsTableAnnotationComposer composer = $composerBuilder(
@@ -2812,29 +2724,29 @@ class $$SchedulesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> userEvId = const Value.absent(),
-                Value<double> chargeKwh = const Value.absent(),
-                Value<int> chargeHour = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> start = const Value.absent(),
+                Value<DateTime> end = const Value.absent(),
+                Value<String> scheduleData = const Value.absent(),
               }) => SchedulesCompanion(
                 id: id,
                 userEvId: userEvId,
-                chargeKwh: chargeKwh,
-                chargeHour: chargeHour,
-                createdAt: createdAt,
+                start: start,
+                end: end,
+                scheduleData: scheduleData,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required int userEvId,
-                required double chargeKwh,
-                required int chargeHour,
-                Value<DateTime> createdAt = const Value.absent(),
+                required DateTime start,
+                required DateTime end,
+                required String scheduleData,
               }) => SchedulesCompanion.insert(
                 id: id,
                 userEvId: userEvId,
-                chargeKwh: chargeKwh,
-                chargeHour: chargeHour,
-                createdAt: createdAt,
+                start: start,
+                end: end,
+                scheduleData: scheduleData,
               ),
           withReferenceMapper:
               (p0) =>
