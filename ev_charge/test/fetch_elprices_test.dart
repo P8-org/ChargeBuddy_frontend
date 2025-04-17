@@ -28,8 +28,8 @@ void main() {
         // provided http.Client.
         when(mockClient.get(Uri.parse(url))).thenAnswer(
           (_) async => http.Response(
-            '[{"HourDK": "2025-04-01T00:00:00", "SpotPriceDKK": 50.0}, '
-            '{"HourDK": "2025-04-01T01:00:00", "SpotPriceDKK": 45.0}]',
+            '[ {"time": "2025-04-15T00:00:00", "price": 0.0218051}, '
+            '  {"time": "2025-04-15T12:00:00", "price": 0.0005974}]',
             200,
           ),
         );
@@ -37,13 +37,15 @@ void main() {
         // Create the service and fetch the electricity prices
         final prices = await service.fetchElectricityPrices();
 
+        const double tax = 0.951;
+
         // Check that the data is correctly parsed
         expect(prices, isA<List<ElectricityPrices>>());
         expect(prices.length, 2);
         expect(prices[0].hour, 0);
-        expect(prices[0].price, 50.0);
-        expect(prices[1].hour, 1);
-        expect(prices[1].price, 45.0);
+        expect(prices[0].price, 0.0218051+tax);
+        expect(prices[1].hour, 12);
+        expect(prices[1].price, 0.0005974+tax);
       },
     );
 
