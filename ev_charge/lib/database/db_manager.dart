@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 
 import 'database.dart';
@@ -39,13 +38,13 @@ class DbManager {
         batch.insertAll(db.eVCarModels, [
           EVCarModelsCompanion.insert(
             modelName: 'Model S',
-            modelYear: const Value(2020),
+            modelYear: 2020,
             batteryCapacity: 100.0,
             maxChargingPower: 250.0,
           ),
           EVCarModelsCompanion.insert(
             modelName: 'Model 3',
-            modelYear: const Value(2022),
+            modelYear: 2022,
             batteryCapacity: 75.0,
             maxChargingPower: 200.0,
           ),
