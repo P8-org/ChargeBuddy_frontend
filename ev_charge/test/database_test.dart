@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
 
-import 'package:ev_charge/core/database.dart'; // Update the import path
+import 'package:ev_charge/database/database.dart'; // Update the import path
 
 void main() {
   late AppDatabase db;
@@ -27,6 +27,7 @@ void main() {
           ),
         );
 
+    // ignore: unused_local_variable
     final userEvId = await db
         .into(db.userEVs)
         .insert(
