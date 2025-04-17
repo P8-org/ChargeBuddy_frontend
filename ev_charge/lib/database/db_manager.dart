@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+import 'package:ev_charge/core/backend_service.dart';
 import 'package:flutter/foundation.dart';
 
 import 'database.dart';
@@ -13,12 +15,15 @@ class DbManager {
       await _resetDatabase(db);
     }
 
-    if (debugMode) {
-      if (kDebugMode) {
-        print('[Debug] Seeding database...');
-      }
-      await _seedDatabase(db);
-    }
+    await _updateDatabase(db);
+
+    // if (debugMode) {
+    //   if (kDebugMode) {
+    //     print('[Debug] Seeding database...');
+    //   }
+    //   await _seedDatabase(db);
+    // }
+
     return db;
   }
 
@@ -75,12 +80,7 @@ class DbManager {
       }
       await db.batch((batch) {
         batch.insertAll(db.constraints, [
-          ConstraintsCompanion.insert(
-            userCarModelId: 1,
-            dayOfWeek: 1,
-            startMinutes: 0,
-            endMinutes: 10,
-          ),
+          ConstraintsCompanion.insert(userEvId: 1, chargedBy: DateTime.now(), minPercentage: 80),
         ]);
       });
     }
@@ -95,8 +95,9 @@ class DbManager {
           .insert(
             SchedulesCompanion.insert(
               userEvId: 1,
-              chargeKwh: 15,
-              chargeHour: 18,
+              start: DateTime.now(),
+              end: DateTime.now(),
+              scheduleData: "scheduleData",
             ),
           );
     }
@@ -110,5 +111,53 @@ class DbManager {
     await db.customStatement('DELETE FROM sqlite_sequence;');
 
     if (kDebugMode) print('[Reset] All tables cleared, autoincrements reset.');
+  }
+
+  static Future<void> _updateDatabase(AppDatabase db) async {
+    final evList = await BackendService().getEvs();
+    for (final ev in evList) {
+      final carModel = await db
+          .into(db.eVCarModels)
+          .insertReturning(
+            EVCarModelsCompanion.insert(
+              modelName: ev.carModel.modelName,
+              modelYear: ev.carModel.modelYear,
+              batteryCapacity: ev.carModel.batteryCapacity,
+              maxChargingPower: ev.carModel.maxChargingPower,
+            ),
+          );
+
+      final userEv = await db
+          .into(db.userEVs)
+          .insertReturning(
+            UserEVsCompanion.insert(
+              carModelId: carModel.id,
+              userSetName: ev.userSetName,
+              currentCharge: ev.currentCharge,
+            ),
+          );
+
+      await db
+          .into(db.schedules)
+          .insertOnConflictUpdate(
+            SchedulesCompanion.insert(
+              userEvId: userEv.id,
+              start: ev.schedule.start,
+              end: ev.schedule.end,
+              scheduleData: ev.schedule.scheduleData,
+            ),
+          );
+
+      await db
+          .into(db.constraints)
+          .insertOnConflictUpdate(
+            ConstraintsCompanion.insert(
+              userEvId: userEv.id,
+              chargedBy: ev.constraint.chargedBy,
+              minPercentage: ev.constraint.targetPercentage,
+            ),
+          );
+    }
+    if (kDebugMode) print('[Update] Database updated.');
   }
 }
