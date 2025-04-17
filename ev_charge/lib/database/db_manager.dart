@@ -80,7 +80,11 @@ class DbManager {
       }
       await db.batch((batch) {
         batch.insertAll(db.constraints, [
-          ConstraintsCompanion.insert(userEvId: 1, chargedBy: DateTime.now(), minPercentage: 80),
+          ConstraintsCompanion.insert(
+            userEvId: 1,
+            chargedBy: DateTime.now(),
+            minPercentage: 80,
+          ),
         ]);
       });
     }
@@ -108,56 +112,73 @@ class DbManager {
     await db.delete(db.constraints).go();
     await db.delete(db.userEVs).go();
     await db.delete(db.eVCarModels).go();
-    await db.customStatement('DELETE FROM sqlite_sequence;');
+    // await db.customStatement('DELETE FROM sqlite_sequence;');
 
     if (kDebugMode) print('[Reset] All tables cleared, autoincrements reset.');
   }
 
   static Future<void> _updateDatabase(AppDatabase db) async {
-    final evList = await BackendService().getEvs();
-    for (final ev in evList) {
-      final carModel = await db
-          .into(db.eVCarModels)
-          .insertReturning(
-            EVCarModelsCompanion.insert(
-              modelName: ev.carModel.modelName,
-              modelYear: ev.carModel.modelYear,
-              batteryCapacity: ev.carModel.batteryCapacity,
-              maxChargingPower: ev.carModel.maxChargingPower,
-            ),
-          );
+    try {
+      final evList = await BackendService().getEvs();
 
-      final userEv = await db
-          .into(db.userEVs)
-          .insertReturning(
-            UserEVsCompanion.insert(
-              carModelId: carModel.id,
-              userSetName: ev.userSetName,
-              currentCharge: ev.currentCharge,
-            ),
-          );
+      await _resetDatabase(db);
 
-      await db
-          .into(db.schedules)
-          .insertOnConflictUpdate(
-            SchedulesCompanion.insert(
-              userEvId: userEv.id,
-              start: ev.schedule.start,
-              end: ev.schedule.end,
-              scheduleData: ev.schedule.scheduleData,
-            ),
-          );
+      for (final ev in evList) {
+        await db
+            .into(db.eVCarModels)
+            .insertOnConflictUpdate(
+              EVCarModelsCompanion.insert(
+                id: Value(ev.carModel.id),
+                modelName: ev.carModel.modelName,
+                modelYear: ev.carModel.modelYear,
+                batteryCapacity: ev.carModel.batteryCapacity,
+                maxChargingPower: ev.carModel.maxChargingPower,
+              ),
+            );
 
-      await db
-          .into(db.constraints)
-          .insertOnConflictUpdate(
-            ConstraintsCompanion.insert(
-              userEvId: userEv.id,
-              chargedBy: ev.constraint.chargedBy,
-              minPercentage: ev.constraint.targetPercentage,
-            ),
-          );
+        await db
+            .into(db.userEVs)
+            .insertOnConflictUpdate(
+              UserEVsCompanion.insert(
+                id: Value(ev.id),
+                carModelId: ev.carModel.id,
+                userSetName: ev.userSetName,
+                currentCharge: ev.currentCharge,
+              ),
+            );
+
+        await db
+            .into(db.schedules)
+            .insertOnConflictUpdate(
+              SchedulesCompanion.insert(
+                id: Value(ev.schedule.id),
+                userEvId: ev.id,
+                start: ev.schedule.start,
+                end: ev.schedule.end,
+                scheduleData: ev.schedule.scheduleData,
+              ),
+            );
+
+        await db
+            .into(db.constraints)
+            .insertOnConflictUpdate(
+              ConstraintsCompanion.insert(
+                id: Value(ev.constraint.id),
+                userEvId: ev.id,
+                chargedBy: ev.constraint.chargedBy,
+                minPercentage: ev.constraint.targetPercentage,
+              ),
+            );
+      }
+
+      if (kDebugMode) print('[Update] Database updated.');
+    } catch (e) {
+      if (kDebugMode) {
+        print(
+          '[Warning] Error fetching data from backend, keeping local cache.',
+        );
+        print('[Error]: $e');
+      }
     }
-    if (kDebugMode) print('[Update] Database updated.');
   }
 }
