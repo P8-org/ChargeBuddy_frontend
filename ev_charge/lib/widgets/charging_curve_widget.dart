@@ -7,7 +7,6 @@ class AppColors {
   static const mainGridLineColor = Color(0xff37434d);
 }
 
-
 class ChargingCurve extends StatefulWidget {
   const ChargingCurve({super.key});
 
@@ -36,29 +35,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
               top: 24,
               bottom: 12,
             ),
-            child: LineChart(
-              showAvg ? avgData() : mainData(),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                fontSize: 12,
-                color: showAvg
-                    ? Colors.white.withValues(alpha: 0.5)
-                    : Colors.white,
-              ),
-            ),
+            child: LineChart(mainData()),
           ),
         ),
       ],
@@ -66,10 +43,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    );
+    const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 12);
 
     if (value % 4 == 0) {
       return SideTitleWidget(
@@ -82,10 +56,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 15,
-    );
+    const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 15);
     String text;
     if (value % 20 == 0) {
       text = '${value.toInt()}%';
@@ -98,10 +69,29 @@ class _ChargingCurveState extends State<ChargingCurve> {
 
   LineChartData mainData() {
     return LineChartData(
+      lineTouchData: LineTouchData(
+        enabled: true,
+        touchTooltipData: LineTouchTooltipData(
+          tooltipRoundedRadius: 8,
+          getTooltipItems: (touchedSpots) {
+            return touchedSpots.map((spot) {
+              final time = '${spot.x.toInt().toString().padLeft(2, '0')}:00';
+              final percentage = '${spot.y.toStringAsFixed(0)}%';
+              return LineTooltipItem(
+                '$time\n$percentage',
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }).toList();
+          },
+        ),
+      ),
       gridData: FlGridData(
-        show: false,
+        show: true,
         drawVerticalLine: false,
-        horizontalInterval: 1,
+        horizontalInterval: 20,
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
           return const FlLine(
@@ -121,9 +111,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
@@ -167,112 +155,17 @@ class _ChargingCurveState extends State<ChargingCurve> {
             FlSpot(23, 100),
           ],
           isCurved: true,
-          gradient: LinearGradient(
-            colors: gradientColors,
-          ),
+          gradient: LinearGradient(colors: gradientColors),
           barWidth: 5,
           isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
+          dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withValues(alpha: 0.3))
-                  .toList(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  LineChartData avgData() {
-    return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
-      gridData: FlGridData(
-        show: false,
-        drawHorizontalLine: false,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
-            interval: 1,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-            interval: 20,
-          ),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
-      ),
-      minX: 0,
-      maxX: 23,
-      minY: 0,
-      maxY: 100,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 71.5),
-            FlSpot(23, 71.5),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-            ],
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withValues(alpha: 0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withValues(alpha: 0.1),
-              ],
+              colors:
+                  gradientColors
+                      .map((color) => color.withValues(alpha: 0.3))
+                      .toList(),
             ),
           ),
         ),
