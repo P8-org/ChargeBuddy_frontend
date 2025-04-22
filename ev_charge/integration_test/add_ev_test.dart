@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:ev_charge/core/database.dart';
+import 'package:ev_charge/database/database.dart';
+
 import 'package:drift/native.dart';
 
 import 'package:ev_charge/main.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/form_helper.dart';
-import 'package:ev_charge/core/database.dart';
+import 'package:ev_charge/database/database.dart';
 
 class EVForm extends StatefulWidget {
   const EVForm({super.key});
