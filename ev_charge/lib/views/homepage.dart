@@ -80,21 +80,21 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             }
-            List<Widget> additionalWidgets = [
-              ElevatedButton.icon(
-                onPressed: () => context.go("/add_ev"),
-                label: Text("Add EV"),
-                icon: Icon(Icons.add),
-              ),
-            ];
             return RefreshIndicator(
               onRefresh: () async => await vm.getEvs(),
               child: ListView.builder(
-                itemCount: vm.evs.length + additionalWidgets.length,
+                itemCount: vm.evs.length,
                 itemBuilder: (context, index) {
-                  if (index + 1 > vm.evs.length) {
-                    return Center(
-                      child: additionalWidgets[index - vm.evs.length],
+                  if (index + 1 == vm.evs.length) {
+                    return Column(
+                      children: [
+                        EvCard(ev: vm.evs[index]),
+                        ElevatedButton.icon(
+                          onPressed: () => context.go("/add_ev"),
+                          label: Text("Add EV"),
+                          icon: Icon(Icons.add),
+                        ),
+                      ],
                     );
                   }
                   return EvCard(ev: vm.evs[index]);
