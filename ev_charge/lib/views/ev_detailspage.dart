@@ -38,7 +38,7 @@ class _EvDetailsPageState extends State<EvDetailsPage> {
                 onPressed: () => vm.deleteEv(onSuccess: context.pop),
                 icon: Icon(Icons.delete_forever_rounded),
               ),
-            ],
+            ], backgroundColor: Colors.green,
           ),
           body: SingleChildScrollView(
             child: Builder(
