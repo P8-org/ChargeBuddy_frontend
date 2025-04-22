@@ -1,33 +1,18 @@
-import 'package:ev_charge/viewmodels/home_page_vm.dart';
+// Updated homepage.dart using Riverpod and DAO stream
 import 'package:ev_charge/widgets/ev_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
+import 'package:ev_charge/providers/ev_providers.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final evsState = ref.watch(userEvsProvider);
 
-class _HomePageState extends State<HomePage> {
-  final HomePageVM vm = HomePageVM();
-
-  @override
-  void initState() {
-    super.initState();
-    vm.getEvs();
-  }
-
-  @override
-  void didUpdateWidget(covariant HomePage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    vm.getEvs(); // to refresh data when navigating back to homepage
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
@@ -42,54 +27,46 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: ListenableBuilder(
-          listenable: vm,
-          builder: (context, child) {
-            if (vm.isError) {
-              return Column(
+      body: evsState.when(
+        data: (evs) {
+          if (evs.isEmpty) {
+            return Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(vm.errorMessage),
-                  Padding(padding: EdgeInsets.all(16)),
-                  ElevatedButton(
-                    onPressed: vm.getEvs,
-                    child: Text("Try again"),
+                  const Text("No cars in db"),
+                  const SizedBox(height: 8),
+                  ElevatedButton.icon(
+                    onPressed: () => context.go("/add_car"),
+                    label: const Text("Add car"),
+                    icon: const Icon(Icons.add),
                   ),
                 ],
-              );
-            }
-            if (vm.evs.isEmpty && !vm.loading && !vm.isError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("No cars in db"),
-                    SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: vm.getEvs,
-                      child: Text("Refresh"),
-                    ),
-                    SizedBox(height: 8),
-                    ElevatedButton.icon(
-                      onPressed: () => context.go("/add_car"), 
-                      label: Text("Add car"),
-                      icon: Icon(Icons.add),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return RefreshIndicator(
-              onRefresh: () async => await vm.getEvs(),
-              child: ListView.builder(
-                itemCount: vm.evs.length,
-                itemBuilder: (context, index) {
-                  return EvCard(ev: vm.evs[index]);
-                },
               ),
             );
-          },
+          }
+          return RefreshIndicator(
+            onRefresh: () async {
+              // nothing to do: stream auto updates
+            },
+            child: ListView.builder(
+              itemCount: evs.length,
+              itemBuilder: (context, index) => EvCard(ev: evs[index]),
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Error: $e"),
+              ElevatedButton(
+                onPressed: () => ref.refresh(userEvsProvider),
+                child: const Text("Try again"),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const BottomNavBar(),
