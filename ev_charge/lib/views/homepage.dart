@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 8),
                     ElevatedButton.icon(
-                      onPressed: () => context.go("/add_car"), 
+                      onPressed: () => context.go("/add_car"),
                       label: Text("Add car"),
                       icon: Icon(Icons.add),
                     ),
@@ -80,11 +80,23 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             }
+            List<Widget> additionalWidgets = [
+              ElevatedButton.icon(
+                onPressed: () => context.go("/add_car"),
+                label: Text("Add car"),
+                icon: Icon(Icons.add),
+              ),
+            ];
             return RefreshIndicator(
               onRefresh: () async => await vm.getEvs(),
               child: ListView.builder(
-                itemCount: vm.evs.length,
+                itemCount: vm.evs.length + additionalWidgets.length,
                 itemBuilder: (context, index) {
+                  if (index + 1 > vm.evs.length) {
+                    return Center(
+                      child: additionalWidgets[index - vm.evs.length],
+                    );
+                  }
                   return EvCard(ev: vm.evs[index]);
                 },
               ),
