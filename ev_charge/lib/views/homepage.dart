@@ -72,8 +72,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 8),
                     ElevatedButton.icon(
-                      onPressed: () => context.go("/add_car"),
-                      label: Text("Add car"),
+                      onPressed: () => context.go("/add_ev"),
+                      label: Text("Add EV"),
                       icon: Icon(Icons.add),
                     ),
                   ],
@@ -82,8 +82,8 @@ class _HomePageState extends State<HomePage> {
             }
             List<Widget> additionalWidgets = [
               ElevatedButton.icon(
-                onPressed: () => context.go("/add_car"),
-                label: Text("Add car"),
+                onPressed: () => context.go("/add_ev"),
+                label: Text("Add EV"),
                 icon: Icon(Icons.add),
               ),
             ];
