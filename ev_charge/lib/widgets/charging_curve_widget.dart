@@ -8,7 +8,8 @@ class AppColors {
 }
 
 class ChargingCurve extends StatefulWidget {
-  const ChargingCurve({super.key});
+  final List<FlSpot> chargingData;
+  const ChargingCurve({super.key, required this.chargingData});
 
   @override
   State<ChargingCurve> createState() => _ChargingCurveState();
@@ -19,8 +20,6 @@ class _ChargingCurveState extends State<ChargingCurve> {
     AppColors.contentColorCyan,
     AppColors.contentColorBlue,
   ];
-
-  bool showAvg = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +44,10 @@ class _ChargingCurveState extends State<ChargingCurve> {
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 12);
 
-    if (value % 4 == 0) {
+    if (value % 3 == 0) {
       return SideTitleWidget(
         meta: meta,
-        child: Text('${value.toInt()}', style: style),
+        child: Text('${value.toInt()}:00', style: style),
       );
     }
 
@@ -72,6 +71,8 @@ class _ChargingCurveState extends State<ChargingCurve> {
       lineTouchData: LineTouchData(
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
+          fitInsideHorizontally: true,
+          fitInsideVertically: true,
           tooltipRoundedRadius: 8,
           getTooltipItems: (touchedSpots) {
             return touchedSpots.map((spot) {
@@ -139,21 +140,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
       maxY: 100,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 0),
-            FlSpot(1, 5),
-            FlSpot(2, 15),
-            FlSpot(3, 30),
-            FlSpot(4, 50),
-            FlSpot(5, 69),
-            FlSpot(6, 71),
-            FlSpot(7, 71),
-            FlSpot(8, 85),
-            FlSpot(9, 100),
-            FlSpot(16, 100),
-            FlSpot(20, 100),
-            FlSpot(23, 100),
-          ],
+          spots: widget.chargingData,
           isCurved: true,
           gradient: LinearGradient(colors: gradientColors),
           barWidth: 5,

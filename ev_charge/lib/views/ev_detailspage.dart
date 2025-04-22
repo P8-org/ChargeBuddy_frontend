@@ -4,6 +4,7 @@ import 'package:ev_charge/widgets/charging_curve_widget.dart';
 import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import '../widgets/bottom_navbar.dart';
 
@@ -74,6 +75,7 @@ class _EvDetailsPageState extends State<EvDetailsPage> {
                               "${ev.currentChargingPower} kW",
                               style: TextStyle(fontSize: 18),
                             ),
+                            Text("Current charge: ${ev.currentCharge}")
                           ],
                         ),
                         SizedBox(height: 16),
@@ -117,7 +119,7 @@ class _EvDetailsPageState extends State<EvDetailsPage> {
                             );
                           },
                         ),
-                        Padding(padding: EdgeInsets.all(8)),
+                        /*  Padding(padding: EdgeInsets.all(8)),
                         ElevatedButton(
                           onPressed: () {
                             showTimePicker(
@@ -127,9 +129,29 @@ class _EvDetailsPageState extends State<EvDetailsPage> {
                             );
                           },
                           child: Text("Schedule charging"),
-                        ),
+                        ), */
                         ElectricityPricesWidget(),
-                        ChargingCurve(),
+                        ChargingCurve(
+                          chargingData: [
+                            FlSpot(0, 0),
+                            FlSpot(1, 5),
+                            FlSpot(2, 15),
+                            FlSpot(3, 30),
+                            FlSpot(4, 50),
+                            FlSpot(5, 69),
+                            FlSpot(6, 71),
+                            FlSpot(7, 71),
+                            FlSpot(8, 71),
+                            FlSpot(9, 71),
+                            FlSpot(10, 82),
+                            FlSpot(11, 82),
+                            FlSpot(12, 82),
+                            FlSpot(13, 90),
+                            FlSpot(14, 90),
+                            FlSpot(15, 90),
+                            FlSpot(23, 100),
+                          ],
+                        ),
                       ],
                     );
                   },
