@@ -5,6 +5,7 @@ import '../views/homepage.dart';
 import '../views/infopage.dart';
 import '../views/settings.dart';
 import '../views/add_ev.dart';
+import '../views/edit_ev.dart';
 
 // GoRouter configuration
 final GoRouter router = GoRouter(
@@ -31,6 +32,13 @@ final GoRouter router = GoRouter(
           path: 'add_ev',
           builder: (BuildContext context, GoRouterState state) {
             return const AddEv();
+          }
+        ),
+        GoRoute(
+          path: 'edit_ev/:id',
+          builder: (BuildContext context, GoRouterState state) {
+            var id = int.parse(state.pathParameters["id"]!);
+            return EVEdit(id: id);
           }
         ),
         GoRoute(

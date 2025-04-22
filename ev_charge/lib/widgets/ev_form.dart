@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/form_helper.dart';
 import 'package:ev_charge/database/database.dart';
 
+import 'package:ev_charge/viewmodels/ev_page_vm.dart';
 class EVForm extends StatefulWidget {
-  const EVForm({super.key});
+  const EVForm({super.key, this.id});
+  final int? id;
 
   @override
   EVFormState createState() {
@@ -27,10 +29,46 @@ class EVFormState extends State<EVForm> {
   TextEditingController userSetNameController = TextEditingController();
   TextEditingController maxChargingPowerController = TextEditingController();
 
+  late EvPageVM vm;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.id != null) {
+      vm = EvPageVM(id: widget.id!);
+      vm.getEv();
+    }
+  }
+
+  ChangeNotifier getVM() {
+    if (widget.id == null) {
+      return ChangeNotifier();
+    }
+    return vm;
+  }
+
+  void initializeFields() {
+    if (widget.id == null) {
+      return;
+    }
+    modelNameController.text = vm.ev!.carModel.modelName;
+    modelYearController.text = vm.ev!.carModel.modelYear.toString();
+    userSetNameController.text = vm.ev!.userSetName;
+    batteryCapacityController.text = vm.ev!.carModel.batteryCapacity.toString();
+    maxChargingPowerController.text = vm.ev!.carModel.maxChargingPower.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
+    return ListenableBuilder(
+      listenable: getVM(),
+      builder: (context, child) {
+      if (widget.id != null && vm.loading) {
+        return SizedBox();
+      }
+      initializeFields();
+      return Form(
       key: _formKey,
       child: ListView(
         padding: const EdgeInsets.all(8),
@@ -78,6 +116,7 @@ class EVFormState extends State<EVForm> {
           ),
         ],
       ),
+    );},
     );
   }
 }
