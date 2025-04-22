@@ -9,6 +9,9 @@ class DbManager {
     bool debugMode = false,
     bool clearDB = false,
   }) async {
+    if (kDebugMode) {
+      print('[Debug] Initializing database...');
+    }
     final db = AppDatabase();
 
     if (clearDB) {
