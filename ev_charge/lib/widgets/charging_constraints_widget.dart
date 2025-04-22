@@ -40,7 +40,7 @@ class _ChargingConstraintSheetState extends State<ChargingConstraintSheet> {
     final date = await showDatePicker(
       context: context,
       initialDate: widget.selectedDate,
-      firstDate: DateTime.now(),
+      firstDate:widget.selectedDate,
       lastDate: DateTime.now().add(Duration(days: 365)),
     );
     if (date == null) return;

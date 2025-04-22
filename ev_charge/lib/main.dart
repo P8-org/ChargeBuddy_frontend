@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/app_router.dart';
 import 'core/database.dart';
-
+//import 'views/calendar_page.dart';
+import 'views/calendar_page2.dart';
 /// A global provider for the Drift database
 final dbProvider = Provider<AppDatabase>((ref) {
   return AppDatabase(); // Calls _openConnection() internally
@@ -12,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Seeding and other asynchronous tasks can be done here
-
+    
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -22,6 +23,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(routerConfig: router);
+    return MaterialApp(home: CalendarPage());//.router(routerConfig: router);
   }
 }
