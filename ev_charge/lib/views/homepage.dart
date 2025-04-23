@@ -51,8 +51,21 @@ class HomePage extends ConsumerWidget {
             },
             child: ListView.builder(
               itemCount: evs.length,
-              itemBuilder: (context, index) => EvCard(ev: evs[index]),
-            ),
+              itemBuilder: (context, index) {
+                if (index + 1 == evs.length) {
+                  return Column(
+                    children: [
+                      EvCard(ev: evs[index]),
+                      ElevatedButton.icon(
+                        onPressed: () => context.go("/add_ev"),
+                        label: Text("Add EV"),
+                        icon: Icon(Icons.add),
+                      ),
+                    ],
+                  );
+                }
+                return EvCard(ev: evs[index]);
+              },),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
