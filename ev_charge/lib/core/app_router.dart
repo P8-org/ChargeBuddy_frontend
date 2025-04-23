@@ -27,13 +27,6 @@ final GoRouter router = GoRouter(
             return const Settings();
           },
         ),
-        /*  GoRoute(
-          path: 'car/:id',
-          builder: (context, state) {
-            var id = int.parse(state.pathParameters["id"]!);
-            return EVDetailsPage(id: id);
-          },
-        ),*/
         GoRoute(
           path: 'ev/:id',
           builder: (context, state) {
