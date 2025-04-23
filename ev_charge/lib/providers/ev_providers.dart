@@ -9,7 +9,12 @@ final evDaoProvider = Provider<EvDao>((ref) {
   return EvDao(db);                  // DAO depends on AppDatabase
 });
 
-final userEvsProvider = StreamProvider<List<UserEV>>((ref) {
+final allUserEvsProvider = StreamProvider<List<UserEV>>((ref) {
   final dao = ref.watch(evDaoProvider);
   return dao.watchUserEVsWithDetails(); // exposes the DAO's stream
+});
+
+final singleEvDetailProvider = FutureProvider.family<UserEV?, int>((ref, id) async {
+  final dao = ref.watch(evDaoProvider);
+  return await dao.getSingleEVWithDetails(id);
 });
