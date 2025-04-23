@@ -26,6 +26,8 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 
+# Local sqlite database for testing
+local_db/
 
 # Created by https://www.toptal.com/developers/gitignore/api/flutter
 # Edit at https://www.toptal.com/developers/gitignore?templates=flutter
