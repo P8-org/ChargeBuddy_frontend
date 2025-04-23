@@ -6,54 +6,47 @@ import 'package:path_provider/path_provider.dart';
 part 'database.g.dart';
 
 class EVCarModels extends Table {
-  late final id = integer().autoIncrement()();
+  late final id = integer()();
   late final modelName = text().withLength(min: 3, max: 64)();
   late final modelYear = integer()();
   late final batteryCapacity = real()();
   late final maxChargingPower = real()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 class UserEVs extends Table {
-  late final id = integer().autoIncrement()();
+  late final id = integer()();
   late final carModelId = integer().references(EVCarModels, #id)();
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 class Constraints extends Table {
-  late final id = integer().autoIncrement()();
-  late final userCarModelId = integer().references(UserEVs, #id)();
+  late final id = integer()();
+  late final userEvId = integer().references(UserEVs, #id)();
+  late final chargedBy = dateTime()();
+  late final minPercentage = real()();
 
-  // The day of the week, 0 is Monday, 6 is Sunday
-  late final Column<int> dayOfWeek =
-      integer().check(dayOfWeek.isBetweenValues(0, 6))();
-
-  // Stored as minutes since midnight: 0 = 00:00, 60 = 01:00, ..., 1380 = 23:00
-  // Displayed in UI through TimeOfDay.fromMinutes(startMinutes)
-  // Might be changed depending on back-end requirements
-  late final Column<int> startMinutes =
-      integer().check(startMinutes.isBetweenValues(0, 1440))();
-  late final Column<int> endMinutes =
-      integer().check(endMinutes.isBetweenValues(0, 1440))();
-
-  // Optional: Prevent inverted ranges
   @override
-  List<String> get customConstraints => ['CHECK (start_minutes < end_minutes)'];
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 class Schedules extends Table {
-  late final id = integer().autoIncrement()();
+  late final id = integer()();
   late final userEvId = integer().references(UserEVs, #id)();
 
-  /// Amount of energy needed (in kWh) for this hour
-  late final chargeKwh = real()();
+  late final start = dateTime()();
+  late final end = dateTime()();
 
-  /// The hour offset from [createdAt], e.g. 0 = current hour, 1 = +1h
-  late final Column<int> chargeHour =
-      integer().check(chargeHour.isBetweenValues(0, 24))();
+  late final scheduleData = text()();
 
-  /// When this schedule was generated (e.g., by API call)
-  late final createdAt = dateTime().withDefault(currentDateAndTime)();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }
 
 @DriftDatabase(tables: [EVCarModels, UserEVs, Constraints, Schedules])
