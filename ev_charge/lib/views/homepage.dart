@@ -1,17 +1,17 @@
 // Updated homepage.dart using Riverpod and DAO stream
+import 'package:ev_charge/providers/ev_providers.dart';
+import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/ev_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ev_charge/widgets/bottom_navbar.dart';
-import 'package:ev_charge/providers/ev_providers.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final evsState = ref.watch(userEvsProvider);
+    final evsState = ref.watch(allUserEvsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,18 +56,19 @@ class HomePage extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Error: $e"),
-              ElevatedButton(
-                onPressed: () => ref.refresh(userEvsProvider),
-                child: const Text("Try again"),
+        error:
+            (e, _) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Error: $e"),
+                  ElevatedButton(
+                    onPressed: () => ref.refresh(allUserEvsProvider),
+                    child: const Text("Try again"),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
       ),
       bottomNavigationBar: const BottomNavBar(),
     );
