@@ -35,6 +35,7 @@ void main() {
             carModelId: modelId,
             userSetName: 'Test Car',
             currentCharge: 40.0,
+            state: 'charging',
           ),
         );
 

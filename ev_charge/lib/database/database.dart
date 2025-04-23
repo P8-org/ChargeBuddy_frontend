@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
@@ -21,6 +24,7 @@ class UserEVs extends Table {
   late final carModelId = integer().references(EVCarModels, #id)();
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
+  late final state = text()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};
@@ -69,14 +73,25 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
     } else {
+      Future<Directory> resolveDatabaseDirectory() async {
+        Directory dir;
+
+        if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+          dir = Directory(p.join(Directory.current.path, 'local_db'));
+        } else {
+          dir = await getApplicationSupportDirectory();
+        }
+
+        if (!await dir.exists()) {
+          await dir.create(recursive: true);
+        }
+
+        return dir;
+      }
+
       return driftDatabase(
         name: 'chargeBuddy_database',
-        native: const DriftNativeOptions(
-          // By default, `driftDatabase` from `package:drift_flutter` stores the
-          // database files in `getApplicationDocumentsDirectory()`.
-          databaseDirectory: getApplicationSupportDirectory,
-        ),
-        // If you need web support, see https://drift.simonbinder.eu/platforms/web/
+        native: DriftNativeOptions(databaseDirectory: resolveDatabaseDirectory),
       );
     }
   }

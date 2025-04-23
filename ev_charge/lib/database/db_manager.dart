@@ -66,6 +66,7 @@ class DbManager {
                 carModelId: ev.carModel.id,
                 userSetName: ev.userSetName,
                 currentCharge: ev.currentCharge,
+                state: ev.state,
               ),
             );
 
