@@ -40,4 +40,28 @@ class BackendService {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
     }
   }
+  Future<void> postConstraint({
+    required int evId,
+    required DateTime deadline,
+    required double targetPercentage,
+  }) async {
+    final uri = Uri.parse("$baseUrl/evs/$evId/constraints");
+
+    final Map<String, dynamic> body = {
+      'deadline': deadline.toIso8601String(),
+      'target_percentage': targetPercentage,
+    };
+
+    final response = await client.post(
+      uri,
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
 }
