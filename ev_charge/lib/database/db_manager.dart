@@ -17,16 +17,8 @@ class DbManager {
     if (clearDB) {
       await _resetDatabase(db);
     }
-
     await _updateDatabase(db);
-
-    // if (debugMode) {
-    //   if (kDebugMode) {
-    //     print('[Debug] Seeding database...');
-    //   }
-    //   await _seedDatabase(db);
-    // }
-
+    
     return db;
   }
 
