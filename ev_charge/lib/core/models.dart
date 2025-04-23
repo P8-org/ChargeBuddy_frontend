@@ -95,7 +95,7 @@ class UserEV {
       id: json['id'],
       userSetName: json['user_set_name'],
       currentCharge: json['current_charge'],
-      state: json['state'],
+      state: json['state']?? 'charging',
       currentChargingPower: json['current_charging_power'],
       carModelId: json['car_model_id'],
       carModel: CarModel.fromJson(json['car_model']),
