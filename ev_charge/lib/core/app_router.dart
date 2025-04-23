@@ -1,11 +1,11 @@
-import 'package:ev_charge/views/ev_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../views/homepage.dart';
-import '../views/infopage.dart';
 import '../views/settings.dart';
 import '../views/add_ev.dart';
 import '../views/edit_ev.dart';
+import '../views/ev_detailspage.dart';
+import '../views/ev_schedulepage.dart';
 
 // GoRouter configuration
 final GoRouter router = GoRouter(
@@ -16,12 +16,6 @@ final GoRouter router = GoRouter(
         return HomePage();
       },
       routes: <RouteBase>[
-        GoRoute(
-          path: 'infopage',
-          builder: (BuildContext context, GoRouterState state) {
-            return const InfoPage();
-          },
-        ),
         GoRoute(
           path: 'settings',
           builder: (BuildContext context, GoRouterState state) {
@@ -42,11 +36,27 @@ final GoRouter router = GoRouter(
           }
         ),
         GoRoute(
-          path: 'car/:id',
+          path: 'ev/:id',
           builder: (context, state) {
-            var id = int.parse(state.pathParameters["id"]!);
-            return EvPage(id: id);
+            final id = int.parse(state.pathParameters['id']!);
+            return EvSchedulePage(id: id);
           },
+          routes: [
+            GoRoute(
+              path: 'schedule',
+              builder: (context, state) {
+                final id = int.parse(state.pathParameters['id']!);
+                return EvSchedulePage(id: id);
+              },
+            ),
+            GoRoute(
+              path: 'details',
+              builder: (context, state) {
+                final id = int.parse(state.pathParameters['id']!);
+                return EvDetailsPage(id: id);
+              },
+            ),
+          ],
         ),
       ],
     ),

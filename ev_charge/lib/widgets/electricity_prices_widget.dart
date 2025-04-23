@@ -68,7 +68,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
         final maxPrice = prices.map((e) => e.price).reduce(max);
 
         double formatPrice(double price) {
-          return double.parse(price.toStringAsFixed(2));
+          return double.parse(price.toStringAsFixed(3));
         }
 
         final chartMinY = minPrice < 0 ? formatPrice(minPrice - 0.1) : 0.0;
@@ -82,94 +82,126 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
               builder: (context, constraints) {
                 final barsSpace = 4.0 * constraints.maxWidth / 400;
                 final barsWidth = 8.0 * constraints.maxWidth / 400;
-
-                return BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.center,
-                    barTouchData: BarTouchData(
-                      enabled: true,
-                      touchTooltipData: BarTouchTooltipData(
-                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                          final hour = prices[group.x].hour;
-                          final price = rod.toY;
-
-                          return BarTooltipItem(
-                            '$hour:00\n',
-                            const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 4.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.flash_on, color: Colors.yellow, size: 24),
+                          Text(
+                            'Electricity Prices',
+                            style: TextStyle(
                               fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            children: [
-                              TextSpan(
-                                text: '${price.toStringAsPrecision(3)} kr',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.center,
+                          barTouchData: BarTouchData(
+                            enabled: true,
+                            touchTooltipData: BarTouchTooltipData(
+                              getTooltipItem: (
+                                group,
+                                groupIndex,
+                                rod,
+                                rodIndex,
+                              ) {
+                                final hour = prices[group.x].hour;
+                                final price = rod.toY;
+
+                                return BarTooltipItem(
+                                  '$hour:00\n',
+                                  const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          '${price.toStringAsPrecision(3)} kr',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                              direction: TooltipDirection.auto,
+                              tooltipHorizontalAlignment:
+                                  FLHorizontalAlignment.center,
+                              fitInsideHorizontally: true,
+                              fitInsideVertically: true,
+                              tooltipPadding: const EdgeInsets.all(8.0),
+                              tooltipMargin: 1,
+                            ),
+                          ),
+                          maxY: chartMaxY,
+                          minY: chartMinY,
+                          gridData: FlGridData(show: false),
+                          extraLinesData:
+                              minPrice < 0
+                                  ? ExtraLinesData(
+                                    horizontalLines: [
+                                      HorizontalLine(
+                                        y: 0,
+                                        color: Colors.grey,
+                                        strokeWidth: 1.5,
+                                      ),
+                                    ],
+                                  )
+                                  : ExtraLinesData(),
+                          borderData: FlBorderData(show: true),
+                          titlesData: FlTitlesData(
+                            rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 50,
+                                getTitlesWidget: (value, meta) {
+                                  return Text('${value.toStringAsFixed(2)} kr');
+                                },
                               ),
-                            ],
-                          );
-                        },
-                        direction: TooltipDirection.auto,
-                        tooltipHorizontalAlignment:
-                            FLHorizontalAlignment.center,
-                        fitInsideHorizontally: true,
-                        fitInsideVertically: true,
-                        tooltipPadding: const EdgeInsets.all(8.0),
-                        tooltipMargin: 1,
-                      ),
-                    ),
-                    maxY: chartMaxY,
-                    minY: chartMinY,
-                    gridData: FlGridData(show: false),
-                    extraLinesData:
-                        minPrice < 0
-                            ? ExtraLinesData(
-                              horizontalLines: [
-                                HorizontalLine(
-                                  y: 0,
-                                  color: Colors.grey,
-                                  strokeWidth: 1.5,
-                                ),
-                              ],
-                            )
-                            : ExtraLinesData(),
-                    borderData: FlBorderData(show: true),
-                    titlesData: FlTitlesData(
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 50,
-                          getTitlesWidget: (value, meta) {
-                            return Text('${value.toStringAsFixed(2)} kr');
-                          },
-                        ),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            int hourIndex = value.toInt();
-                            if (hourIndex % 3 == 0 &&
-                                hourIndex < prices.length) {
-                              return Text('${prices[hourIndex].hour}');
-                            } else {
-                              return const Text('');
-                            }
-                          },
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  int hourIndex = value.toInt();
+                                  if (hourIndex % 3 == 0 &&
+                                      hourIndex < prices.length) {
+                                    return Text('${prices[hourIndex].hour}');
+                                  } else {
+                                    return const Text('');
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                          barGroups: getBarChartData(
+                            prices,
+                            barsWidth,
+                            barsSpace,
+                          ),
                         ),
                       ),
                     ),
-                    barGroups: getBarChartData(prices, barsWidth, barsSpace),
-                  ),
+                  ],
                 );
               },
             ),

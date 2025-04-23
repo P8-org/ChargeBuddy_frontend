@@ -1,14 +1,17 @@
 import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
+import 'package:ev_charge/widgets/charging_curve_widget.dart';
+import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import '../widgets/bottom_navbar.dart';
 
-class EvPage extends ConsumerWidget {
-  const EvPage({super.key, required this.id});
+class EvDetailsPage extends ConsumerWidget {
+  const EvDetailsPage({super.key, required this.id});
 
   final int id;
 
@@ -35,7 +38,7 @@ class EvPage extends ConsumerWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('EV details'),
+            title: const Text('EV Details'),
             actions: [
               IconButton(
                 onPressed: () async {
@@ -51,8 +54,9 @@ class EvPage extends ConsumerWidget {
                 icon: const Icon(Icons.delete_forever_rounded),
               ),
             ],
+            backgroundColor: Colors.green,
           ),
-          body: Center(
+          body: SingleChildScrollView(
             child: Column(
               spacing: 16,
               children: [
@@ -111,16 +115,28 @@ class EvPage extends ConsumerWidget {
                     );
                   },
                 ),
-                const Padding(padding: EdgeInsets.all(8)),
-                ElevatedButton(
-                  onPressed: () {
-                    showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      initialEntryMode: TimePickerEntryMode.dial,
-                    );
-                  },
-                  child: const Text("Schedule charging"),
+                SizedBox(height: 16),
+                ElectricityPricesWidget(),
+                ChargingCurve(
+                  chargingData: [
+                    FlSpot(0, 0),
+                    FlSpot(1, 5),
+                    FlSpot(2, 15),
+                    FlSpot(3, 30),
+                    FlSpot(4, 50),
+                    FlSpot(5, 69),
+                    FlSpot(6, 71),
+                    FlSpot(7, 71),
+                    FlSpot(8, 71),
+                    FlSpot(9, 71),
+                    FlSpot(10, 82),
+                    FlSpot(11, 82),
+                    FlSpot(12, 82),
+                    FlSpot(13, 90),
+                    FlSpot(14, 90),
+                    FlSpot(15, 90),
+                    FlSpot(23, 100),
+                  ],
                 ),
               ],
             ),

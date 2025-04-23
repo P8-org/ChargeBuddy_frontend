@@ -16,7 +16,7 @@ class EvCard extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () {
-          context.go("/car/${ev.id}");
+          context.go("/ev/${ev.id}");
         },
         onLongPress: () {
           context.go("/edit_ev/${ev.id}");
