@@ -38,14 +38,14 @@ final GoRouter router = GoRouter(
               path: 'schedule',
               builder: (context, state) {
                 final id = int.parse(state.pathParameters['id']!);
-                return EvSchedulePage(id: id); // this is your schedule screen
+                return EvSchedulePage(id: id);
               },
             ),
             GoRoute(
               path: 'details',
               builder: (context, state) {
                 final id = int.parse(state.pathParameters['id']!);
-                return EvDetailsPage(id: id); // this is your details screen
+                return EvDetailsPage(id: id);
               },
             ),
           ],
