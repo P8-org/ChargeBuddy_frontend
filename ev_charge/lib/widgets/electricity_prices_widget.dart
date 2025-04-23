@@ -62,13 +62,13 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
           return const Center(child: Text("No data available"));
         }
 
-        final prices = snapshot.data!.toList();
+        final prices = snapshot.data!.reversed.toList();
 
         final minPrice = prices.map((e) => e.price).reduce(min);
         final maxPrice = prices.map((e) => e.price).reduce(max);
 
         double formatPrice(double price) {
-          return double.parse(price.toStringAsFixed(3));
+          return double.parse(price.toStringAsFixed(2));
         }
 
         final chartMinY = minPrice < 0 ? formatPrice(minPrice - 0.1) : 0.0;
@@ -149,7 +149,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
                           showTitles: true,
                           reservedSize: 50,
                           getTitlesWidget: (value, meta) {
-                            return Text('${value.toDouble()}');
+                            return Text('${value.toStringAsFixed(2)} kr');
                           },
                         ),
                       ),
