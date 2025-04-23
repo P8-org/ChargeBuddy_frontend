@@ -28,8 +28,8 @@ void main() {
         // provided http.Client.
         when(mockClient.get(Uri.parse(url))).thenAnswer(
           (_) async => http.Response(
-            '[ {"time": "2025-04-15T00:00:00", "price": 0.0218051}, '
-            '  {"time": "2025-04-15T12:00:00", "price": 0.0005974}]',
+            '[ {"HourDK": "2025-04-15T00:00:00", "SpotPriceDKK": 0.0218051}, '
+            '  {"HourDK": "2025-04-15T12:00:00", "SpotPriceDKK": 0.0005974}]',
             200,
           ),
         );
@@ -38,14 +38,16 @@ void main() {
         final prices = await service.fetchElectricityPrices();
 
         const double tax = 0.951;
+        const double convertToKwh = 1000.0;
+
 
         // Check that the data is correctly parsed
         expect(prices, isA<List<ElectricityPrices>>());
         expect(prices.length, 2);
         expect(prices[0].hour, 0);
-        expect(prices[0].price, 0.0218051+tax);
+        expect(prices[0].price, 0.0218051 / convertToKwh + tax);
         expect(prices[1].hour, 12);
-        expect(prices[1].price, 0.0005974+tax);
+        expect(prices[1].price, 0.0005974 / convertToKwh + tax);
       },
     );
 
@@ -53,7 +55,7 @@ void main() {
       // Use Mockito to return an unsuccessful response when it calls the
       // provided http.Client.
       when(
-        mockClient.get(Uri.parse('http://10.0.2.2:8000/power')),
+        mockClient.get(Uri.parse('${getBaseUrl()}/power')),
       ).thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(

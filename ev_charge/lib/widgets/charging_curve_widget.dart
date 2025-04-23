@@ -23,15 +23,29 @@ class _ChargingCurveState extends State<ChargingCurve> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+        const Padding(
+          padding: EdgeInsets.only(bottom: 4.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.battery_charging_full, color: Colors.green),
+              Text(
+                'Charging Curve',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
         AspectRatio(
           aspectRatio: 1.70,
           child: Padding(
             padding: const EdgeInsets.only(
               right: 18,
               left: 12,
-              top: 24,
+              top: 0,
               bottom: 12,
             ),
             child: LineChart(mainData()),

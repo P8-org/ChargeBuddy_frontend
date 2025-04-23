@@ -72,8 +72,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 8),
                     ElevatedButton.icon(
-                      onPressed: () => context.go("/add_car"),
-                      label: Text("Add car"),
+                      onPressed: () => context.go("/add_ev"),
+                      label: Text("Add EV"),
                       icon: Icon(Icons.add),
                     ),
                   ],
@@ -85,6 +85,18 @@ class _HomePageState extends State<HomePage> {
               child: ListView.builder(
                 itemCount: vm.evs.length,
                 itemBuilder: (context, index) {
+                  if (index + 1 == vm.evs.length) {
+                    return Column(
+                      children: [
+                        EvCard(ev: vm.evs[index]),
+                        ElevatedButton.icon(
+                          onPressed: () => context.go("/add_ev"),
+                          label: Text("Add EV"),
+                          icon: Icon(Icons.add),
+                        ),
+                      ],
+                    );
+                  }
                   return EvCard(ev: vm.evs[index]);
                 },
               ),

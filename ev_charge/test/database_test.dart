@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
 
@@ -22,7 +21,7 @@ void main() {
         .insert(
           EVCarModelsCompanion.insert(
             modelName: 'Model X',
-            modelYear: const Value(2023),
+            modelYear: 2023,
             batteryCapacity: 85.0,
             maxChargingPower: 250.0,
           ),
