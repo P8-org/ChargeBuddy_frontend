@@ -12,7 +12,7 @@ class HomePageVM extends ChangeNotifier {
   String _errorMessage = "";
 
   HomePageVM({BackendService? backendService})
-    : _backendService = backendService ?? BackendService();
+      : _backendService = backendService ?? BackendService();
 
   List<UserEV> get evs => _evs;
   bool get loading => _loading;

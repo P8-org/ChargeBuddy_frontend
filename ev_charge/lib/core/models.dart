@@ -71,6 +71,7 @@ class UserEV {
   final int id;
   final String userSetName;
   double currentCharge;
+  String state;
   final double currentChargingPower;
   final int carModelId;
   final CarModel carModel;
@@ -81,6 +82,7 @@ class UserEV {
     required this.id,
     required this.userSetName,
     required this.currentCharge,
+    required this.state,
     required this.currentChargingPower,
     required this.carModelId,
     required this.carModel,
@@ -93,6 +95,7 @@ class UserEV {
       id: json['id'],
       userSetName: json['user_set_name'],
       currentCharge: json['current_charge'],
+      state: json['state']?? 'charging',
       currentChargingPower: json['current_charging_power'],
       carModelId: json['car_model_id'],
       carModel: CarModel.fromJson(json['car_model']),
