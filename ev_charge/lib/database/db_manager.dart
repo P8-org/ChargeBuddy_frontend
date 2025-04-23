@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 import 'package:ev_charge/core/backend_service.dart';
 import 'package:flutter/foundation.dart';
@@ -18,10 +20,9 @@ class DbManager {
       await _resetDatabase(db);
     }
     await _updateDatabase(db);
-    
+
     return db;
   }
-
 
   static Future<void> _resetDatabase(AppDatabase db) async {
     await db.delete(db.schedules).go();
@@ -35,7 +36,12 @@ class DbManager {
 
   static Future<void> _updateDatabase(AppDatabase db) async {
     try {
-      final evList = await BackendService().getEvs();
+      final evList = await BackendService().getEvs().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          throw TimeoutException("Fetching EVs from backend timed out.");
+        },
+      );
 
       await _resetDatabase(db);
 
