@@ -37,8 +37,8 @@ class HomePage extends ConsumerWidget {
                   const Text("No cars in db"),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
-                    onPressed: () => context.go("/add_car"),
-                    label: const Text("Add car"),
+                    onPressed: () => context.go("/add_ev"),
+                    label: const Text("Add EV"),
                     icon: const Icon(Icons.add),
                   ),
                 ],
