@@ -24,6 +24,7 @@ class UserEVs extends Table {
   late final carModelId = integer().references(EVCarModels, #id)();
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
+  late final state = text()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};
