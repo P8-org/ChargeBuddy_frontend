@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/form_helper.dart';
+import 'package:ev_charge/viewmodels/form_vm.dart';
 
 class EVForm extends StatefulWidget {
   const EVForm({super.key, this.id});
@@ -31,8 +32,8 @@ class EVFormState extends State<EVForm> {
   @override
   void initState() {
     super.initState();
+    vm = formVM();
     if (widget.id != null) {
-      vm = formVM();
       vm.getEv(widget.id!);
     }
   }
@@ -84,11 +85,11 @@ class EVFormState extends State<EVForm> {
           child: ListView(
             padding: const EdgeInsets.all(8),
             children: <Widget>[
-              FormHelper.inputField("Model", modelNameController, FormHelper.stringValidator()),
-              FormHelper.inputField("Model Year", modelYearController, FormHelper.intValidator()),
-              FormHelper.inputField("Custom Name", userSetNameController, null), // TODO: Not used for anything currently
-              FormHelper.inputField("Battery Capacity (kWh)", batteryCapacityController, FormHelper.doubleValidator()),
-              FormHelper.inputField("Maximum Charging Power (kW)", maxChargingPowerController, FormHelper.doubleValidator()),
+              FormHelper.inputField("Custom Name", false, userSetNameController, FormHelper.optionalStringValidator()),
+              FormHelper.inputField("Model", true, modelNameController, FormHelper.stringValidator()),
+              FormHelper.inputField("Model Year", true, modelYearController, FormHelper.intValidator()),
+              FormHelper.inputField("Battery Capacity (kWh)", true, batteryCapacityController, FormHelper.doubleValidator()),
+              FormHelper.inputField("Maximum Charging Power (kW)", true, maxChargingPowerController, FormHelper.doubleValidator()),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
@@ -105,20 +106,10 @@ class EVFormState extends State<EVForm> {
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          /* TODO Insert & Edit DB logic
-                          final db = ProviderScope.containerOf(context).read(dbProvider);
+                          if (widget.id == null) {
+                            vm.addEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text);
+                          }
 
-                          await db
-                              .into(db.eVCarModels)
-                              .insert(
-                                EVCarModelsCompanion.insert(
-                                  modelName: modelNameController.text,
-                                  modelYear: int.parse(modelYearController.text),
-                                  batteryCapacity: double.parse(batteryCapacityController.text),
-                                  maxChargingPower: double.parse(maxChargingPowerController.text),
-                                ),
-                              );
-                          */
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: formSnackbarText(),
