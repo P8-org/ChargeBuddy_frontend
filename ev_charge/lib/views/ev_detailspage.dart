@@ -34,8 +34,31 @@ class EvDetailsPage extends ConsumerWidget {
           return const Scaffold(body: Center(child: Text("EV not found")));
         }
         final indicatorColor =
-            ev.currentChargingPower != 0 ? Colors.green : Colors.red;
-
+            ev.state == "charging"
+                ? Colors.green
+                : ev.state == "idle"
+                ? Colors.amber
+                : Colors.red;
+        final chargingCurveData =
+            ev.schedule.scheduleData
+                .split(',')
+                .map((e) => double.tryParse(e) ?? 0.0)
+                .toList();
+        final padLength = ev.schedule.start.difference(DateTime.now()).inHours;
+        final cumulativeChargingCurve = <double>[];
+        for (var i = 0; i <= padLength; i++) {
+          cumulativeChargingCurve.add(ev.schedule.startCharge);
+        }
+        if (padLength > 0) {
+          for (var i = padLength; i < 0; i++) {
+            cumulativeChargingCurve.removeAt(0);
+          }
+        }
+        double sum = ev.schedule.startCharge;
+        for (final value in chargingCurveData) {
+          sum += value;
+          cumulativeChargingCurve.add(sum);
+        }
         return Scaffold(
           appBar: AppBar(
             title: const Text('EV Details'),
@@ -73,7 +96,9 @@ class EvDetailsPage extends ConsumerWidget {
                     CircleAvatar(radius: 5, backgroundColor: indicatorColor),
                     const SizedBox(width: 8),
                     Text(
-                      "${ev.currentChargingPower} kW",
+                      ev.currentChargingPower != 0
+                          ? "${ev.state[0].toUpperCase()}${ev.state.substring(1)} ${ev.currentChargingPower} kW"
+                          : "${ev.state[0].toUpperCase()}${ev.state.substring(1)}",
                       style: const TextStyle(fontSize: 18),
                     ),
                   ],
@@ -117,26 +142,18 @@ class EvDetailsPage extends ConsumerWidget {
                 ),
                 SizedBox(height: 16),
                 ElectricityPricesWidget(),
+                Text("start: ${ev.schedule.start.toString()}"),
+                Text("end: ${ev.schedule.end.toString()}"),
                 ChargingCurve(
-                  chargingData: [
-                    FlSpot(0, 0),
-                    FlSpot(1, 5),
-                    FlSpot(2, 15),
-                    FlSpot(3, 30),
-                    FlSpot(4, 50),
-                    FlSpot(5, 69),
-                    FlSpot(6, 71),
-                    FlSpot(7, 71),
-                    FlSpot(8, 71),
-                    FlSpot(9, 71),
-                    FlSpot(10, 82),
-                    FlSpot(11, 82),
-                    FlSpot(12, 82),
-                    FlSpot(13, 90),
-                    FlSpot(14, 90),
-                    FlSpot(15, 90),
-                    FlSpot(23, 100),
-                  ],
+                  chargingData: List.generate(
+                    cumulativeChargingCurve.length,
+                    (index) => FlSpot(
+                      index.toDouble(),
+                      cumulativeChargingCurve[index] /
+                          ev.carModel.batteryCapacity *
+                          100,
+                    ),
+                  ),
                 ),
               ],
             ),

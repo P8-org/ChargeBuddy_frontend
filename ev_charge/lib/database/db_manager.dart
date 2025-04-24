@@ -66,6 +66,7 @@ class DbManager {
                 carModelId: ev.carModel.id,
                 userSetName: ev.userSetName,
                 currentCharge: ev.currentCharge,
+                currentChargePower: ev.currentChargingPower,
                 state: ev.state,
               ),
             );
@@ -78,6 +79,7 @@ class DbManager {
                 userEvId: ev.id,
                 start: ev.schedule.start,
                 end: ev.schedule.end,
+                startCharge: ev.schedule.startCharge,
                 scheduleData: ev.schedule.scheduleData,
               ),
             );
