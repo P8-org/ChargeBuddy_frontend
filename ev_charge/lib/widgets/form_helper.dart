@@ -15,6 +15,7 @@ class FormHelper {
         ),
         validator: validator,
         controller: controller,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
       ),
     );
   }
