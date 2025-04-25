@@ -6,6 +6,11 @@ class BottomNavBar extends StatelessWidget {
 
   static const List<NavItem> navItems = [
     NavItem(route: '/', label: 'Home', icon: Icons.home),
+    NavItem(
+      route: '/prices',
+      label: 'Electricity prices',
+      icon: Icons.auto_graph_rounded,
+    ),
     NavItem(route: '/settings', label: 'Settings', icon: Icons.settings),
   ];
 

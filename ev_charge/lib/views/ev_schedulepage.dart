@@ -62,6 +62,9 @@ class _EvSchedulePageState extends State<EvSchedulePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TimePickerDialog(initialTime: TimeOfDay.now()),
+                            Text(
+                              "${(targetPercentage * 100).toStringAsFixed(0)}%",
+                            ),
                             Slider(
                               value: targetPercentage,
                               onChanged: (val) {

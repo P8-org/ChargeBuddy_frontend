@@ -2,7 +2,6 @@ import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
 import 'package:ev_charge/widgets/charging_curve_widget.dart';
-import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -141,20 +140,20 @@ class EvDetailsPage extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: 16),
-                ElectricityPricesWidget(),
                 Text("start: ${ev.schedule.start.toString()}"),
                 Text("end: ${ev.schedule.end.toString()}"),
-                ChargingCurve(
-                  chargingData: List.generate(
-                    cumulativeChargingCurve.length,
-                    (index) => FlSpot(
-                      index.toDouble(),
-                      cumulativeChargingCurve[index] /
-                          ev.carModel.batteryCapacity *
-                          100,
+                if (ev.schedule.end.isAfter(DateTime.now()))
+                  ChargingCurve(
+                    chargingData: List.generate(
+                      cumulativeChargingCurve.length,
+                      (index) => FlSpot(
+                        index.toDouble(),
+                        cumulativeChargingCurve[index] /
+                            ev.carModel.batteryCapacity *
+                            100,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
