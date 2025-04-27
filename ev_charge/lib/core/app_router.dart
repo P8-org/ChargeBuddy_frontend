@@ -53,7 +53,7 @@ final GoRouter router = GoRouter(
                 title: const Text('EV Details'),
                 backgroundColor: Colors.green,
               ),
-              body: Expanded(child: Center(child: ElectricityPricesWidget())),
+              body: ElectricityPricesWidget(),
               bottomNavigationBar: const BottomNavBar(),
             );
           },
