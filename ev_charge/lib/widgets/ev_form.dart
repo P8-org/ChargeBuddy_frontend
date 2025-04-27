@@ -108,6 +108,8 @@ class EVFormState extends State<EVForm> {
                         if (_formKey.currentState!.validate()) {
                           if (widget.id == null) {
                             vm.addEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text);
+                          } else {
+                            vm.putEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text, vm.ev.carModelId, vm.ev.id);
                           }
 
                           if (context.mounted) {

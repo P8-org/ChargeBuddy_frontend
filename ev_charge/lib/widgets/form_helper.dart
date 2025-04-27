@@ -74,7 +74,7 @@ class FormHelper {
     return (value) {
       if (value == null || value.isEmpty) {
         return null;
-      }else if (value.length < 3) {
+      } else if (value.length < 3) {
         return 'Please enter at least 3 characters or none at all';
       } else if (value.length > 64) {
         return 'Please enter at most 64 characters or none at all';

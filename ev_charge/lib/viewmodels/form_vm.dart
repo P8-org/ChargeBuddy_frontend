@@ -32,6 +32,45 @@ class formVM extends ChangeNotifier {
     }
   }
 
+  void putEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower, int carModelId, int evId) async {
+    final bs = BackendService();
+    
+    var carModel = CarModel(
+      id: carModelId,
+      modelName: modelName,
+      modelYear: int.parse(modelYear),
+      batteryCapacity: double.parse(batteryCapacity),
+      maxChargingPower: double.parse(maxChargingPower),
+    );
+    await bs.putCarModel(carModel);
+
+    if (userSetName == null || userSetName.isEmpty) {
+      userSetName = modelName;
+    }
+
+    final userEv = UserEV(
+      id: evId,
+      userSetName: userSetName,
+      currentCharge: 0,
+      state: 'Not Charging',
+      currentChargingPower: 0,
+      carModelId: carModel.id,
+      carModel: carModel,
+      constraint: Constraint(
+        id: 0,
+        chargedBy: DateTime.now(),
+        targetPercentage: 0,
+      ),
+      schedule: Schedule(
+        id: 0,
+        start: DateTime.now(),
+        end: DateTime.now(),
+        scheduleData: 'n/a',
+      ),
+    );
+    await bs.putEv(userEv, evId);
+  }
+
   void addEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower) async {
     final bs = BackendService();
     // Step 1: POST /carmodels + retrieve 'correct' carModelId from db

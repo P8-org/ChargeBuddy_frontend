@@ -59,6 +59,24 @@ class BackendService {
     }
   }
 
+  Future<void> putEv(UserEV userEv, int id) async {
+    final uri = Uri.parse("$baseUrl/evs/$id");
+    final response = await client.put(
+      uri,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: jsonEncode({
+        "name": userEv.userSetName,
+        "car_model_id": userEv.carModelId,
+        "battery_level": userEv.currentCharge,
+        })
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
+
   Future<int> postCarModel(CarModel carModel) async {
     final uri = Uri.parse("$baseUrl/carmodels");
     final response = await client.post(
@@ -79,7 +97,22 @@ class BackendService {
     return jsonDecode(response.body)['id'];
   }
 
-  
-
-
+  Future<void> putCarModel(CarModel carModel) async {
+    final uri = Uri.parse("$baseUrl/carmodels/${carModel.id}");
+    final response = await client.put(
+      uri,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: jsonEncode({
+        "name": carModel.modelName,
+        "year": carModel.modelYear,
+        "battery_capacity": carModel.batteryCapacity,
+        "max_charging_power": carModel.maxChargingPower,
+        })
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
 }
