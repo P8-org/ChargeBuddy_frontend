@@ -43,7 +43,10 @@ class EvDetailsPage extends ConsumerWidget {
                 .split(',')
                 .map((e) => double.tryParse(e) ?? 0.0)
                 .toList();
-        final padLength = ev.schedule.start.difference(DateTime.now()).inHours;
+        final padLength =
+            ev.schedule.start
+                .difference(DateTime.now().add(Duration(hours: -1)))
+                .inHours;
         final cumulativeChargingCurve = <double>[];
         for (var i = 0; i <= padLength; i++) {
           cumulativeChargingCurve.add(ev.schedule.startCharge);
