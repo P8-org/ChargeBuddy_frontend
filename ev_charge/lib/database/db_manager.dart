@@ -19,7 +19,7 @@ class DbManager {
     if (clearDB) {
       await _resetDatabase(db);
     }
-    await _updateDatabase(db);
+    await updateDatabase(db);
 
     return db;
   }
@@ -34,7 +34,7 @@ class DbManager {
     if (kDebugMode) print('[Reset] All tables cleared, autoincrements reset.');
   }
 
-  static Future<void> _updateDatabase(AppDatabase db) async {
+  static Future<void> updateDatabase(AppDatabase db) async {
     try {
       final evList = await BackendService().getEvs().timeout(
         const Duration(seconds: 5),

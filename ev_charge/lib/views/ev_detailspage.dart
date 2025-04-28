@@ -69,6 +69,7 @@ class EvDetailsPage extends ConsumerWidget {
                 onPressed: () async {
                   try {
                     await backendService.deleteEvById(id);
+                    if (!context.mounted) return;
                     context.pop();
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
