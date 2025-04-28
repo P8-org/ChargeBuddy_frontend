@@ -8,7 +8,7 @@ part 'ev_dao.g.dart';
 
 @DriftAccessor(tables: [UserEVs, EVCarModels, Constraints, Schedules])
 class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
-  EvDao(AppDatabase db) : super(db);
+  EvDao(super.db);
 
   Stream<List<models.UserEV>> watchUserEVsWithDetails() {
     final query = select(userEVs).join([
