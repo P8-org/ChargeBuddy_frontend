@@ -1,4 +1,3 @@
-// lib/database/dao/ev_dao.dart
 import 'package:drift/drift.dart';
 
 import '../../core/models.dart' as models;

@@ -1,4 +1,3 @@
-// Updated homepage.dart using Riverpod and DAO stream
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/ev_card.dart';
