@@ -3,6 +3,7 @@ import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
 import 'package:ev_charge/widgets/charging_curve_widget.dart';
 import 'package:ev_charge/widgets/electricity_prices_widget.dart';
+import 'package:ev_charge/widgets/ev_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -33,8 +34,6 @@ class EvDetailsPage extends ConsumerWidget {
         if (ev == null) {
           return const Scaffold(body: Center(child: Text("EV not found")));
         }
-        final indicatorColor =
-            ev.currentChargingPower != 0 ? Colors.green : Colors.red;
 
         return Scaffold(
           appBar: AppBar(
@@ -61,61 +60,20 @@ class EvDetailsPage extends ConsumerWidget {
               spacing: 16,
               children: [
                 const SizedBox(height: 8),
-                Text(
-                  ev.userSetName,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(radius: 5, backgroundColor: indicatorColor),
-                    const SizedBox(width: 8),
-                    Text(
-                      "${ev.currentChargingPower} kW",
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TweenAnimationBuilder(
-                  tween: Tween(
-                    begin: ev.currentCharge / ev.carModel.batteryCapacity,
-                    end: ev.currentCharge / ev.carModel.batteryCapacity,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: EVInfoCard(
+                    id: ev.id,
+                    userSetName: ev.userSetName,
+                    modelName: ev.carModel.modelName,
+                    modelYear: ev.carModel.modelYear,
+                    batteryCapacity: ev.carModel.batteryCapacity,
+                    maxChargingPower: ev.carModel.maxChargingPower,
+                    currentCharge: ev.currentCharge,
+                    state: ev.state,
+                    targetPercentage: ev.constraint.targetPercentage,
                   ),
-                  duration: const Duration(seconds: 1),
-                  builder: (context, value, child) {
-                    return BatteryLevelCircle(
-                      value: value,
-                      limitValue: ev.constraint.targetPercentage,
-                      height: 300,
-                      width: 300,
-                      strokeWidth: 30,
-                      center: Column(
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Text(
-                                (value * 100).toStringAsFixed(1),
-                                style: const TextStyle(fontSize: 48),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(top: 84),
-                                child: Text(
-                                  "%",
-                                  style: TextStyle(fontSize: 24),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
                 ),
-                SizedBox(height: 16),
                 ElectricityPricesWidget(),
                 ChargingCurve(
                   chargingData: [
