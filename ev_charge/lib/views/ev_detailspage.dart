@@ -143,8 +143,6 @@ class EvDetailsPage extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: 16),
-                Text("start: ${ev.schedule.start.toString()}"),
-                Text("end: ${ev.schedule.end.toString()}"),
                 if (ev.schedule.end.isAfter(DateTime.now()))
                   ChargingCurve(
                     chargingData: List.generate(
