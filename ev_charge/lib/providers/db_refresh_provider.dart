@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ev_charge/database/db_manager.dart';
-import 'package:ev_charge/main.dart';
 
 import 'package:ev_charge/database/database.dart';
+import 'package:ev_charge/database/db_manager.dart';
+import 'package:ev_charge/main.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final databaseAutoUpdaterProvider = Provider<DatabaseAutoUpdater>((ref) {
   final db = ref.watch(dbProvider);
