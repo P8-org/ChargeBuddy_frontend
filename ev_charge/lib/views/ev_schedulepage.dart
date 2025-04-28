@@ -1,5 +1,3 @@
-import 'package:ev_charge/core/backend_service.dart';
-import 'package:ev_charge/database/db_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/bottom_navbar.dart';
