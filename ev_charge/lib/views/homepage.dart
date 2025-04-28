@@ -52,6 +52,7 @@ class HomePage extends ConsumerWidget {
               onRefresh: () async {
                 final db = ref.read(dbProvider);
                 await DbManager.updateDatabase(db);
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Database refreshed.')),
                 );
