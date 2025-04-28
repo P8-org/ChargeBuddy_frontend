@@ -1,3 +1,4 @@
+import 'package:ev_charge/providers/db_refresh_provider.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/ev_card.dart';
@@ -13,6 +14,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(databaseAutoUpdaterProvider);
     final evsState = ref.watch(allUserEvsProvider);
 
     return Scaffold(
