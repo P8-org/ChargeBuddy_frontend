@@ -1,16 +1,20 @@
-// Updated homepage.dart using Riverpod and DAO stream
+import 'package:ev_charge/providers/db_refresh_provider.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/ev_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ev_charge/database/db_manager.dart';
+
+import '../main.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(databaseAutoUpdaterProvider);
     final evsState = ref.watch(allUserEvsProvider);
     return Scaffold(
       appBar: AppBar(
@@ -45,9 +49,15 @@ class HomePage extends ConsumerWidget {
             );
           }
           return RefreshIndicator(
-            onRefresh: () async {
-              // nothing to do: stream auto updates
-            },
+              onRefresh: () async {
+                final db = ref.read(dbProvider);
+                await DbManager.updateDatabase(db);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Database refreshed.')),
+                );
+              },
+
             child: ListView.builder(
               itemCount: evs.length,
               itemBuilder: (context, index) {

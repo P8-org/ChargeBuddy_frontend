@@ -43,7 +43,8 @@ class EvDetailsPage extends ConsumerWidget {
                 onPressed: () async {
                   try {
                     await backendService.deleteEvById(id);
-                    context.pop();
+                    if (!context.mounted) return;
+                    context.go('/home');
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Failed to delete: $e")),
