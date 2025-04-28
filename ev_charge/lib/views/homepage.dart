@@ -5,6 +5,9 @@ import 'package:ev_charge/widgets/ev_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ev_charge/database/db_manager.dart';
+
+import '../main.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -46,9 +49,14 @@ class HomePage extends ConsumerWidget {
             );
           }
           return RefreshIndicator(
-            onRefresh: () async {
-              // nothing to do: stream auto updates
-            },
+              onRefresh: () async {
+                final db = ref.read(dbProvider);
+                await DbManager.updateDatabase(db);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Database refreshed.')),
+                );
+              },
+
             child: ListView.builder(
               itemCount: evs.length,
               itemBuilder: (context, index) {
