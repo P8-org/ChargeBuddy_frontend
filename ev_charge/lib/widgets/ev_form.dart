@@ -55,11 +55,21 @@ class EVFormState extends State<EVForm> {
     }
   }
 
-  getInitialSelection(){
+  getInitialSelection(FormFieldState<int> state) {
     if (widget.id == null) {
       return null;
     } else {
-      return vm.ev.carModel.id;
+      if (carModelController.text.isEmpty) {
+        final entry = getCarModelEntries().firstWhere(
+          (carModelEntry) => carModelEntry.value == vm.ev.carModel.id,
+        );
+        selectedCarModel = vm.carmodels.where((carModel) => carModel.id == entry.value).first;
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          state.didChange(entry.value);
+        });
+        return entry.value;
+      }
     }
   }
 
@@ -112,7 +122,7 @@ class EVFormState extends State<EVForm> {
                       menuHeight: 200,
                       expandedInsets: EdgeInsets.zero,
                       errorText: state.errorText,
-                      initialSelection: getInitialSelection(),
+                      initialSelection: getInitialSelection(state),
                       onSelected: (value) {
                         if (value != null) {
                           state.didChange(value as int);
