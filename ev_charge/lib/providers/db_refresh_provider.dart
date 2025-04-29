@@ -18,17 +18,19 @@ class DatabaseAutoUpdater {
   final AppDatabase db;
   late bool _connected = false;
   late WebSocketChannel _channel;
+  int _retries = 0;
 
   DatabaseAutoUpdater(this.db) {
     _connectWS();
   }
 
   void _connectWS() async {
-    final url = "${getBaseUrl().replaceFirst("http", "ws")}/ws";
-    _channel = WebSocketChannel.connect(Uri.parse(url));
-    await _channel.ready;
-    _connected = true;
     try {
+      final url = "${getBaseUrl().replaceFirst("http", "ws")}/ws";
+      _channel = WebSocketChannel.connect(Uri.parse(url));
+      await _channel.ready;
+      _connected = true;
+      _retries = 0;
       _channel.stream.listen(
         (event) => DbManager.updateDatabase(db),
         cancelOnError: false,
@@ -47,9 +49,11 @@ class DatabaseAutoUpdater {
   }
 
   Future<void> _tryReconnect() async {
-    while (!_connected) {
-      // retry every 5 seconds
-      await Future.delayed(const Duration(seconds: 5), () {
+    const int maxRetries = 10;
+    while (!_connected && _retries < maxRetries) {
+      _retries++;
+      // retry every 10 seconds
+      await Future.delayed(const Duration(seconds: 10), () {
         _connectWS();
       });
     }
