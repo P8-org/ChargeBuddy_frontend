@@ -57,9 +57,7 @@ class formVM extends ChangeNotifier {
     }
   }
 
-  void putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async {
-    final bs = BackendService();
-    
+  void putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
     final userEv = UserEV(
       id: oldUserEv.id,
       userSetName: userSetName,
@@ -71,11 +69,10 @@ class formVM extends ChangeNotifier {
       constraint: oldUserEv.constraint,
       schedule: oldUserEv.schedule
     );
-    await bs.putEv(userEv, oldUserEv.id);
+    await _backendService.putEv(userEv, oldUserEv.id);
   }
 
   void addEv(String userSetName, CarModel carModel) async {
-    final bs = BackendService();
     final userEv = UserEV(
       id: 0,
       userSetName: userSetName,
@@ -97,6 +94,6 @@ class formVM extends ChangeNotifier {
         scheduleData: 'n/a',
       ),
     );
-    await bs.postEv(userEv);
+    await _backendService.postEv(userEv);
   }
 }
