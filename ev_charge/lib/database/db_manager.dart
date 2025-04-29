@@ -79,6 +79,8 @@ class DbManager {
                 start: ev.schedule.start,
                 end: ev.schedule.end,
                 scheduleData: ev.schedule.scheduleData,
+                price: ev.schedule.price,
+                greedyPrice: ev.schedule.greedyPrice,
               ),
             );
 
