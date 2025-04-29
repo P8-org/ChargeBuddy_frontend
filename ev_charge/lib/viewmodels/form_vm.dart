@@ -57,30 +57,21 @@ class formVM extends ChangeNotifier {
     }
   }
 
-  void putEv(String userSetName, CarModel carModel, int evId, double currentCharge) async {
+  void putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async {
     final bs = BackendService();
     
     final userEv = UserEV(
-      id: evId,
+      id: oldUserEv.id,
       userSetName: userSetName,
-      currentCharge: currentCharge,
-      state: 'Not Charging',
-      currentChargingPower: 0,
+      currentCharge: oldUserEv.currentCharge,
+      state: oldUserEv.state,
+      currentChargingPower: oldUserEv.currentChargingPower,
       carModelId: carModel.id,
       carModel: carModel,
-      constraint: Constraint(
-        id: 0,
-        chargedBy: DateTime.now(),
-        targetPercentage: 0,
-      ),
-      schedule: Schedule(
-        id: 0,
-        start: DateTime.now(),
-        end: DateTime.now(),
-        scheduleData: 'n/a',
-      ),
+      constraint: oldUserEv.constraint,
+      schedule: oldUserEv.schedule
     );
-    await bs.putEv(userEv, evId);
+    await bs.putEv(userEv, oldUserEv.id);
   }
 
   void addEv(String userSetName, CarModel carModel) async {
@@ -102,6 +93,7 @@ class formVM extends ChangeNotifier {
         id: 0,
         start: DateTime.now(),
         end: DateTime.now(),
+        startCharge: 0.0,
         scheduleData: 'n/a',
       ),
     );

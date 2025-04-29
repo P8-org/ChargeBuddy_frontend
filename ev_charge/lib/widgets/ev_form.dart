@@ -165,7 +165,7 @@ class EVFormState extends State<EVForm> {
                           if (widget.id == null) {
                             vm.addEv(userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text, selectedCarModel!);
                           } else {
-                            vm.putEv(userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text, selectedCarModel!, vm.ev.id, vm.ev.currentCharge);
+                            vm.putEv(userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text, selectedCarModel!, vm.ev);
                           }
 
                           if (context.mounted) {
