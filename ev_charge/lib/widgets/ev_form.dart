@@ -74,9 +74,9 @@ class EVFormState extends State<EVForm> {
 
   Text formSnackbarText() {
     if (widget.id == null) {
-      return Text('Added: "${modelNameController.text}"');
+      return Text('Added: "${userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text}"');
     }
-    return Text('Saved: "${modelNameController.text}"');
+    return Text('Saved: "${userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text}"');
   }
 
   Text formSubmissionText() {
