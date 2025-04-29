@@ -63,8 +63,8 @@ class EvDetailsPage extends ConsumerWidget {
           cumulativeChargingCurve.add(sum);
         }
 
-        // // remove 'old' data
-        for (var i = padLength; i < 0; i++) {
+        // remove 'old' data
+        for (var i = padLength; i < 0 && cumulativeChargingCurve.isNotEmpty; i++) {
           cumulativeChargingCurve.removeAt(0);
         }
 
