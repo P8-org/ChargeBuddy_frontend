@@ -32,12 +32,6 @@ class EvDetailsPage extends ConsumerWidget {
         if (ev == null) {
           return const Scaffold(body: Center(child: Text("EV not found")));
         }
-        final indicatorColor =
-            ev.state == "charging"
-                ? Colors.green
-                : ev.state == "idle"
-                ? Colors.amber
-                : Colors.red;
 
         final chargingCurveData =
             ev.schedule.scheduleData

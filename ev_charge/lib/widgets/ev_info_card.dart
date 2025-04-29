@@ -29,6 +29,13 @@ class EVInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color stateColor =
+        state == "charging"
+            ? Colors.green
+            : state == "idle"
+            ? Colors.amber
+            : Colors.red;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ExpansionTileCard(
@@ -51,56 +58,64 @@ class EVInfoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TweenAnimationBuilder(
-                  tween: Tween(
-                    begin: currentCharge / batteryCapacity,
-                    end: currentCharge / batteryCapacity,
-                  ),
-                  duration: const Duration(seconds: 1),
-                  builder: (context, value, child) {
-                    return BatteryLevelCircle(
-                      value: value,
-                      limitValue:
-                          targetPercentage, // Assuming target percentage is 100%
-                      height: 200, // You can adjust the size here
-                      width: 200,
-                      strokeWidth: 20,
-                      center: Column(
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Text(
-                                (value * 100).toStringAsFixed(1),
-                                style: const TextStyle(fontSize: 48),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(top: 84),
-                                child: Text(
-                                  "%",
-                                  style: TextStyle(fontSize: 24),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                // Displaying other details about the EV
                 Text(
                   'Battery Capacity: ${batteryCapacity.toStringAsFixed(1)} kWh',
                 ),
                 Text(
                   'Max Charging Power: ${maxChargingPower.toStringAsFixed(1)} kW',
                 ),
-                Text('Charging Status: $state'),
+                Row(
+                  children: [
+                    const Text('Charging State:'),
+                    const SizedBox(width: 8),
+                    CircleAvatar(radius: 5, backgroundColor: stateColor),
+                    const SizedBox(width: 8),
+                    Text(state),
+                  ],
+                ),
                 ElevatedButton.icon(
                   onPressed: () => context.go("/edit_ev/$id"),
                   label: Text("Edit EV"),
                   icon: Icon(Icons.edit),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: TweenAnimationBuilder(
+                    tween: Tween(
+                      begin: currentCharge / batteryCapacity,
+                      end: currentCharge / batteryCapacity,
+                    ),
+                    duration: const Duration(seconds: 1),
+                    builder: (context, value, child) {
+                      return BatteryLevelCircle(
+                        value: value,
+                        limitValue: targetPercentage,
+                        height: 200,
+                        width: 200,
+                        strokeWidth: 20,
+                        center: Column(
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Text(
+                                  (value * 100).toStringAsFixed(1),
+                                  style: const TextStyle(fontSize: 48),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 84),
+                                  child: Text(
+                                    "%",
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
