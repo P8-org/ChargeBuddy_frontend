@@ -47,6 +47,8 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
             start: schedule.start,
             end: schedule.end,
             scheduleData: schedule.scheduleData,
+            price: schedule.price,
+            greedyPrice: schedule.greedyPrice,
           ),
         );
       }).toList();
@@ -93,6 +95,8 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
         start: schedule.start,
         end: schedule.end,
         scheduleData: schedule.scheduleData,
+        price: schedule.price,
+        greedyPrice: schedule.greedyPrice,
       ),
     );
   }

@@ -23,12 +23,16 @@ class Schedule {
   final DateTime start;
   final DateTime end;
   final String scheduleData;
+  final double price;
+  final double greedyPrice;
 
   Schedule({
     required this.id,
     required this.start,
     required this.end,
     required this.scheduleData,
+    required this.price,
+    required this.greedyPrice,
   });
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
@@ -37,6 +41,8 @@ class Schedule {
       start: DateTime.parse(json['start']),
       end: DateTime.parse(json['end']),
       scheduleData: json['schedule_data'],
+      price: json['price'],
+      greedyPrice: json['greedy_price'],
     );
   }
 }
@@ -95,7 +101,7 @@ class UserEV {
       id: json['id'],
       userSetName: json['user_set_name'],
       currentCharge: json['current_charge'],
-      state: json['state']?? 'charging',
+      state: json['state'] ?? 'charging',
       currentChargingPower: json['current_charging_power'],
       carModelId: json['car_model_id'],
       carModel: CarModel.fromJson(json['car_model']),

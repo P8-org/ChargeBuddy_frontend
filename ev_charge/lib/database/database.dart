@@ -49,6 +49,9 @@ class Schedules extends Table {
 
   late final scheduleData = text()();
 
+  late final price = real()();
+  late final greedyPrice = real()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 }

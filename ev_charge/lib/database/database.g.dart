@@ -1117,6 +1117,26 @@ class $SchedulesTable extends Schedules
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  @override
+  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+    'price',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _greedyPriceMeta = const VerificationMeta(
+    'greedyPrice',
+  );
+  @override
+  late final GeneratedColumn<double> greedyPrice = GeneratedColumn<double>(
+    'greedy_price',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1124,6 +1144,8 @@ class $SchedulesTable extends Schedules
     start,
     end,
     scheduleData,
+    price,
+    greedyPrice,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1175,6 +1197,25 @@ class $SchedulesTable extends Schedules
     } else if (isInserting) {
       context.missing(_scheduleDataMeta);
     }
+    if (data.containsKey('price')) {
+      context.handle(
+        _priceMeta,
+        price.isAcceptableOrUnknown(data['price']!, _priceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_priceMeta);
+    }
+    if (data.containsKey('greedy_price')) {
+      context.handle(
+        _greedyPriceMeta,
+        greedyPrice.isAcceptableOrUnknown(
+          data['greedy_price']!,
+          _greedyPriceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_greedyPriceMeta);
+    }
     return context;
   }
 
@@ -1209,6 +1250,16 @@ class $SchedulesTable extends Schedules
             DriftSqlType.string,
             data['${effectivePrefix}schedule_data'],
           )!,
+      price:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.double,
+            data['${effectivePrefix}price'],
+          )!,
+      greedyPrice:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.double,
+            data['${effectivePrefix}greedy_price'],
+          )!,
     );
   }
 
@@ -1224,12 +1275,16 @@ class Schedule extends DataClass implements Insertable<Schedule> {
   final DateTime start;
   final DateTime end;
   final String scheduleData;
+  final double price;
+  final double greedyPrice;
   const Schedule({
     required this.id,
     required this.userEvId,
     required this.start,
     required this.end,
     required this.scheduleData,
+    required this.price,
+    required this.greedyPrice,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1239,6 +1294,8 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     map['start'] = Variable<DateTime>(start);
     map['end'] = Variable<DateTime>(end);
     map['schedule_data'] = Variable<String>(scheduleData);
+    map['price'] = Variable<double>(price);
+    map['greedy_price'] = Variable<double>(greedyPrice);
     return map;
   }
 
@@ -1249,6 +1306,8 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       start: Value(start),
       end: Value(end),
       scheduleData: Value(scheduleData),
+      price: Value(price),
+      greedyPrice: Value(greedyPrice),
     );
   }
 
@@ -1263,6 +1322,8 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       start: serializer.fromJson<DateTime>(json['start']),
       end: serializer.fromJson<DateTime>(json['end']),
       scheduleData: serializer.fromJson<String>(json['scheduleData']),
+      price: serializer.fromJson<double>(json['price']),
+      greedyPrice: serializer.fromJson<double>(json['greedyPrice']),
     );
   }
   @override
@@ -1274,6 +1335,8 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       'start': serializer.toJson<DateTime>(start),
       'end': serializer.toJson<DateTime>(end),
       'scheduleData': serializer.toJson<String>(scheduleData),
+      'price': serializer.toJson<double>(price),
+      'greedyPrice': serializer.toJson<double>(greedyPrice),
     };
   }
 
@@ -1283,12 +1346,16 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     DateTime? start,
     DateTime? end,
     String? scheduleData,
+    double? price,
+    double? greedyPrice,
   }) => Schedule(
     id: id ?? this.id,
     userEvId: userEvId ?? this.userEvId,
     start: start ?? this.start,
     end: end ?? this.end,
     scheduleData: scheduleData ?? this.scheduleData,
+    price: price ?? this.price,
+    greedyPrice: greedyPrice ?? this.greedyPrice,
   );
   Schedule copyWithCompanion(SchedulesCompanion data) {
     return Schedule(
@@ -1300,6 +1367,9 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           data.scheduleData.present
               ? data.scheduleData.value
               : this.scheduleData,
+      price: data.price.present ? data.price.value : this.price,
+      greedyPrice:
+          data.greedyPrice.present ? data.greedyPrice.value : this.greedyPrice,
     );
   }
 
@@ -1310,13 +1380,16 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           ..write('userEvId: $userEvId, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
-          ..write('scheduleData: $scheduleData')
+          ..write('scheduleData: $scheduleData, ')
+          ..write('price: $price, ')
+          ..write('greedyPrice: $greedyPrice')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, userEvId, start, end, scheduleData);
+  int get hashCode =>
+      Object.hash(id, userEvId, start, end, scheduleData, price, greedyPrice);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1325,7 +1398,9 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           other.userEvId == this.userEvId &&
           other.start == this.start &&
           other.end == this.end &&
-          other.scheduleData == this.scheduleData);
+          other.scheduleData == this.scheduleData &&
+          other.price == this.price &&
+          other.greedyPrice == this.greedyPrice);
 }
 
 class SchedulesCompanion extends UpdateCompanion<Schedule> {
@@ -1334,12 +1409,16 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
   final Value<DateTime> start;
   final Value<DateTime> end;
   final Value<String> scheduleData;
+  final Value<double> price;
+  final Value<double> greedyPrice;
   const SchedulesCompanion({
     this.id = const Value.absent(),
     this.userEvId = const Value.absent(),
     this.start = const Value.absent(),
     this.end = const Value.absent(),
     this.scheduleData = const Value.absent(),
+    this.price = const Value.absent(),
+    this.greedyPrice = const Value.absent(),
   });
   SchedulesCompanion.insert({
     this.id = const Value.absent(),
@@ -1347,16 +1426,22 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     required DateTime start,
     required DateTime end,
     required String scheduleData,
+    required double price,
+    required double greedyPrice,
   }) : userEvId = Value(userEvId),
        start = Value(start),
        end = Value(end),
-       scheduleData = Value(scheduleData);
+       scheduleData = Value(scheduleData),
+       price = Value(price),
+       greedyPrice = Value(greedyPrice);
   static Insertable<Schedule> custom({
     Expression<int>? id,
     Expression<int>? userEvId,
     Expression<DateTime>? start,
     Expression<DateTime>? end,
     Expression<String>? scheduleData,
+    Expression<double>? price,
+    Expression<double>? greedyPrice,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1364,6 +1449,8 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
       if (start != null) 'start': start,
       if (end != null) 'end': end,
       if (scheduleData != null) 'schedule_data': scheduleData,
+      if (price != null) 'price': price,
+      if (greedyPrice != null) 'greedy_price': greedyPrice,
     });
   }
 
@@ -1373,6 +1460,8 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     Value<DateTime>? start,
     Value<DateTime>? end,
     Value<String>? scheduleData,
+    Value<double>? price,
+    Value<double>? greedyPrice,
   }) {
     return SchedulesCompanion(
       id: id ?? this.id,
@@ -1380,6 +1469,8 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
       start: start ?? this.start,
       end: end ?? this.end,
       scheduleData: scheduleData ?? this.scheduleData,
+      price: price ?? this.price,
+      greedyPrice: greedyPrice ?? this.greedyPrice,
     );
   }
 
@@ -1401,6 +1492,12 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     if (scheduleData.present) {
       map['schedule_data'] = Variable<String>(scheduleData.value);
     }
+    if (price.present) {
+      map['price'] = Variable<double>(price.value);
+    }
+    if (greedyPrice.present) {
+      map['greedy_price'] = Variable<double>(greedyPrice.value);
+    }
     return map;
   }
 
@@ -1411,7 +1508,9 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
           ..write('userEvId: $userEvId, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
-          ..write('scheduleData: $scheduleData')
+          ..write('scheduleData: $scheduleData, ')
+          ..write('price: $price, ')
+          ..write('greedyPrice: $greedyPrice')
           ..write(')'))
         .toString();
   }
@@ -2559,6 +2658,8 @@ typedef $$SchedulesTableCreateCompanionBuilder =
       required DateTime start,
       required DateTime end,
       required String scheduleData,
+      required double price,
+      required double greedyPrice,
     });
 typedef $$SchedulesTableUpdateCompanionBuilder =
     SchedulesCompanion Function({
@@ -2567,6 +2668,8 @@ typedef $$SchedulesTableUpdateCompanionBuilder =
       Value<DateTime> start,
       Value<DateTime> end,
       Value<String> scheduleData,
+      Value<double> price,
+      Value<double> greedyPrice,
     });
 
 final class $$SchedulesTableReferences
@@ -2617,6 +2720,16 @@ class $$SchedulesTableFilterComposer
 
   ColumnFilters<String> get scheduleData => $composableBuilder(
     column: $table.scheduleData,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get price => $composableBuilder(
+    column: $table.price,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get greedyPrice => $composableBuilder(
+    column: $table.greedyPrice,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2673,6 +2786,16 @@ class $$SchedulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get price => $composableBuilder(
+    column: $table.price,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get greedyPrice => $composableBuilder(
+    column: $table.greedyPrice,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$UserEVsTableOrderingComposer get userEvId {
     final $$UserEVsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2717,6 +2840,14 @@ class $$SchedulesTableAnnotationComposer
 
   GeneratedColumn<String> get scheduleData => $composableBuilder(
     column: $table.scheduleData,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+
+  GeneratedColumn<double> get greedyPrice => $composableBuilder(
+    column: $table.greedyPrice,
     builder: (column) => column,
   );
 
@@ -2777,12 +2908,16 @@ class $$SchedulesTableTableManager
                 Value<DateTime> start = const Value.absent(),
                 Value<DateTime> end = const Value.absent(),
                 Value<String> scheduleData = const Value.absent(),
+                Value<double> price = const Value.absent(),
+                Value<double> greedyPrice = const Value.absent(),
               }) => SchedulesCompanion(
                 id: id,
                 userEvId: userEvId,
                 start: start,
                 end: end,
                 scheduleData: scheduleData,
+                price: price,
+                greedyPrice: greedyPrice,
               ),
           createCompanionCallback:
               ({
@@ -2791,12 +2926,16 @@ class $$SchedulesTableTableManager
                 required DateTime start,
                 required DateTime end,
                 required String scheduleData,
+                required double price,
+                required double greedyPrice,
               }) => SchedulesCompanion.insert(
                 id: id,
                 userEvId: userEvId,
                 start: start,
                 end: end,
                 scheduleData: scheduleData,
+                price: price,
+                greedyPrice: greedyPrice,
               ),
           withReferenceMapper:
               (p0) =>
