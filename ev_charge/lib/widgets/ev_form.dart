@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/form_helper.dart';
@@ -28,6 +30,7 @@ class EVFormState extends State<EVForm> {
   TextEditingController maxChargingPowerController = TextEditingController();
 
   TextEditingController carModelController = TextEditingController();
+  int? selectedCarModelId;
 
   late formVM vm;
 
@@ -97,39 +100,43 @@ class EVFormState extends State<EVForm> {
           child: ListView(
             padding: const EdgeInsets.all(8),
             children: <Widget>[
-              FormHelper.inputField("Custom Name", false, userSetNameController, FormHelper.optionalStringValidator()),
-              FormHelper.inputField("Model", true, modelNameController, FormHelper.stringValidator()),
-              FormHelper.inputField("Model Year", true, modelYearController, FormHelper.intValidator()),
-              FormHelper.inputField("Battery Capacity (kWh)", true, batteryCapacityController, FormHelper.doubleValidator()),
-              FormHelper.inputField("Maximum Charging Power (kW)", true, maxChargingPowerController, FormHelper.doubleValidator()),
-              FormField<int>(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: FormHelper.dropdownSelectionValidator(),
-                    builder: (FormFieldState<int> state) {
-                      return DropdownMenu(
-                        label: Text("Select Car Model"),
-                        controller: carModelController,
-                        dropdownMenuEntries: getCarModelEntries(),
-                        //enableFilter: true,
-                        enableSearch: true,
-                        menuHeight: 200,
-                        errorText: state.errorText,
-                        onSelected: (value) {
-                          print(value);
-                          if (value != null) {
-                            state.didChange(value as int);
-                            _formKey.currentState!.validate(); // this will undo error message once user selects option
-                            setState(() {
-                              //selectedOption = value;
-                            });
+              FormHelper.inputField("Custom Name", true, userSetNameController, FormHelper.optionalStringValidator()),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                child: FormField<int>(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: FormHelper.dropdownSelectionValidator(),
+                  builder: (FormFieldState<int> state) {
+                    return DropdownMenu(
+                      label: Text("Select Car Model"),
+                      controller: carModelController,
+                      dropdownMenuEntries: getCarModelEntries(),
+                      menuHeight: 200,
+                      expandedInsets: EdgeInsets.zero,
+                      errorText: state.errorText,
+                      onSelected: (value) {
+                        print(value);
+                        if (value != null) {
+                          state.didChange(value as int);
+                          _formKey.currentState!.validate();
+                          setState(() {
+                            final selectedCarModel = vm.carmodels.where((carModel) => carModel.id == value).first;
+                            modelNameController.text = selectedCarModel.modelName.toString();
+                            modelYearController.text = selectedCarModel.modelYear.toString();
+                            batteryCapacityController.text = selectedCarModel.batteryCapacity.toString();
+                            maxChargingPowerController.text = selectedCarModel.maxChargingPower.toString();
+                            selectedCarModelId = value;
+                          });
                         }
-
-                    },
-                        
-                  );
-                }        
-                  
+                      },
+                    );
+                  },
+                ),
               ),
+              FormHelper.inputField("Model", false, modelNameController, null),
+              FormHelper.inputField("Model Year", false, modelYearController, null),
+              FormHelper.inputField("Battery Capacity (kWh)", false, batteryCapacityController, null),
+              FormHelper.inputField("Maximum Charging Power (kW)", false, maxChargingPowerController, null),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
@@ -145,6 +152,7 @@ class EVFormState extends State<EVForm> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                        print(carModelController.value);
                         if (_formKey.currentState!.validate()) {
                           if (widget.id == null) {
                             vm.addEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text);

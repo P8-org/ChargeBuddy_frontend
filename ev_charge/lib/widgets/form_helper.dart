@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 class FormHelper {
   static Padding inputField(
     String label,
-    bool required,
+    bool enabled,
     TextEditingController controller,
     String? Function(String?)? validator,
   ) {
@@ -11,30 +11,24 @@ class FormHelper {
       child: TextFormField(
         decoration: InputDecoration(
           border: UnderlineInputBorder(),
-          label: checkRequirement(label, required),
+          label: Text(label),
         ),
         validator: validator,
         controller: controller,
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        //readOnly: true,
+        enabled: checkState(enabled),
       ),
     );
   }
 
-  static checkRequirement(String label, bool required) {
-    if (required) {
-      return Row(
-        children: [
-          Text(label),
-          const Text('*', style: TextStyle(color: Colors.red)),
-        ],
-      );
+  static checkState(bool enabled) {
+    if (enabled) {
+      return true;
     } else {
-      return Row(
-        children: [
-          Text(label),
-        ],
-      );
+      return false;
     }
+
   }
 
   static String? Function(String?)? intValidator() {
@@ -92,4 +86,3 @@ class FormHelper {
     };
   }
 }
-
