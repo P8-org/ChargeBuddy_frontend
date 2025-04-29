@@ -1,23 +1,35 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:uuid/uuid.dart';
-
+import '../core/backend_service.dart';
+import '../providers/ev_providers.dart';
 enum CalendarViewType { day, week, month }
 
-class EventCalendarPage extends StatefulWidget {
+class EventCalendarPage extends ConsumerStatefulWidget{
+  final int id;
+
+  const EventCalendarPage({Key? key, required this.id}) : super(key: key);
+  
   @override
-  _EventCalendarPageState createState() => _EventCalendarPageState();
+  _EventCalendarPage createState() => _EventCalendarPage(); 
 }
 
-class _EventCalendarPageState extends State<EventCalendarPage> {
+class _EventCalendarPage extends ConsumerState<EventCalendarPage>{
   final EventController _eventController = EventController();
   CalendarViewType _currentView = CalendarViewType.day;
   final Map<String, List<CalendarEventData>> _groupedEvents = {};
 
   @override
+  void dispose() {
+    _eventController.dispose();
+    super.dispose();
+  }
+  
+  @override
   Widget build(BuildContext context) {
     Widget calendarView;
-
+    final evstate = ref.watch(singleEvDetailProvider(widget.id));
     switch (_currentView) {
       case CalendarViewType.day:
         calendarView = DayView(onEventTap: _handleEventTap);
@@ -33,50 +45,59 @@ class _EventCalendarPageState extends State<EventCalendarPage> {
     return CalendarControllerProvider(
       controller: _eventController,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Calendar View'),
-          actions: [
-            PopupMenuButton<CalendarViewType>(
-              icon: const Icon(Icons.calendar_view_day),
-              onSelected: (view) {
-                setState(() {
-                  _currentView = view;
-                });
-              },
-              itemBuilder:
-                  (context) => [
-                    const PopupMenuItem(
-                      value: CalendarViewType.day,
-                      child: Text("Day View"),
-                    ),
-                    const PopupMenuItem(
-                      value: CalendarViewType.week,
-                      child: Text("Week View"),
-                    ),
-                    const PopupMenuItem(
-                      value: CalendarViewType.month,
-                      child: Text("Month View"),
-                    ),
-                  ],
+        body: Column(
+          children: [
+            Expanded(
+              child: calendarView,
             ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FloatingActionButton(
+                  onPressed: () async {
+                    final uuid = const Uuid().v4();
+                    final result = await showDialog<List<CalendarEventData>>(
+                      context: context,
+                      builder: (_) => EventDialog(groupId: uuid),
+                    );
+                    if (result != null) {
+                  _groupedEvents[uuid] = result;
+                  for (final e in result) {
+                    _eventController.add(e);
+                  }
+                }
+                  },
+                  child: const Icon(Icons.add),
+                ),
+                const SizedBox(width: 16),
+                PopupMenuButton<CalendarViewType>(
+                icon: const Icon(Icons.calendar_view_day),
+                offset: const Offset(115,0),
+                onSelected: (view) {
+                  setState(() {
+                    _currentView = view;
+                  });
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: CalendarViewType.day,
+                    child: Text("Day View"),
+                  ),
+                  const PopupMenuItem(
+                    value: CalendarViewType.week,
+                    child: Text("Week View"),
+                  ),
+                  const PopupMenuItem(
+                    value: CalendarViewType.month,
+                    child: Text("Month View"),
+                  ),
+                ],
+              ),
+              ],
+            ),
+            const SizedBox(height: 16),
           ],
-        ),
-        body: calendarView,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final uuid = const Uuid().v4(); // Create unique group ID
-            final result = await showDialog<List<CalendarEventData>>(
-              context: context,
-              builder: (_) => EventDialog(groupId: uuid),
-            );
-            if (result != null) {
-              _groupedEvents[uuid] = result;
-              for (final e in result) {
-                _eventController.add(e);
-              }
-            }
-          },
-          child: const Icon(Icons.add),
         ),
       ),
     );
@@ -110,10 +131,7 @@ class _EventCalendarPageState extends State<EventCalendarPage> {
                 child: const Text("Cancel"),
               ),
               TextButton(
-                onPressed: () {
-                  for (final e in groupEvents) {
-                    _eventController.remove(e);
-                  }
+                onPressed: () { for (final e in groupEvents) { _eventController.remove(e); }
                   _groupedEvents.remove(groupId);
                   Navigator.pop(context);
                 },
@@ -138,6 +156,7 @@ class _EventDialogState extends State<EventDialog> {
   DateTime _start = DateTime.now();
   DateTime _end = DateTime.now().add(const Duration(hours: 1));
   double _minCharge = 50;
+  final backend_service = BackendService();
 
   Future<void> _selectDateTime(BuildContext context, bool isStart) async {
     final date = await showDatePicker(
@@ -246,7 +265,9 @@ class _EventDialogState extends State<EventDialog> {
   }
 
   final uuid = Uuid();
+FormatAndPostConstraint(){
 
+}
   List<CalendarEventData> splitMultiDayEvent({
     required String title,
     required DateTime start,
