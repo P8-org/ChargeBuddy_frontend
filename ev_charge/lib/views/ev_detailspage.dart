@@ -38,29 +38,36 @@ class EvDetailsPage extends ConsumerWidget {
                 : ev.state == "idle"
                 ? Colors.amber
                 : Colors.red;
+
         final chargingCurveData =
             ev.schedule.scheduleData
                 .split(',')
                 .map((e) => double.tryParse(e) ?? 0.0)
                 .toList();
+
         final padLength =
             ev.schedule.start
-                .difference(DateTime.now().add(Duration(hours: -1)))
+                .difference(DateTime.now().add(Duration(hours: 3)))
                 .inHours;
+
         final cumulativeChargingCurve = <double>[];
+
+        // add items to make the graph start from current hour
         for (var i = 0; i <= padLength; i++) {
           cumulativeChargingCurve.add(ev.schedule.startCharge);
         }
-        if (padLength > 0) {
-          for (var i = padLength; i < 0; i++) {
-            cumulativeChargingCurve.removeAt(0);
-          }
-        }
+
         double sum = ev.schedule.startCharge;
         for (final value in chargingCurveData) {
           sum += value;
           cumulativeChargingCurve.add(sum);
         }
+
+        // // remove 'old' data
+        // for (var i = padLength; i < 0; i++) {
+        //   cumulativeChargingCurve.removeAt(0);
+        // }
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('EV Details'),
