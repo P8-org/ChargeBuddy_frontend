@@ -64,9 +64,9 @@ class EvDetailsPage extends ConsumerWidget {
         }
 
         // // remove 'old' data
-        // for (var i = padLength; i < 0; i++) {
-        //   cumulativeChargingCurve.removeAt(0);
-        // }
+        for (var i = padLength; i < 0; i++) {
+          cumulativeChargingCurve.removeAt(0);
+        }
 
         return Scaffold(
           appBar: AppBar(
