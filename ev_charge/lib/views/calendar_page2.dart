@@ -59,7 +59,7 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage>{
                     final uuid = const Uuid().v4();
                     final result = await showDialog<List<CalendarEventData>>(
                       context: context,
-                      builder: (_) => EventDialog(groupId: uuid),
+                      builder: (_) => EventDialog(groupId: uuid, evId: widget.id, ),
                     );
                     if (result != null) {
                   _groupedEvents[uuid] = result;
@@ -145,7 +145,8 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage>{
 
 class EventDialog extends StatefulWidget {
   final String groupId;
-  const EventDialog({required this.groupId, super.key});
+  final int evId; 
+  const EventDialog({required this.groupId, super.key, required this.evId});
 
   @override
   _EventDialogState createState() => _EventDialogState();
@@ -248,7 +249,15 @@ class _EventDialogState extends State<EventDialog> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
+            try{
+              await backend_service.postConstraint(
+                evId: widget.evId,
+                start_time:_start,
+                deadline:_end,
+                targetPercentage:_minCharge.toDouble(),
+              );
+
             final events = splitMultiDayEvent(
               title: _titleController.text,
               start: _start,
@@ -257,6 +266,11 @@ class _EventDialogState extends State<EventDialog> {
               groupId: widget.groupId,
             );
             Navigator.pop(context, events);
+            } catch(e){
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Failed to add constraint: $e')),
+              );
+            }
           },
           child: const Text('Add Event'),
         ),
@@ -265,9 +279,6 @@ class _EventDialogState extends State<EventDialog> {
   }
 
   final uuid = Uuid();
-FormatAndPostConstraint(){
-
-}
   List<CalendarEventData> splitMultiDayEvent({
     required String title,
     required DateTime start,

@@ -41,6 +41,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
           constraint: models.Constraint(
             id: constraint.id,
             chargedBy: constraint.chargedBy,
+            startTime: constraint.startTime,
             targetPercentage: constraint.minPercentage,
           ),
           schedule: models.Schedule(
@@ -86,6 +87,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
       ),
       constraint: models.Constraint(
         id: constraint.id,
+        startTime: constraint.startTime,
         chargedBy: constraint.chargedBy,
         targetPercentage: constraint.minPercentage,
       ),

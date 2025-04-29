@@ -1,5 +1,6 @@
 class Constraint {
   final int id;
+  final DateTime startTime;
   final DateTime chargedBy;
   final double targetPercentage;
 
@@ -13,6 +14,7 @@ class Constraint {
   factory Constraint.fromJson(Map<String, dynamic> json) {
     return Constraint(
       id: json['id'],
+      startTime: DateTime.parse(json['start_time']??'string'),
       chargedBy: DateTime.parse(json['charged_by']),
       targetPercentage: json['target_percentage'],
     );

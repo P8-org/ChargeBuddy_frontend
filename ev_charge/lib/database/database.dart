@@ -33,6 +33,7 @@ class UserEVs extends Table {
 class Constraints extends Table {
   late final id = integer()();
   late final userEvId = integer().references(UserEVs, #id)();
+  late final startTime = dateTime()();
   late final chargedBy = dateTime()();
   late final minPercentage = real()();
 

@@ -88,6 +88,7 @@ class DbManager {
               ConstraintsCompanion.insert(
                 id: Value(ev.constraint.id),
                 userEvId: ev.id,
+                startTime: ev.constraint.startTime,
                 chargedBy: ev.constraint.chargedBy,
                 minPercentage: ev.constraint.targetPercentage,
               ),
