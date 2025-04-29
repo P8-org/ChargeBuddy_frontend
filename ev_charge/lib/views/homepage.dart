@@ -75,7 +75,8 @@ class HomePage extends ConsumerWidget {
                   );
                 }
                 return EvCard(ev: evs[index]);
-              },),
+              },
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

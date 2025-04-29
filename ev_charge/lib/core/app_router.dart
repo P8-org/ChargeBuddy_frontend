@@ -1,3 +1,4 @@
+import 'package:ev_charge/views/electricity_prices_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../views/homepage.dart';
@@ -42,6 +43,12 @@ final GoRouter router = GoRouter(
               },
             ),
           ],
+        ),
+        GoRoute(
+          path: "prices",
+          builder: (context, state) {
+            return ElectricityPricesPage();
+          },
         ),
       ],
     ),

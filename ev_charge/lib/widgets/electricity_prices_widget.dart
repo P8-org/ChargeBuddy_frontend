@@ -30,9 +30,28 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
     double barsWidth,
     double barsSpace,
   ) {
+    final avgPrice =
+        prices.map((e) => e.price).reduce((a, b) => a + b) / prices.length;
     return prices.asMap().entries.map((entry) {
       int index = entry.key;
       ElectricityPrices data = entry.value;
+      final barColor =
+          data.price > avgPrice * 1.33
+              ? Colors.redAccent
+              : data.price > avgPrice
+              ? Colors.amber
+              : Colors.lightGreen;
+
+      final BorderRadius borderRadius =
+          data.price > 0
+              ? BorderRadius.only(
+                topLeft: Radius.circular(6),
+                topRight: Radius.circular(6),
+              )
+              : BorderRadius.only(
+                bottomLeft: Radius.circular(6),
+                bottomRight: Radius.circular(6),
+              );
 
       return BarChartGroupData(
         x: index,
@@ -40,9 +59,21 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
         barRods: [
           BarChartRodData(
             toY: data.price,
-            color: data.barColor,
-            width: barsWidth.clamp(2.0, 20.0),
-            borderRadius: BorderRadius.zero,
+            color: barColor,
+            gradient: LinearGradient(
+              colors: [
+                barColor.withValues(
+                  red: barColor.r * 0.9,
+                  green: barColor.g * 0.9,
+                  blue: barColor.b * 0.9,
+                ),
+                barColor,
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+            width: barsWidth.clamp(2.0, 40.0),
+            borderRadius: borderRadius,
           ),
         ],
       );
@@ -62,7 +93,7 @@ class _ElectricityPricesWidgetState extends State<ElectricityPricesWidget> {
           return const Center(child: Text("No data available"));
         }
 
-        final prices = snapshot.data!.reversed.toList();
+        final prices = snapshot.data!;
 
         final minPrice = prices.map((e) => e.price).reduce(min);
         final maxPrice = prices.map((e) => e.price).reduce(max);

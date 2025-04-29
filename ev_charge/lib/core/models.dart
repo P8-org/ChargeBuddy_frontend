@@ -23,11 +23,13 @@ class Schedule {
   final DateTime start;
   final DateTime end;
   final String scheduleData;
+  final double startCharge;
 
   Schedule({
     required this.id,
     required this.start,
     required this.end,
+    required this.startCharge,
     required this.scheduleData,
   });
 
@@ -36,6 +38,7 @@ class Schedule {
       id: json['id'],
       start: DateTime.parse(json['start']),
       end: DateTime.parse(json['end']),
+      startCharge: json['start_charge'],
       scheduleData: json['schedule_data'],
     );
   }
@@ -95,7 +98,7 @@ class UserEV {
       id: json['id'],
       userSetName: json['user_set_name'],
       currentCharge: json['current_charge'],
-      state: json['state']?? 'charging',
+      state: json['state'] ?? 'charging',
       currentChargingPower: json['current_charging_power'],
       carModelId: json['car_model_id'],
       carModel: CarModel.fromJson(json['car_model']),

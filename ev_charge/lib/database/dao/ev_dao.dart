@@ -27,7 +27,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
           id: userEv.id,
           userSetName: userEv.userSetName,
           currentCharge: userEv.currentCharge,
-          currentChargingPower: 0,
+          currentChargingPower: userEv.currentChargePower,
           state: userEv.state,
           carModelId: userEv.carModelId,
           carModel: models.CarModel(
@@ -43,6 +43,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
             targetPercentage: constraint.minPercentage,
           ),
           schedule: models.Schedule(
+            startCharge: schedule.startCharge,
             id: schedule.id,
             start: schedule.start,
             end: schedule.end,
@@ -73,7 +74,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
       id: userEv.id,
       userSetName: userEv.userSetName,
       currentCharge: userEv.currentCharge,
-      currentChargingPower: 0,
+      currentChargingPower: userEv.currentChargePower,
       state: userEv.state,
       carModelId: userEv.carModelId,
       carModel: models.CarModel(
@@ -92,6 +93,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
         id: schedule.id,
         start: schedule.start,
         end: schedule.end,
+        startCharge: schedule.startCharge,
         scheduleData: schedule.scheduleData,
       ),
     );
