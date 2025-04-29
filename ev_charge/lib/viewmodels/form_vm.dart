@@ -5,34 +5,59 @@ import 'package:ev_charge/core/models.dart';
 class formVM extends ChangeNotifier {
   final BackendService _backendService;
   late UserEV _ev;
-  bool _loading = false;
-  bool _isError = false;
-  String _errorMessage = "";
+  List<CarModel> _carModels = List.empty();
+  bool _evLoading = false;
+  bool _evIsError = false;
+  String _evErrorMessage = "";
+  bool _carmodelLoading = false;
+  bool _carmodelIsError = false;
+  String _carmodelErrorMessage = "";
 
   formVM({BackendService? backendService})
     : _backendService = backendService ?? BackendService();
 
   UserEV get ev => _ev;
-  bool get loading => _loading;
-  bool get isError => _isError;
-  String get errorMessage => _errorMessage;
+  List<CarModel> get carmodels => _carModels;
+
+  bool get carmodelLoading => _carmodelLoading;
+  bool get carmodelIsError => _carmodelIsError;
+  String get carmodelErrorMessage => _carmodelErrorMessage;
+
+  bool get evLoading => _evLoading;
+  bool get evIsError => _evIsError;
+  String get evErrorMessage => _evErrorMessage;
 
   Future<void> getEv(int id) async {
-    _loading = true;
+    _evLoading = true;
     notifyListeners();
     try {
       _ev = await _backendService.getEvById(id);
-      _isError = false;
+      _evIsError = false;
     } catch (e) {
-      _isError = true;
-      _errorMessage = e.toString();
+      _evIsError = true;
+      _evErrorMessage = e.toString();
     } finally {
-      _loading = false;
+      _evLoading = false;
       notifyListeners();
     }
   }
 
-  void putEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower, int carModelId, int evId) async {
+  Future<void> getCarmodels() async {
+    _carmodelLoading = true;
+    notifyListeners();
+    try {
+      _carModels = await _backendService.getCarModels();
+      _carmodelIsError = false;
+    } catch (e) {
+      _carmodelIsError = true;
+      _carmodelErrorMessage = e.toString();
+    } finally {
+      _carmodelLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void putEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower, int carModelId, int evId, double currentCharge) async {
     final bs = BackendService();
     
     var carModel = CarModel(
@@ -51,7 +76,7 @@ class formVM extends ChangeNotifier {
     final userEv = UserEV(
       id: evId,
       userSetName: userSetName,
-      currentCharge: 0,
+      currentCharge: currentCharge,
       state: 'Not Charging',
       currentChargingPower: 0,
       carModelId: carModel.id,

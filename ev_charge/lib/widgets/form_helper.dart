@@ -82,5 +82,14 @@ class FormHelper {
       return null;
     };
   }
+
+  static String? Function(int?)? dropdownSelectionValidator() {
+    return (int? value) {
+      if (value == null) {
+        return 'Please select a model from the dropdown menu';
+      }
+      return null;
+    };
+  }
 }
 

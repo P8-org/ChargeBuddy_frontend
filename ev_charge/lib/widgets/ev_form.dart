@@ -27,6 +27,8 @@ class EVFormState extends State<EVForm> {
   TextEditingController userSetNameController = TextEditingController();
   TextEditingController maxChargingPowerController = TextEditingController();
 
+  TextEditingController carModelController = TextEditingController();
+
   late formVM vm;
 
   @override
@@ -36,6 +38,7 @@ class EVFormState extends State<EVForm> {
     if (widget.id != null) {
       vm.getEv(widget.id!);
     }
+    vm.getCarmodels();
   }
 
   ChangeNotifier getVM() {
@@ -70,13 +73,22 @@ class EVFormState extends State<EVForm> {
     return const Text('Save Changes');
   }
 
+  List<DropdownMenuEntry> getCarModelEntries() {
+    var carModelEntries = <DropdownMenuEntry>[];
+    for (final carModel in vm.carmodels) {
+      carModelEntries.add(DropdownMenuEntry(label: carModel.modelName, value: carModel.id));
+    }
+    return carModelEntries;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return ListenableBuilder(
-      listenable: getVM(),
+      listenable: vm,
       builder: (context, child) {
-        if (widget.id != null && vm.loading) {
+        if (vm.evLoading || vm.carmodelLoading) {
           return SizedBox();
         }
         initializeFields();
@@ -90,6 +102,34 @@ class EVFormState extends State<EVForm> {
               FormHelper.inputField("Model Year", true, modelYearController, FormHelper.intValidator()),
               FormHelper.inputField("Battery Capacity (kWh)", true, batteryCapacityController, FormHelper.doubleValidator()),
               FormHelper.inputField("Maximum Charging Power (kW)", true, maxChargingPowerController, FormHelper.doubleValidator()),
+              FormField<int>(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: FormHelper.dropdownSelectionValidator(),
+                    builder: (FormFieldState<int> state) {
+                      return DropdownMenu(
+                        label: Text("Select Car Model"),
+                        controller: carModelController,
+                        dropdownMenuEntries: getCarModelEntries(),
+                        //enableFilter: true,
+                        enableSearch: true,
+                        menuHeight: 200,
+                        errorText: state.errorText,
+                        onSelected: (value) {
+                          print(value);
+                          if (value != null) {
+                            state.didChange(value as int);
+                            _formKey.currentState!.validate(); // this will undo error message once user selects option
+                            setState(() {
+                              //selectedOption = value;
+                            });
+                        }
+
+                    },
+                        
+                  );
+                }        
+                  
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
@@ -109,7 +149,7 @@ class EVFormState extends State<EVForm> {
                           if (widget.id == null) {
                             vm.addEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text);
                           } else {
-                            vm.putEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text, vm.ev.carModelId, vm.ev.id);
+                            vm.putEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text, vm.ev.carModelId, vm.ev.id, vm.ev.currentCharge);
                           }
 
                           if (context.mounted) {
