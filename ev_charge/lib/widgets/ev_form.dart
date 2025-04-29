@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:ev_charge/core/models.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/form_helper.dart';
@@ -30,7 +31,7 @@ class EVFormState extends State<EVForm> {
   TextEditingController maxChargingPowerController = TextEditingController();
 
   TextEditingController carModelController = TextEditingController();
-  int? selectedCarModelId;
+  CarModel? selectedCarModel;
 
   late formVM vm;
 
@@ -54,12 +55,21 @@ class EVFormState extends State<EVForm> {
   void initializeFields() {
     if (widget.id == null) {
       return;
+    } else if (modelNameController.text.isEmpty) {
+      modelNameController.text = vm.ev.carModel.modelName;
+      modelYearController.text = vm.ev.carModel.modelYear.toString();
+      userSetNameController.text = vm.ev.userSetName;
+      batteryCapacityController.text = vm.ev.carModel.batteryCapacity.toString();
+      maxChargingPowerController.text = vm.ev.carModel.maxChargingPower.toString();
     }
-    modelNameController.text = vm.ev.carModel.modelName;
-    modelYearController.text = vm.ev.carModel.modelYear.toString();
-    userSetNameController.text = vm.ev.userSetName;
-    batteryCapacityController.text = vm.ev.carModel.batteryCapacity.toString();
-    maxChargingPowerController.text = vm.ev.carModel.maxChargingPower.toString();
+  }
+
+  getInitialSelection(){
+    if (widget.id == null) {
+      return null;
+    } else {
+      return vm.ev.carModel.id;
+    }
   }
 
   Text formSnackbarText() {
@@ -114,18 +124,17 @@ class EVFormState extends State<EVForm> {
                       menuHeight: 200,
                       expandedInsets: EdgeInsets.zero,
                       errorText: state.errorText,
+                      initialSelection: getInitialSelection(),
                       onSelected: (value) {
-                        print(value);
                         if (value != null) {
                           state.didChange(value as int);
                           _formKey.currentState!.validate();
                           setState(() {
-                            final selectedCarModel = vm.carmodels.where((carModel) => carModel.id == value).first;
-                            modelNameController.text = selectedCarModel.modelName.toString();
-                            modelYearController.text = selectedCarModel.modelYear.toString();
-                            batteryCapacityController.text = selectedCarModel.batteryCapacity.toString();
-                            maxChargingPowerController.text = selectedCarModel.maxChargingPower.toString();
-                            selectedCarModelId = value;
+                            selectedCarModel = vm.carmodels.where((carModel) => carModel.id == value).first;
+                            modelNameController.text = selectedCarModel!.modelName.toString();
+                            modelYearController.text = selectedCarModel!.modelYear.toString();
+                            batteryCapacityController.text = selectedCarModel!.batteryCapacity.toString();
+                            maxChargingPowerController.text = selectedCarModel!.maxChargingPower.toString();
                           });
                         }
                       },
@@ -152,12 +161,11 @@ class EVFormState extends State<EVForm> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        print(carModelController.value);
                         if (_formKey.currentState!.validate()) {
                           if (widget.id == null) {
-                            vm.addEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text);
+                            vm.addEv(userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text, selectedCarModel!);
                           } else {
-                            vm.putEv(modelNameController.text, modelYearController.text, userSetNameController.text, batteryCapacityController.text, maxChargingPowerController.text, vm.ev.carModelId, vm.ev.id, vm.ev.currentCharge);
+                            vm.putEv(userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text, selectedCarModel!, vm.ev.id, vm.ev.currentCharge);
                           }
 
                           if (context.mounted) {

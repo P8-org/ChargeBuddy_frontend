@@ -57,22 +57,9 @@ class formVM extends ChangeNotifier {
     }
   }
 
-  void putEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower, int carModelId, int evId, double currentCharge) async {
+  void putEv(String userSetName, CarModel carModel, int evId, double currentCharge) async {
     final bs = BackendService();
     
-    var carModel = CarModel(
-      id: carModelId,
-      modelName: modelName,
-      modelYear: int.parse(modelYear),
-      batteryCapacity: double.parse(batteryCapacity),
-      maxChargingPower: double.parse(maxChargingPower),
-    );
-    await bs.putCarModel(carModel);
-
-    if (userSetName == null || userSetName.isEmpty) {
-      userSetName = modelName;
-    }
-
     final userEv = UserEV(
       id: evId,
       userSetName: userSetName,
@@ -96,33 +83,8 @@ class formVM extends ChangeNotifier {
     await bs.putEv(userEv, evId);
   }
 
-  void addEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower) async {
+  void addEv(String userSetName, CarModel carModel) async {
     final bs = BackendService();
-    // Step 1: POST /carmodels + retrieve 'correct' carModelId from db
-    var carModel = CarModel(
-      id: 0,
-      modelName: modelName,
-      modelYear: int.parse(modelYear),
-      batteryCapacity: double.parse(batteryCapacity),
-      maxChargingPower: double.parse(maxChargingPower),
-    );
-    final carModelId = await bs.postCarModel(carModel);
-
-    // step 2: Create new carModel with an Id that points to the created carmodel on the db
-    carModel = CarModel(
-      id: carModelId,
-      modelName: modelName,
-      modelYear: int.parse(modelYear),
-      batteryCapacity: double.parse(batteryCapacity),
-      maxChargingPower: double.parse(maxChargingPower),
-    );
-
-    // step 3: Validate userSetName (its optional in the form but not on the DB)
-    if (userSetName == null || userSetName.isEmpty) {
-      userSetName = modelName;
-    }
-
-    // Step 4: create UserEV object + POST /evs
     final userEv = UserEV(
       id: 0,
       userSetName: userSetName,
