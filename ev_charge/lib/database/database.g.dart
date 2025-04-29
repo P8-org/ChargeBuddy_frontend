@@ -436,6 +436,17 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _currentChargePowerMeta =
+      const VerificationMeta('currentChargePower');
+  @override
+  late final GeneratedColumn<double> currentChargePower =
+      GeneratedColumn<double>(
+        'current_charge_power',
+        aliasedName,
+        false,
+        type: DriftSqlType.double,
+        requiredDuringInsert: true,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -443,6 +454,7 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     userSetName,
     currentCharge,
     state,
+    currentChargePower,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -500,6 +512,17 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     } else if (isInserting) {
       context.missing(_stateMeta);
     }
+    if (data.containsKey('current_charge_power')) {
+      context.handle(
+        _currentChargePowerMeta,
+        currentChargePower.isAcceptableOrUnknown(
+          data['current_charge_power']!,
+          _currentChargePowerMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_currentChargePowerMeta);
+    }
     return context;
   }
 
@@ -534,6 +557,11 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
             DriftSqlType.string,
             data['${effectivePrefix}state'],
           )!,
+      currentChargePower:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.double,
+            data['${effectivePrefix}current_charge_power'],
+          )!,
     );
   }
 
@@ -549,12 +577,14 @@ class UserEV extends DataClass implements Insertable<UserEV> {
   final String userSetName;
   final double currentCharge;
   final String state;
+  final double currentChargePower;
   const UserEV({
     required this.id,
     required this.carModelId,
     required this.userSetName,
     required this.currentCharge,
     required this.state,
+    required this.currentChargePower,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -564,6 +594,7 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     map['user_set_name'] = Variable<String>(userSetName);
     map['current_charge'] = Variable<double>(currentCharge);
     map['state'] = Variable<String>(state);
+    map['current_charge_power'] = Variable<double>(currentChargePower);
     return map;
   }
 
@@ -574,6 +605,7 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       userSetName: Value(userSetName),
       currentCharge: Value(currentCharge),
       state: Value(state),
+      currentChargePower: Value(currentChargePower),
     );
   }
 
@@ -588,6 +620,9 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       userSetName: serializer.fromJson<String>(json['userSetName']),
       currentCharge: serializer.fromJson<double>(json['currentCharge']),
       state: serializer.fromJson<String>(json['state']),
+      currentChargePower: serializer.fromJson<double>(
+        json['currentChargePower'],
+      ),
     );
   }
   @override
@@ -599,6 +634,7 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       'userSetName': serializer.toJson<String>(userSetName),
       'currentCharge': serializer.toJson<double>(currentCharge),
       'state': serializer.toJson<String>(state),
+      'currentChargePower': serializer.toJson<double>(currentChargePower),
     };
   }
 
@@ -608,12 +644,14 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     String? userSetName,
     double? currentCharge,
     String? state,
+    double? currentChargePower,
   }) => UserEV(
     id: id ?? this.id,
     carModelId: carModelId ?? this.carModelId,
     userSetName: userSetName ?? this.userSetName,
     currentCharge: currentCharge ?? this.currentCharge,
     state: state ?? this.state,
+    currentChargePower: currentChargePower ?? this.currentChargePower,
   );
   UserEV copyWithCompanion(UserEVsCompanion data) {
     return UserEV(
@@ -627,6 +665,10 @@ class UserEV extends DataClass implements Insertable<UserEV> {
               ? data.currentCharge.value
               : this.currentCharge,
       state: data.state.present ? data.state.value : this.state,
+      currentChargePower:
+          data.currentChargePower.present
+              ? data.currentChargePower.value
+              : this.currentChargePower,
     );
   }
 
@@ -637,14 +679,21 @@ class UserEV extends DataClass implements Insertable<UserEV> {
           ..write('carModelId: $carModelId, ')
           ..write('userSetName: $userSetName, ')
           ..write('currentCharge: $currentCharge, ')
-          ..write('state: $state')
+          ..write('state: $state, ')
+          ..write('currentChargePower: $currentChargePower')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, carModelId, userSetName, currentCharge, state);
+  int get hashCode => Object.hash(
+    id,
+    carModelId,
+    userSetName,
+    currentCharge,
+    state,
+    currentChargePower,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -653,7 +702,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
           other.carModelId == this.carModelId &&
           other.userSetName == this.userSetName &&
           other.currentCharge == this.currentCharge &&
-          other.state == this.state);
+          other.state == this.state &&
+          other.currentChargePower == this.currentChargePower);
 }
 
 class UserEVsCompanion extends UpdateCompanion<UserEV> {
@@ -662,12 +712,14 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
   final Value<String> userSetName;
   final Value<double> currentCharge;
   final Value<String> state;
+  final Value<double> currentChargePower;
   const UserEVsCompanion({
     this.id = const Value.absent(),
     this.carModelId = const Value.absent(),
     this.userSetName = const Value.absent(),
     this.currentCharge = const Value.absent(),
     this.state = const Value.absent(),
+    this.currentChargePower = const Value.absent(),
   });
   UserEVsCompanion.insert({
     this.id = const Value.absent(),
@@ -675,16 +727,19 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     required String userSetName,
     required double currentCharge,
     required String state,
+    required double currentChargePower,
   }) : carModelId = Value(carModelId),
        userSetName = Value(userSetName),
        currentCharge = Value(currentCharge),
-       state = Value(state);
+       state = Value(state),
+       currentChargePower = Value(currentChargePower);
   static Insertable<UserEV> custom({
     Expression<int>? id,
     Expression<int>? carModelId,
     Expression<String>? userSetName,
     Expression<double>? currentCharge,
     Expression<String>? state,
+    Expression<double>? currentChargePower,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -692,6 +747,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
       if (userSetName != null) 'user_set_name': userSetName,
       if (currentCharge != null) 'current_charge': currentCharge,
       if (state != null) 'state': state,
+      if (currentChargePower != null)
+        'current_charge_power': currentChargePower,
     });
   }
 
@@ -701,6 +758,7 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     Value<String>? userSetName,
     Value<double>? currentCharge,
     Value<String>? state,
+    Value<double>? currentChargePower,
   }) {
     return UserEVsCompanion(
       id: id ?? this.id,
@@ -708,6 +766,7 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
       userSetName: userSetName ?? this.userSetName,
       currentCharge: currentCharge ?? this.currentCharge,
       state: state ?? this.state,
+      currentChargePower: currentChargePower ?? this.currentChargePower,
     );
   }
 
@@ -729,6 +788,9 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     if (state.present) {
       map['state'] = Variable<String>(state.value);
     }
+    if (currentChargePower.present) {
+      map['current_charge_power'] = Variable<double>(currentChargePower.value);
+    }
     return map;
   }
 
@@ -739,7 +801,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
           ..write('carModelId: $carModelId, ')
           ..write('userSetName: $userSetName, ')
           ..write('currentCharge: $currentCharge, ')
-          ..write('state: $state')
+          ..write('state: $state, ')
+          ..write('currentChargePower: $currentChargePower')
           ..write(')'))
         .toString();
   }
@@ -1106,6 +1169,17 @@ class $SchedulesTable extends Schedules
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _startChargeMeta = const VerificationMeta(
+    'startCharge',
+  );
+  @override
+  late final GeneratedColumn<double> startCharge = GeneratedColumn<double>(
+    'start_charge',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _scheduleDataMeta = const VerificationMeta(
     'scheduleData',
   );
@@ -1123,6 +1197,7 @@ class $SchedulesTable extends Schedules
     userEvId,
     start,
     end,
+    startCharge,
     scheduleData,
   ];
   @override
@@ -1164,6 +1239,17 @@ class $SchedulesTable extends Schedules
     } else if (isInserting) {
       context.missing(_endMeta);
     }
+    if (data.containsKey('start_charge')) {
+      context.handle(
+        _startChargeMeta,
+        startCharge.isAcceptableOrUnknown(
+          data['start_charge']!,
+          _startChargeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_startChargeMeta);
+    }
     if (data.containsKey('schedule_data')) {
       context.handle(
         _scheduleDataMeta,
@@ -1204,6 +1290,11 @@ class $SchedulesTable extends Schedules
             DriftSqlType.dateTime,
             data['${effectivePrefix}end'],
           )!,
+      startCharge:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.double,
+            data['${effectivePrefix}start_charge'],
+          )!,
       scheduleData:
           attachedDatabase.typeMapping.read(
             DriftSqlType.string,
@@ -1223,12 +1314,14 @@ class Schedule extends DataClass implements Insertable<Schedule> {
   final int userEvId;
   final DateTime start;
   final DateTime end;
+  final double startCharge;
   final String scheduleData;
   const Schedule({
     required this.id,
     required this.userEvId,
     required this.start,
     required this.end,
+    required this.startCharge,
     required this.scheduleData,
   });
   @override
@@ -1238,6 +1331,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     map['user_ev_id'] = Variable<int>(userEvId);
     map['start'] = Variable<DateTime>(start);
     map['end'] = Variable<DateTime>(end);
+    map['start_charge'] = Variable<double>(startCharge);
     map['schedule_data'] = Variable<String>(scheduleData);
     return map;
   }
@@ -1248,6 +1342,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       userEvId: Value(userEvId),
       start: Value(start),
       end: Value(end),
+      startCharge: Value(startCharge),
       scheduleData: Value(scheduleData),
     );
   }
@@ -1262,6 +1357,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       userEvId: serializer.fromJson<int>(json['userEvId']),
       start: serializer.fromJson<DateTime>(json['start']),
       end: serializer.fromJson<DateTime>(json['end']),
+      startCharge: serializer.fromJson<double>(json['startCharge']),
       scheduleData: serializer.fromJson<String>(json['scheduleData']),
     );
   }
@@ -1273,6 +1369,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       'userEvId': serializer.toJson<int>(userEvId),
       'start': serializer.toJson<DateTime>(start),
       'end': serializer.toJson<DateTime>(end),
+      'startCharge': serializer.toJson<double>(startCharge),
       'scheduleData': serializer.toJson<String>(scheduleData),
     };
   }
@@ -1282,12 +1379,14 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     int? userEvId,
     DateTime? start,
     DateTime? end,
+    double? startCharge,
     String? scheduleData,
   }) => Schedule(
     id: id ?? this.id,
     userEvId: userEvId ?? this.userEvId,
     start: start ?? this.start,
     end: end ?? this.end,
+    startCharge: startCharge ?? this.startCharge,
     scheduleData: scheduleData ?? this.scheduleData,
   );
   Schedule copyWithCompanion(SchedulesCompanion data) {
@@ -1296,6 +1395,8 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       userEvId: data.userEvId.present ? data.userEvId.value : this.userEvId,
       start: data.start.present ? data.start.value : this.start,
       end: data.end.present ? data.end.value : this.end,
+      startCharge:
+          data.startCharge.present ? data.startCharge.value : this.startCharge,
       scheduleData:
           data.scheduleData.present
               ? data.scheduleData.value
@@ -1310,13 +1411,15 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           ..write('userEvId: $userEvId, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
+          ..write('startCharge: $startCharge, ')
           ..write('scheduleData: $scheduleData')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, userEvId, start, end, scheduleData);
+  int get hashCode =>
+      Object.hash(id, userEvId, start, end, startCharge, scheduleData);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1325,6 +1428,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           other.userEvId == this.userEvId &&
           other.start == this.start &&
           other.end == this.end &&
+          other.startCharge == this.startCharge &&
           other.scheduleData == this.scheduleData);
 }
 
@@ -1333,12 +1437,14 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
   final Value<int> userEvId;
   final Value<DateTime> start;
   final Value<DateTime> end;
+  final Value<double> startCharge;
   final Value<String> scheduleData;
   const SchedulesCompanion({
     this.id = const Value.absent(),
     this.userEvId = const Value.absent(),
     this.start = const Value.absent(),
     this.end = const Value.absent(),
+    this.startCharge = const Value.absent(),
     this.scheduleData = const Value.absent(),
   });
   SchedulesCompanion.insert({
@@ -1346,16 +1452,19 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     required int userEvId,
     required DateTime start,
     required DateTime end,
+    required double startCharge,
     required String scheduleData,
   }) : userEvId = Value(userEvId),
        start = Value(start),
        end = Value(end),
+       startCharge = Value(startCharge),
        scheduleData = Value(scheduleData);
   static Insertable<Schedule> custom({
     Expression<int>? id,
     Expression<int>? userEvId,
     Expression<DateTime>? start,
     Expression<DateTime>? end,
+    Expression<double>? startCharge,
     Expression<String>? scheduleData,
   }) {
     return RawValuesInsertable({
@@ -1363,6 +1472,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
       if (userEvId != null) 'user_ev_id': userEvId,
       if (start != null) 'start': start,
       if (end != null) 'end': end,
+      if (startCharge != null) 'start_charge': startCharge,
       if (scheduleData != null) 'schedule_data': scheduleData,
     });
   }
@@ -1372,6 +1482,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     Value<int>? userEvId,
     Value<DateTime>? start,
     Value<DateTime>? end,
+    Value<double>? startCharge,
     Value<String>? scheduleData,
   }) {
     return SchedulesCompanion(
@@ -1379,6 +1490,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
       userEvId: userEvId ?? this.userEvId,
       start: start ?? this.start,
       end: end ?? this.end,
+      startCharge: startCharge ?? this.startCharge,
       scheduleData: scheduleData ?? this.scheduleData,
     );
   }
@@ -1398,6 +1510,9 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     if (end.present) {
       map['end'] = Variable<DateTime>(end.value);
     }
+    if (startCharge.present) {
+      map['start_charge'] = Variable<double>(startCharge.value);
+    }
     if (scheduleData.present) {
       map['schedule_data'] = Variable<String>(scheduleData.value);
     }
@@ -1411,6 +1526,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
           ..write('userEvId: $userEvId, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
+          ..write('startCharge: $startCharge, ')
           ..write('scheduleData: $scheduleData')
           ..write(')'))
         .toString();
@@ -1749,6 +1865,7 @@ typedef $$UserEVsTableCreateCompanionBuilder =
       required String userSetName,
       required double currentCharge,
       required String state,
+      required double currentChargePower,
     });
 typedef $$UserEVsTableUpdateCompanionBuilder =
     UserEVsCompanion Function({
@@ -1757,6 +1874,7 @@ typedef $$UserEVsTableUpdateCompanionBuilder =
       Value<String> userSetName,
       Value<double> currentCharge,
       Value<String> state,
+      Value<double> currentChargePower,
     });
 
 final class $$UserEVsTableReferences
@@ -1845,6 +1963,11 @@ class $$UserEVsTableFilterComposer
 
   ColumnFilters<String> get state => $composableBuilder(
     column: $table.state,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get currentChargePower => $composableBuilder(
+    column: $table.currentChargePower,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1951,6 +2074,11 @@ class $$UserEVsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get currentChargePower => $composableBuilder(
+    column: $table.currentChargePower,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$EVCarModelsTableOrderingComposer get carModelId {
     final $$EVCarModelsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1999,6 +2127,11 @@ class $$UserEVsTableAnnotationComposer
 
   GeneratedColumn<String> get state =>
       $composableBuilder(column: $table.state, builder: (column) => column);
+
+  GeneratedColumn<double> get currentChargePower => $composableBuilder(
+    column: $table.currentChargePower,
+    builder: (column) => column,
+  );
 
   $$EVCarModelsTableAnnotationComposer get carModelId {
     final $$EVCarModelsTableAnnotationComposer composer = $composerBuilder(
@@ -2111,12 +2244,14 @@ class $$UserEVsTableTableManager
                 Value<String> userSetName = const Value.absent(),
                 Value<double> currentCharge = const Value.absent(),
                 Value<String> state = const Value.absent(),
+                Value<double> currentChargePower = const Value.absent(),
               }) => UserEVsCompanion(
                 id: id,
                 carModelId: carModelId,
                 userSetName: userSetName,
                 currentCharge: currentCharge,
                 state: state,
+                currentChargePower: currentChargePower,
               ),
           createCompanionCallback:
               ({
@@ -2125,12 +2260,14 @@ class $$UserEVsTableTableManager
                 required String userSetName,
                 required double currentCharge,
                 required String state,
+                required double currentChargePower,
               }) => UserEVsCompanion.insert(
                 id: id,
                 carModelId: carModelId,
                 userSetName: userSetName,
                 currentCharge: currentCharge,
                 state: state,
+                currentChargePower: currentChargePower,
               ),
           withReferenceMapper:
               (p0) =>
@@ -2558,6 +2695,7 @@ typedef $$SchedulesTableCreateCompanionBuilder =
       required int userEvId,
       required DateTime start,
       required DateTime end,
+      required double startCharge,
       required String scheduleData,
     });
 typedef $$SchedulesTableUpdateCompanionBuilder =
@@ -2566,6 +2704,7 @@ typedef $$SchedulesTableUpdateCompanionBuilder =
       Value<int> userEvId,
       Value<DateTime> start,
       Value<DateTime> end,
+      Value<double> startCharge,
       Value<String> scheduleData,
     });
 
@@ -2612,6 +2751,11 @@ class $$SchedulesTableFilterComposer
 
   ColumnFilters<DateTime> get end => $composableBuilder(
     column: $table.end,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get startCharge => $composableBuilder(
+    column: $table.startCharge,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2668,6 +2812,11 @@ class $$SchedulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get startCharge => $composableBuilder(
+    column: $table.startCharge,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get scheduleData => $composableBuilder(
     column: $table.scheduleData,
     builder: (column) => ColumnOrderings(column),
@@ -2714,6 +2863,11 @@ class $$SchedulesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get end =>
       $composableBuilder(column: $table.end, builder: (column) => column);
+
+  GeneratedColumn<double> get startCharge => $composableBuilder(
+    column: $table.startCharge,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get scheduleData => $composableBuilder(
     column: $table.scheduleData,
@@ -2776,12 +2930,14 @@ class $$SchedulesTableTableManager
                 Value<int> userEvId = const Value.absent(),
                 Value<DateTime> start = const Value.absent(),
                 Value<DateTime> end = const Value.absent(),
+                Value<double> startCharge = const Value.absent(),
                 Value<String> scheduleData = const Value.absent(),
               }) => SchedulesCompanion(
                 id: id,
                 userEvId: userEvId,
                 start: start,
                 end: end,
+                startCharge: startCharge,
                 scheduleData: scheduleData,
               ),
           createCompanionCallback:
@@ -2790,12 +2946,14 @@ class $$SchedulesTableTableManager
                 required int userEvId,
                 required DateTime start,
                 required DateTime end,
+                required double startCharge,
                 required String scheduleData,
               }) => SchedulesCompanion.insert(
                 id: id,
                 userEvId: userEvId,
                 start: start,
                 end: end,
+                startCharge: startCharge,
                 scheduleData: scheduleData,
               ),
           withReferenceMapper:

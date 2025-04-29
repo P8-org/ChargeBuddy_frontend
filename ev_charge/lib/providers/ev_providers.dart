@@ -6,7 +6,7 @@ import '../main.dart';
 
 final evDaoProvider = Provider<EvDao>((ref) {
   final db = ref.watch(dbProvider); // global DB from main.dart
-  return EvDao(db);                  // DAO depends on AppDatabase
+  return EvDao(db); // DAO depends on AppDatabase
 });
 
 final allUserEvsProvider = StreamProvider<List<UserEV>>((ref) {
@@ -14,7 +14,10 @@ final allUserEvsProvider = StreamProvider<List<UserEV>>((ref) {
   return dao.watchUserEVsWithDetails(); // exposes the DAO's stream
 });
 
-final singleEvDetailProvider = FutureProvider.family<UserEV?, int>((ref, id) async {
+final singleEvDetailProvider = FutureProvider.family<UserEV?, int>((
+  ref,
+  id,
+) async {
   final dao = ref.watch(evDaoProvider);
   return await dao.getSingleEVWithDetails(id);
 });

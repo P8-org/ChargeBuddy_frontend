@@ -57,12 +57,10 @@ class _ChargingCurveState extends State<ChargingCurve> {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 12);
+    final hour = DateTime.now().add(Duration(hours: value.toInt())).hour;
 
-    if (value % 3 == 0) {
-      return SideTitleWidget(
-        meta: meta,
-        child: Text('${value.toInt()}:00', style: style),
-      );
+    if (value % 2 == 0) {
+      return SideTitleWidget(meta: meta, child: Text('$hour:00', style: style));
     }
 
     return const SizedBox.shrink(); // Hide other labels
@@ -90,7 +88,9 @@ class _ChargingCurveState extends State<ChargingCurve> {
           tooltipRoundedRadius: 8,
           getTooltipItems: (touchedSpots) {
             return touchedSpots.map((spot) {
-              final time = '${spot.x.toInt().toString().padLeft(2, '0')}:00';
+              final time =
+                  "${DateTime.now().add(Duration(hours: spot.x.toInt())).hour}:00";
+
               final percentage = '${spot.y.toStringAsFixed(0)}%';
               return LineTooltipItem(
                 '$time\n$percentage',
@@ -149,16 +149,15 @@ class _ChargingCurveState extends State<ChargingCurve> {
         border: Border.all(color: const Color(0xff37434d)),
       ),
       minX: 0,
-      maxX: 23,
+      maxX: widget.chargingData.length.toDouble() - 1,
       minY: 0,
       maxY: 100,
       lineBarsData: [
         LineChartBarData(
           spots: widget.chargingData,
-          isCurved: true,
           gradient: LinearGradient(colors: gradientColors),
           barWidth: 5,
-          isStrokeCapRound: true,
+          isStrokeCapRound: false,
           dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,

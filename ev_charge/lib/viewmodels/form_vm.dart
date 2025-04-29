@@ -65,6 +65,7 @@ class formVM extends ChangeNotifier {
         id: 0,
         start: DateTime.now(),
         end: DateTime.now(),
+        startCharge: 20, // change value
         scheduleData: 'n/a',
       ),
     );
@@ -115,6 +116,7 @@ class formVM extends ChangeNotifier {
         id: 0,
         start: DateTime.now(),
         end: DateTime.now(),
+        startCharge: 20, // change value
         scheduleData: 'n/a',
       ),
     );
