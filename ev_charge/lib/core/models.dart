@@ -5,6 +5,7 @@ class Constraint {
 
   Constraint({
     required this.id,
+    required this.startTime,
     required this.chargedBy,
     required this.targetPercentage,
   });
