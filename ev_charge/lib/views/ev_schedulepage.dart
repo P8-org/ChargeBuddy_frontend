@@ -30,6 +30,7 @@ class _EvSchedulePageState extends State<EvSchedulePage> {
               ),
             ),
           ),
+
           Expanded(
               child: EventCalendarPage(id: widget.id)               
           ),

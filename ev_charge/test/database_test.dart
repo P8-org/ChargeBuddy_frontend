@@ -36,6 +36,7 @@ void main() {
             userSetName: 'Test Car',
             currentCharge: 40.0,
             state: 'charging',
+            currentChargePower: 0,
           ),
         );
 

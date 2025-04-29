@@ -25,6 +25,7 @@ class UserEVs extends Table {
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
   late final state = text()();
+  late final currentChargePower = real()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};
@@ -47,6 +48,8 @@ class Schedules extends Table {
 
   late final start = dateTime()();
   late final end = dateTime()();
+
+  late final startCharge = real()();
 
   late final scheduleData = text()();
 
