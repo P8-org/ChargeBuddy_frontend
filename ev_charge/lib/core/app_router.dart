@@ -32,7 +32,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: 'edit_ev/:id',
           builder: (BuildContext context, GoRouterState state) {
-            var id = int.parse(state.pathParameters["id"]!);
+            final id = int.parse(state.pathParameters["id"]!);
             return EVEdit(id: id);
           }
         ),
