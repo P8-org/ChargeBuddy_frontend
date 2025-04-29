@@ -16,19 +16,9 @@ class FormHelper {
         validator: validator,
         controller: controller,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        //readOnly: true,
-        enabled: checkState(enabled),
+        enabled: enabled,
       ),
     );
-  }
-
-  static checkState(bool enabled) {
-    if (enabled) {
-      return true;
-    } else {
-      return false;
-    }
-
   }
 
   static String? Function(String?)? optionalStringValidator() {
