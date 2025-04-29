@@ -43,13 +43,6 @@ class EVFormState extends State<EVForm> {
     vm.getCarmodels();
   }
 
-  ChangeNotifier getVM() {
-    if (widget.id == null) {
-      return ChangeNotifier();
-    }
-    return vm;
-  }
-
   void initializeFields() {
     if (widget.id == null) {
       return;
@@ -89,7 +82,6 @@ class EVFormState extends State<EVForm> {
         .map((car) => DropdownMenuEntry(value: car.id, label: car.modelName))
         .toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
