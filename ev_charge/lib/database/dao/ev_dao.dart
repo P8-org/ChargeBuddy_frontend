@@ -1,4 +1,3 @@
-// lib/database/dao/ev_dao.dart
 import 'package:drift/drift.dart';
 
 import '../../core/models.dart' as models;
@@ -8,7 +7,7 @@ part 'ev_dao.g.dart';
 
 @DriftAccessor(tables: [UserEVs, EVCarModels, Constraints, Schedules])
 class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
-  EvDao(AppDatabase db) : super(db);
+  EvDao(super.db);
 
   Stream<List<models.UserEV>> watchUserEVsWithDetails() {
     final query = select(userEVs).join([
@@ -28,7 +27,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
           id: userEv.id,
           userSetName: userEv.userSetName,
           currentCharge: userEv.currentCharge,
-          currentChargingPower: 0,
+          currentChargingPower: userEv.currentChargePower,
           state: userEv.state,
           carModelId: userEv.carModelId,
           carModel: models.CarModel(
@@ -44,6 +43,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
             targetPercentage: constraint.minPercentage,
           ),
           schedule: models.Schedule(
+            startCharge: schedule.startCharge,
             id: schedule.id,
             start: schedule.start,
             end: schedule.end,
@@ -74,7 +74,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
       id: userEv.id,
       userSetName: userEv.userSetName,
       currentCharge: userEv.currentCharge,
-      currentChargingPower: 0,
+      currentChargingPower: userEv.currentChargePower,
       state: userEv.state,
       carModelId: userEv.carModelId,
       carModel: models.CarModel(
@@ -93,6 +93,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
         id: schedule.id,
         start: schedule.start,
         end: schedule.end,
+        startCharge: schedule.startCharge,
         scheduleData: schedule.scheduleData,
       ),
     );

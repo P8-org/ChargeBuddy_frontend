@@ -29,6 +29,7 @@ class _EvSchedulePageState extends State<EvSchedulePage> {
               ),
             ),
           ),
+
           Expanded(
             child: Container(
               width: double.infinity,
