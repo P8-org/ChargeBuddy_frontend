@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:ev_charge/core/models.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
