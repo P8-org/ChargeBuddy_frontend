@@ -85,11 +85,9 @@ class EVFormState extends State<EVForm> {
   }
 
   List<DropdownMenuEntry> getCarModelEntries() {
-    var carModelEntries = <DropdownMenuEntry>[];
-    for (final carModel in vm.carmodels) {
-      carModelEntries.add(DropdownMenuEntry(label: carModel.modelName, value: carModel.id));
-    }
-    return carModelEntries;
+    return vm.carmodels
+        .map((car) => DropdownMenuEntry(value: car.id, label: car.modelName))
+        .toList();
   }
 
 
