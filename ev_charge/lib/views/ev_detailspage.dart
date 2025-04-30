@@ -123,7 +123,7 @@ class EvDetailsPage extends ConsumerWidget {
                   builder: (context, value, child) {
                     return BatteryLevelCircle(
                       value: value,
-                      limitValue: ev.constraint.targetPercentage,
+                      limitValue: 200,
                       height: 300,
                       width: 300,
                       strokeWidth: 30,
