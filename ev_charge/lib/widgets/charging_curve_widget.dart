@@ -32,7 +32,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         const Padding(
-          padding: EdgeInsets.only(bottom: 4.0),
+          padding: EdgeInsets.only(bottom: 8.0),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -48,10 +48,10 @@ class _ChargingCurveState extends State<ChargingCurve> {
           aspectRatio: 1.70,
           child: Padding(
             padding: const EdgeInsets.only(
-              right: 18,
-              left: 12,
+              right: 32,
+              left: 18,
               top: 0,
-              bottom: 12,
+              bottom: 32,
             ),
             child: LineChart(mainData()),
           ),
@@ -61,18 +61,14 @@ class _ChargingCurveState extends State<ChargingCurve> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 12);
+    const style = TextStyle(fontWeight: FontWeight.w600, fontSize: 12);
     final hour = DateTime.now().add(Duration(hours: value.toInt())).hour;
 
-    if (value % 2 == 0) {
-      return SideTitleWidget(meta: meta, child: Text('$hour:00', style: style));
-    }
-
-    return const SizedBox.shrink(); // Hide other labels
+    return SideTitleWidget(meta: meta, child: Text('$hour:00', style: style));
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 15);
+    const style = TextStyle(fontWeight: FontWeight.w600, fontSize: 15);
     String text;
     if (value % 20 == 0) {
       text = '${value.toInt()}%';
@@ -114,8 +110,8 @@ class _ChargingCurveState extends State<ChargingCurve> {
         horizontalInterval: 20,
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: AppColors.mainGridLineColor,
+          return FlLine(
+            color: Theme.of(context).dividerColor.withAlpha(100),
             strokeWidth: 1,
           );
         },
@@ -136,8 +132,9 @@ class _ChargingCurveState extends State<ChargingCurve> {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
-            interval: 1,
+            interval: _calcInterval(),
             getTitlesWidget: bottomTitleWidgets,
+            maxIncluded: false,
           ),
         ),
         leftTitles: AxisTitles(
@@ -150,13 +147,15 @@ class _ChargingCurveState extends State<ChargingCurve> {
         ),
       ),
       borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
+        show: false,
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withAlpha(100),
+        ),
       ),
       minX: 0,
       maxX: widget.chargingData.length.toDouble() - 1,
-      minY: 0,
-      maxY: 100,
+      minY: -0.001,
+      maxY: 100.001,
       lineBarsData: [
         LineChartBarData(
           spots: widget.chargingData,
@@ -180,10 +179,19 @@ class _ChargingCurveState extends State<ChargingCurve> {
           VerticalLine(
             x: widget.currentX,
             color: Colors.grey,
+            dashArray: [5],
             label: VerticalLineLabel(show: true, labelResolver: (p0) => "Now"),
           ),
         ],
       ),
     );
+  }
+
+  double _calcInterval() {
+    double chartWidth = MediaQuery.of(context).size.width - 50;
+    double approxLabelWidth = 50;
+    int maxLabels = (chartWidth / approxLabelWidth).floor();
+    double interval = (widget.chargingData.length / maxLabels).ceilToDouble();
+    return interval < 1 ? 1 : interval;
   }
 }

@@ -167,7 +167,7 @@ class EvDetailsPage extends ConsumerWidget {
   // used to get the x-coordinate for the vertical line at the current time
   double getNowX(UserEV ev, List<double> cumulativeChargingCurve) {
     final totalDuration =
-        ev.schedule.end.difference(ev.schedule.start).inSeconds + 3600;
+        ev.schedule.end.difference(ev.schedule.start).inSeconds + 3600 * 2;
     final currentDuration =
         DateTime.now().difference(ev.schedule.start).inSeconds + 3600;
 
