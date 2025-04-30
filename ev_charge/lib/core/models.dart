@@ -81,7 +81,7 @@ class UserEV {
   final double currentChargingPower;
   final int carModelId;
   final CarModel carModel;
-  final Constraint constraint;
+  final List<Constraint> constraints;
   final Schedule schedule;
 
   UserEV({
@@ -92,7 +92,7 @@ class UserEV {
     required this.currentChargingPower,
     required this.carModelId,
     required this.carModel,
-    required this.constraint,
+    required this.constraints,
     required this.schedule,
   });
 
@@ -105,7 +105,9 @@ class UserEV {
       currentChargingPower: json['current_charging_power'],
       carModelId: json['car_model_id'],
       carModel: CarModel.fromJson(json['car_model']),
-      constraint: Constraint.fromJson(json['constraint']),
+      constraints: (json['constraints'] as List)
+      .map((c)=> Constraint.fromJson(c)) 
+      .toList();
       schedule: Schedule.fromJson(json['schedule']),
     );
   }
