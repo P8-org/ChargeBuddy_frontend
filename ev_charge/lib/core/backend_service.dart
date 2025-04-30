@@ -43,28 +43,6 @@ class BackendService {
       );
     }
   }
-
-  Future<void> postConstraint(
-    int evId,
-    DateTime deadline,
-    double targetPercentage,
-  ) async {
-    final uri = Uri.parse("$baseUrl/evs/$evId/constraints");
-    final response = await client.patch(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'deadline': deadline.toIso8601String(),
-        'target_percentage': targetPercentage,
-      }),
-    );
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw HttpException(
-        'Http error ${response.statusCode}: ${response.body}',
-        uri: uri,
-      );
-    }
-  }
   Future<void> postConstraint({
     required int evId,
     required DateTime start_time,

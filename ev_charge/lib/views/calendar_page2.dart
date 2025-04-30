@@ -255,7 +255,7 @@ class _EventDialogState extends State<EventDialog> {
                 evId: widget.evId,
                 start_time:_start,
                 deadline:_end,
-                targetPercentage:_minCharge.toDouble(),
+                targetPercentage:_minCharge.toDouble()/100,
               );
 
             final events = splitMultiDayEvent(
