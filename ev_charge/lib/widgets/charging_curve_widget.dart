@@ -9,7 +9,12 @@ class AppColors {
 
 class ChargingCurve extends StatefulWidget {
   final List<FlSpot> chargingData;
-  const ChargingCurve({super.key, required this.chargingData});
+  final double currentX;
+  const ChargingCurve({
+    super.key,
+    required this.chargingData,
+    required this.currentX,
+  });
 
   @override
   State<ChargingCurve> createState() => _ChargingCurveState();
@@ -170,6 +175,15 @@ class _ChargingCurveState extends State<ChargingCurve> {
           ),
         ),
       ],
+      extraLinesData: ExtraLinesData(
+        verticalLines: [
+          VerticalLine(
+            x: widget.currentX,
+            color: Colors.grey,
+            label: VerticalLineLabel(show: true, labelResolver: (p0) => "Now"),
+          ),
+        ],
+      ),
     );
   }
 }

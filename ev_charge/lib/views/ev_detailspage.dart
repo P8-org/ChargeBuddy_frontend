@@ -1,4 +1,5 @@
 import 'package:ev_charge/core/backend_service.dart';
+import 'package:ev_charge/core/models.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
 import 'package:ev_charge/widgets/charging_curve_widget.dart';
@@ -45,28 +46,18 @@ class EvDetailsPage extends ConsumerWidget {
                 .map((e) => double.tryParse(e) ?? 0.0)
                 .toList();
 
-        final padLength =
-            ev.schedule.start
-                .difference(DateTime.now().add(Duration(hours: -1)))
-                .inHours;
-
         final cumulativeChargingCurve = <double>[];
 
         // add items to make the graph start from current hour
-        for (var i = 0; i <= padLength; i++) {
-          cumulativeChargingCurve.add(ev.schedule.startCharge);
-        }
+        cumulativeChargingCurve.add(ev.schedule.startCharge);
+        cumulativeChargingCurve.add(ev.schedule.startCharge);
 
         double sum = ev.schedule.startCharge;
         for (final value in chargingCurveData) {
           sum += value;
           cumulativeChargingCurve.add(sum);
         }
-
-        // // remove 'old' data
-        for (var i = padLength; i < 0; i++) {
-          cumulativeChargingCurve.removeAt(0);
-        }
+        double currentX = getNowX(ev, cumulativeChargingCurve);
 
         return Scaffold(
           appBar: AppBar(
@@ -153,6 +144,7 @@ class EvDetailsPage extends ConsumerWidget {
                 SizedBox(height: 16),
                 if (ev.schedule.end.isAfter(DateTime.now()))
                   ChargingCurve(
+                    currentX: currentX,
                     chargingData: List.generate(
                       cumulativeChargingCurve.length,
                       (index) => FlSpot(
@@ -170,5 +162,17 @@ class EvDetailsPage extends ConsumerWidget {
         );
       },
     );
+  }
+
+  // used to get the x-coordinate for the vertical line at the current time
+  double getNowX(UserEV ev, List<double> cumulativeChargingCurve) {
+    final totalDuration =
+        ev.schedule.end.difference(ev.schedule.start).inSeconds + 3600;
+    final currentDuration =
+        DateTime.now().difference(ev.schedule.start).inSeconds + 3600;
+
+    final progress = currentDuration / totalDuration;
+    final currentX = progress * cumulativeChargingCurve.length;
+    return currentX;
   }
 }
