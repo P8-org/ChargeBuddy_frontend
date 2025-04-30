@@ -16,11 +16,12 @@ class BackendService {
   Future<List<CarModel>> getCarModels() async {
     final uri = Uri.parse("$baseUrl/carmodels");
     final response = await client.get(uri);
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      return (jsonData as List).map((item) => CarModel.fromJson(item)).toList();
+    } else {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
-    }
-    final jsonData = jsonDecode(response.body);
-    return (jsonData as List).map((item) => CarModel.fromJson(item)).toList();
+    }    
   }
 
   Future<List<UserEV>> getEvs() async {

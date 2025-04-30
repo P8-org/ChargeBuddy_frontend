@@ -1,8 +1,17 @@
+import 'package:drift/drift.dart';
 import 'package:ev_charge/core/models.dart';
+import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/form_helper.dart';
 import 'package:ev_charge/viewmodels/form_vm.dart';
+
+import 'package:ev_charge/core/backend_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:ev_charge/main.dart';
+
 
 class EVForm extends StatefulWidget {
   const EVForm({super.key, this.id});
@@ -33,12 +42,24 @@ class EVFormState extends State<EVForm> {
 
   late formVM vm;
 
+  final client = http.Client();
+  
+  Future<UserEV?>? futureUserEv;
+  late Future<List<CarModel>> futureCarModels;
+  List<CarModel> carModels = List.empty();
+
   @override
   void initState() {
     super.initState();
+
+    final client = http.Client();
+    final bs = BackendService(client: client);
+    futureCarModels = bs.getCarModels();
+
     vm = formVM();
     if (widget.id != null) {
       vm.getEv(widget.id!);
+      futureUserEv = bs.getEvById(widget.id!);
     }
     vm.getCarmodels();
   }
@@ -88,20 +109,49 @@ class EVFormState extends State<EVForm> {
   }
 
   List<DropdownMenuEntry> getCarModelEntries() {
-    return vm.carmodels
+    return carModels
         .map((car) => DropdownMenuEntry(value: car.id, label: car.modelName))
         .toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final ev = ProviderScope.containerOf(context).read(singleEvDetailProvider(widget.id!));
+    print('${ev}');
+
+    final dao = ProviderScope.containerOf(context).read(evDaoProvider);
+    final models = dao.eVCarModels.all();
+    print('${models.get()}');
+    
     // Build a Form widget using the _formKey created above.
-    return ListenableBuilder(
-      listenable: vm,
+    return FutureBuilder<List<Object>>(
+      //listenable: vm,
+      future: futureCarModels,
       builder: (context, child) {
-        if (vm.evLoading || vm.carmodelLoading) {
-          return SizedBox();
+        // if (child.data == null) {
+        //   return const Center(child: Text("No DB connection"));
+        // }
+        // else if (child.data == null || child.connectionState == ConnectionState.waiting) {
+        //   return const Center(child: CircularProgressIndicator());      
+        // } else if (child.hasError) {
+        //   Center(child: Text('Error: ${child.error}'));
+        // } else if (!child.hasData || child.data == null) {
+        //   return const Center(child: Text("No data available"));
+        // } else if (child.hasData == true) {
+        //   final carModels = child.data!;
+        // }
+        switch (child.connectionState) {
+          case ConnectionState.waiting:
+            return const Center(child: CircularProgressIndicator());
+          default:
+            if (child.hasError)
+              return Text('Error: ${child.error}');
+            else {
+              carModels = child.data!.cast();
+              break;
+            }
         }
+        
         initializeFields();
         return Form(
           key: _formKey,
