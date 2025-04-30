@@ -84,18 +84,21 @@ class DbManager {
               ),
             );
 
-        await db
-            .into(db.constraints)
-            .insertOnConflictUpdate(
-              ConstraintsCompanion.insert(
-                id: Value(ev.constraint.id),
-                userEvId: ev.id,
-                startTime: ev.constraint.startTime,
-                chargedBy: ev.constraint.chargedBy,
-                minPercentage: ev.constraint.targetPercentage,
-              ),
-            );
-      }
+        for (final constraint in ev.constraints) {
+          await db
+              .into(db.constraints)
+              .insertOnConflictUpdate(
+                ConstraintsCompanion.insert(
+                  id: Value(constraint.id),
+                  userEvId: ev.id,
+                  startTime: constraint.startTime,
+                  chargedBy: constraint.chargedBy,
+                  minPercentage: constraint.targetPercentage,
+                ),
+              );
+        }
+        }
+
 
       if (kDebugMode) print('[Update] Database updated.');
     } catch (e) {
