@@ -70,7 +70,6 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
         await (select(schedules)
           ..where((t) => t.userEvId.equals(userEv.id))).getSingle();
           
-    print('getSingle: ${userEv.userSetName}');
     return models.UserEV(
       id: userEv.id,
       userSetName: userEv.userSetName,

@@ -1,64 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/core/models.dart';
-import 'package:http/http.dart';
 
 class formVM extends ChangeNotifier {
   final BackendService _backendService;
-  late UserEV _ev;
-  List<CarModel> _carModels = List.empty();
-  bool _evLoading = false;
-  bool _evIsError = false;
-  String _evErrorMessage = "";
-  bool _carmodelLoading = false;
-  bool _carmodelIsError = false;
-  String _carmodelErrorMessage = "";
 
   formVM({BackendService? backendService})
     : _backendService = backendService ?? BackendService();
-
-  UserEV get ev => _ev;
-  List<CarModel> get carmodels => _carModels;
-
-  bool get carmodelLoading => _carmodelLoading;
-  bool get carmodelIsError => _carmodelIsError;
-  String get carmodelErrorMessage => _carmodelErrorMessage;
-
-  bool get evLoading => _evLoading;
-  bool get evIsError => _evIsError;
-  String get evErrorMessage => _evErrorMessage;
-
-  Future<void> getEv(int id) async {
-    _evLoading = true;
-    notifyListeners();
-    try {
-      _ev = await _backendService.getEvById(id);
-      _evIsError = false;
-    } catch (e) {
-      _evIsError = true;
-      _evErrorMessage = e.toString();
-    } finally {
-      _evLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> getCarmodels() async {
-    _carmodelLoading = true;
-    notifyListeners();
-    try {
-      _carModels = await _backendService.getCarModels();
-      _carmodelIsError = false;
-    } catch (e) {
-      _carmodelIsError = true;
-      _carmodelErrorMessage = e.toString();
-    } finally {
-      _carmodelLoading = false;
-      notifyListeners();
-    }
-  }
 
   Future<bool> putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
     final userEv = UserEV(
