@@ -1,20 +1,10 @@
-import 'dart:io';
-
-//import 'package:drift/drift.dart';
 import 'package:ev_charge/core/models.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ev_charge/widgets/form_helper.dart';
 import 'package:ev_charge/viewmodels/form_vm.dart';
-
-import 'package:ev_charge/core/backend_service.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-
-import 'package:ev_charge/main.dart';
-
 
 class EVForm extends ConsumerStatefulWidget {
   const EVForm({super.key, this.id});
@@ -33,6 +23,8 @@ class EVFormState extends ConsumerState<EVForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<EVFormState>.
   final _formKey = GlobalKey<FormState>();
+  final vm = formVM();
+
   bool isLoading = false;
 
   TextEditingController modelNameController = TextEditingController();
@@ -44,12 +36,9 @@ class EVFormState extends ConsumerState<EVForm> {
   TextEditingController carModelController = TextEditingController();
   CarModel? selectedCarModel;
 
-  late formVM vm;
-
   @override
   void initState() {
     super.initState();
-    vm = formVM();
   }
 
   void initializeFields(UserEV ev) {
@@ -133,7 +122,7 @@ class EVFormState extends ConsumerState<EVForm> {
         error: (e, _) {return const Scaffold(body: Center(child: Text("EV not found"))); },
         data: (data) {
           ev = data.firstWhere((ev) => ev!.id == widget.id);
-          initializeFields(ev!);
+          userSetNameController.text.isEmpty ? initializeFields(ev!) : null;
           },
       );
     }

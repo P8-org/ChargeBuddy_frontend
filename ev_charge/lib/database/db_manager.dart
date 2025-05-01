@@ -46,7 +46,7 @@ class DbManager {
       final carModels = await BackendService().getCarModels().timeout(
         const Duration(seconds: 5),
         onTimeout: () {
-          throw TimeoutException("Fetching EVs from backend timed out.");
+          throw TimeoutException("Fetching CarModels from backend timed out.");
         },
       );
 
