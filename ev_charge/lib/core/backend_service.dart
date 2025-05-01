@@ -97,19 +97,22 @@ class BackendService {
 
   Future<void> putEv(UserEV userEv, int id) async {
     final uri = Uri.parse("$baseUrl/evs/$id");
-    final response = await client.put(
-      uri,
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: jsonEncode({
-        "name": userEv.userSetName,
-        "car_model_id": userEv.carModelId,
-        "battery_level": userEv.currentCharge,
-        })
-    );
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    try {
+      final response = await client.put(
+        uri,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "name": userEv.userSetName,
+          "car_model_id": userEv.carModelId,
+          "battery_level": userEv.currentCharge,
+        }),
+      );
+      if (response.statusCode == 200) {
+      } else {
+        throw HttpException('Http error: ${response.statusCode}', uri: uri);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 

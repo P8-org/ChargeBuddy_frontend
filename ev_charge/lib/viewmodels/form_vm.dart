@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/core/models.dart';
+import 'package:http/http.dart';
 
 class formVM extends ChangeNotifier {
   final BackendService _backendService;
@@ -57,7 +60,7 @@ class formVM extends ChangeNotifier {
     }
   }
 
-  void putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
+  Future<bool> putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
     final userEv = UserEV(
       id: oldUserEv.id,
       userSetName: userSetName,
@@ -69,10 +72,15 @@ class formVM extends ChangeNotifier {
       constraint: oldUserEv.constraint,
       schedule: oldUserEv.schedule
     );
-    await _backendService.putEv(userEv, oldUserEv.id);
+    try {
+      await _backendService.putEv(userEv, oldUserEv.id);
+      return (true);
+    } catch (e) {
+      return (false);
+    }
   }
 
-  void addEv(String userSetName, CarModel carModel) async {
+  Future<bool> addEv(String userSetName, CarModel carModel) async {
     final userEv = UserEV(
       id: 0,
       userSetName: userSetName,
@@ -94,6 +102,11 @@ class formVM extends ChangeNotifier {
         scheduleData: 'n/a',
       ),
     );
-    await _backendService.postEv(userEv);
+    try {
+      await _backendService.postEv(userEv);
+      return (true);
+    } catch (e) {
+      return (false);
+    }
   }
 }

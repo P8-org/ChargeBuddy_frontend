@@ -43,21 +43,30 @@ class DbManager {
         },
       );
 
+      final carModels = await BackendService().getCarModels().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          throw TimeoutException("Fetching EVs from backend timed out.");
+        },
+      );
+
       await _resetDatabase(db);
 
-      for (final ev in evList) {
+      for (final carModel in carModels) {
         await db
             .into(db.eVCarModels)
             .insertOnConflictUpdate(
               EVCarModelsCompanion.insert(
-                id: Value(ev.carModel.id),
-                modelName: ev.carModel.modelName,
-                modelYear: ev.carModel.modelYear,
-                batteryCapacity: ev.carModel.batteryCapacity,
-                maxChargingPower: ev.carModel.maxChargingPower,
+                id: Value(carModel.id),
+                modelName: carModel.modelName,
+                modelYear: carModel.modelYear,
+                batteryCapacity: carModel.batteryCapacity,
+                maxChargingPower: carModel.maxChargingPower,
               ),
             );
+      }
 
+      for (final ev in evList) {
         await db
             .into(db.userEVs)
             .insertOnConflictUpdate(
