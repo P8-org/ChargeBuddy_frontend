@@ -65,7 +65,7 @@ class BackendService {
 
     final Map<String, dynamic> body = {
       if (id != null) 'id': id,
-      'start_time': startTime.toIso8601String(),
+      'startTime': startTime.toIso8601String(),
       'deadline': deadline.toIso8601String(),
       'target_percentage': targetPercentage,
     };
@@ -87,8 +87,6 @@ class BackendService {
     final uri = Uri.parse("$baseUrl/constraints/$constraintId");
     final response = await client.delete(uri);
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      print('Http error: ${response.statusCode}');
-      print('Response body: ${response.body}');
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
     }
   }
