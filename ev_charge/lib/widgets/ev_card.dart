@@ -18,6 +18,9 @@ class EvCard extends StatelessWidget {
         onTap: () {
           context.go("/ev/${ev.id}");
         },
+        onLongPress: () {
+          context.go("/edit_ev/${ev.id}");
+        },
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Row(

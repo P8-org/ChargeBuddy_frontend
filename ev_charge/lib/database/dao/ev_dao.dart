@@ -86,7 +86,6 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
     final schedule =
         await (select(schedules)
           ..where((t) => t.userEvId.equals(userEv.id))).getSingle();
-
     return models.UserEV(
       id: userEv.id,
       userSetName: userEv.userSetName,
@@ -120,5 +119,15 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
         scheduleData: schedule.scheduleData,
       ),
     );
+  }
+
+  Stream<List<models.CarModel>> watchCarModels() {
+    final query = select(eVCarModels);
+    
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        return models.CarModel(id: row.id, modelName: row.modelName, modelYear: row.modelYear, batteryCapacity: row.batteryCapacity, maxChargingPower: row.maxChargingPower);
+      }).toList();
+    });
   }
 }

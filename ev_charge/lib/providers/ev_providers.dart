@@ -21,3 +21,8 @@ final singleEvDetailProvider = FutureProvider.family<UserEV?, int>((
   final dao = ref.watch(evDaoProvider);
   return await dao.getSingleEVWithDetails(id);
 });
+
+final carModelsProvider = StreamProvider<List<CarModel>>((ref) {
+  final dao = ref.watch(evDaoProvider);
+  return dao.watchCarModels(); // exposes the DAO's stream
+});

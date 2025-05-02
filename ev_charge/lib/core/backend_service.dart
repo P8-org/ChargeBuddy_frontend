@@ -12,6 +12,17 @@ class BackendService {
   BackendService({Client? client, String? baseUrl})
     : client = client ?? Client(),
       baseUrl = baseUrl ?? getBaseUrl();
+  
+  Future<List<CarModel>> getCarModels() async {
+    final uri = Uri.parse("$baseUrl/carmodels");
+    final response = await client.get(uri);
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      return (jsonData as List).map((item) => CarModel.fromJson(item)).toList();
+    } else {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }    
+  }
 
   Future<List<UserEV>> getEvs() async {
     final uri = Uri.parse("$baseUrl/evs");
@@ -65,6 +76,84 @@ class BackendService {
       body: jsonEncode(body),
     );
 
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
+
+  Future<void> postEv(UserEV userEv) async {
+    final uri = Uri.parse("$baseUrl/evs");
+    final response = await client.post(
+      uri,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: jsonEncode({
+        "name": userEv.userSetName,
+        "car_model_id": userEv.carModelId,
+        "battery_level": userEv.currentCharge,
+        })
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
+
+  Future<void> putEv(UserEV userEv, int id) async {
+    final uri = Uri.parse("$baseUrl/evs/$id");
+    try {
+      final response = await client.put(
+        uri,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "name": userEv.userSetName,
+          "car_model_id": userEv.carModelId,
+          "battery_level": userEv.currentCharge,
+        }),
+      );
+      if (response.statusCode == 200) {
+      } else {
+        throw HttpException('Http error: ${response.statusCode}', uri: uri);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<int> postCarModel(CarModel carModel) async {
+    final uri = Uri.parse("$baseUrl/carmodels");
+    final response = await client.post(
+      uri,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: jsonEncode({
+        "name": carModel.modelName,
+        "year": carModel.modelYear,
+        "battery_capacity": carModel.batteryCapacity,
+        "max_charging_power": carModel.maxChargingPower,
+        })
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+    return jsonDecode(response.body)['id'];
+  }
+
+  Future<void> putCarModel(CarModel carModel) async {
+    final uri = Uri.parse("$baseUrl/carmodels/${carModel.id}");
+    final response = await client.put(
+      uri,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: jsonEncode({
+        "name": carModel.modelName,
+        "year": carModel.modelYear,
+        "battery_capacity": carModel.batteryCapacity,
+        "max_charging_power": carModel.maxChargingPower,
+        })
+    );
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
     }

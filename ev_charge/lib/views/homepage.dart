@@ -16,7 +16,6 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(databaseAutoUpdaterProvider);
     final evsState = ref.watch(allUserEvsProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
@@ -41,8 +40,8 @@ class HomePage extends ConsumerWidget {
                   const Text("No cars in db"),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
-                    onPressed: () => context.go("/add_car"),
-                    label: const Text("Add car"),
+                    onPressed: () => context.go("/add_ev"),
+                    label: const Text("Add EV"),
                     icon: const Icon(Icons.add),
                   ),
                 ],
