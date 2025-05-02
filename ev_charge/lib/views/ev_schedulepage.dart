@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/bottom_navbar.dart';
-import '../views/calendar_page2.dart';
+import '../views/calendar_page.dart';
 
 class EvSchedulePage extends StatefulWidget {
   const EvSchedulePage({super.key, required this.id});
