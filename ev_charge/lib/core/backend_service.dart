@@ -83,6 +83,16 @@ class BackendService {
     }
   }
 
+  Future<void> deleteConstraint(int constraintId) async {
+    final uri = Uri.parse("$baseUrl/constraints/$constraintId");
+    final response = await client.delete(uri);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      print('Http error: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
+
   Future<void> postEv(UserEV userEv) async {
     final uri = Uri.parse("$baseUrl/evs");
     final response = await client.post(

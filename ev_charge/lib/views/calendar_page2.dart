@@ -114,25 +114,60 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
 
   void _handleEventTap(List<CalendarEventData> events, DateTime date) {
     final tappedEvent = events.first;
-
-    final constraintId = tappedEvent.description;
+    final constraintId = int.tryParse(tappedEvent.description ?? '');
     if (constraintId == null) return;
 
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            title: Text(tappedEvent.title ?? "Event"),
-            content: const Text("This event was generated from a constraint."),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
+      builder: (_) => AlertDialog(
+        title: const Text("Edit or Delete Constraint"),
+        content: const Text("What would you like to do with this constraint?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
           ),
+          TextButton(
+            onPressed: () async {
+              final backendService = BackendService();
+              try {
+                await backendService.deleteConstraint(constraintId);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Constraint deleted.")),
+                );
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Delete failed: $e")),
+                );
+              }
+            },
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context); // close dialog first
+              await showDialog(
+                context: context,
+                builder: (_) => EvConstraintDialog(
+                  groupId: tappedEvent.description ?? const Uuid().v4(),
+                  evId: widget.id,
+                  initialConstraintId: constraintId,
+                  initialStart: tappedEvent.startTime,
+                  initialEnd: tappedEvent.endTime,
+                  initialPercentage: double.tryParse(
+                      tappedEvent.title?.replaceAll(RegExp(r'[^\d]'), '') ?? '50') ?? 50,
+                ),
+              );
+            },
+            child: const Text("Edit"),
+          ),
+        ],
+      ),
     );
   }
+
 
   List<CalendarEventData> splitMultiDayEvent({
     required int constraintId,
@@ -181,11 +216,19 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
 class EvConstraintDialog extends StatefulWidget {
   final String groupId;
   final int evId;
+  final int? initialConstraintId;
+  final DateTime? initialStart;
+  final DateTime? initialEnd;
+  final double? initialPercentage;
 
   const EvConstraintDialog({
     required this.groupId,
-    super.key,
     required this.evId,
+    this.initialConstraintId,
+    this.initialStart,
+    this.initialEnd,
+    this.initialPercentage,
+    super.key,
   });
 
   @override
@@ -197,7 +240,17 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
   DateTime _start = DateTime.now();
   DateTime _end = DateTime.now().add(const Duration(hours: 1));
   double _minCharge = 50;
+  int? _constraintId;
   final backend_service = BackendService();
+
+  @override
+  void initState() {
+    super.initState();
+    _start = widget.initialStart ?? DateTime.now();
+    _end = widget.initialEnd ?? _start.add(const Duration(hours: 1));
+    _minCharge = widget.initialPercentage ?? 50;
+    _constraintId = widget.initialConstraintId;
+  }
 
   Future<void> _selectDateTime(BuildContext context, bool isStart) async {
     final date = await showDatePicker(
@@ -292,6 +345,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
           onPressed: () async {
             try {
               await backend_service.postConstraint(
+                id: _constraintId,
                 evId: widget.evId,
                 startTime: _start,
                 deadline: _end,
