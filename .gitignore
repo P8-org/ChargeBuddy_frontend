@@ -215,3 +215,14 @@ fabric.properties
 .idea/**/azureSettings.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains
+
+# ios build files
+ev_charge/ios/Podfile
+ev_charge/macos/Podfile
+ev_charge/macos/Podfile.lock
+ev_charge/ios/Flutter/Debug.xcconfig
+ev_charge/ios/Flutter/Release.xcconfig
+ev_charge/macos/Flutter/Flutter-Debug.xcconfig
+ev_charge/macos/Flutter/Flutter-Release.xcconfig
+ev_charge/macos/Runner.xcodeproj/project.pbxproj
+ev_charge/macos/Runner.xcworkspace/contents.xcworkspacedata
