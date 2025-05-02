@@ -134,6 +134,19 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
   }
 
 
+  Future<models.Constraint?> getConstraintById(int constraintId) async {
+    final c = await (select(constraints)..where((t) => t.id.equals(constraintId))).getSingleOrNull();
+    if (c == null) return null;
+
+    return models.Constraint(
+      id: c.id,
+      startTime: c.startTime,
+      chargedBy: c.chargedBy,
+      targetPercentage: c.minPercentage,
+    );
+  }
+
+
   Stream<List<models.CarModel>> watchCarModels() {
     final query = select(eVCarModels);
     return query.watch().map((rows) {

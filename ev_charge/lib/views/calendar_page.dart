@@ -10,7 +10,7 @@ enum CalendarViewType { day, week, month }
 class EventCalendarPage extends ConsumerStatefulWidget {
   final int id;
 
-  const EventCalendarPage({Key? key, required this.id}) : super(key: key);
+  const EventCalendarPage({super.key, required this.id});
 
   @override
   _EventCalendarPage createState() => _EventCalendarPage();
@@ -119,55 +119,63 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Edit or Delete Constraint"),
-        content: const Text("What would you like to do with this constraint?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () async {
-              final backendService = BackendService();
-              try {
-                await backendService.deleteConstraint(constraintId);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Constraint deleted.")),
-                );
-              } catch (e) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Delete failed: $e")),
-                );
-              }
-            },
-            child: const Text("Delete", style: TextStyle(color: Colors.red)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context); // close dialog first
-              await showDialog(
-                context: context,
-                builder: (_) => EvConstraintDialog(
-                  groupId: tappedEvent.description ?? const Uuid().v4(),
-                  evId: widget.id,
-                  initialConstraintId: constraintId,
-                  initialStart: tappedEvent.startTime,
-                  initialEnd: tappedEvent.endTime,
-                  initialPercentage: double.tryParse(
-                      tappedEvent.title?.replaceAll(RegExp(r'[^\d]'), '') ?? '50') ?? 50,
+      builder:
+          (_) => AlertDialog(
+            title: const Text("Edit or Delete Constraint"),
+            content: const Text(
+              "What would you like to do with this constraint?",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final backendService = BackendService();
+                  try {
+                    await backendService.deleteConstraint(constraintId);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Constraint deleted.")),
+                    );
+                  } catch (e) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Delete failed: $e")),
+                    );
+                  }
+                },
+                child: const Text(
+                  "Delete",
+                  style: TextStyle(color: Colors.red),
                 ),
-              );
-            },
-            child: const Text("Edit"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context); // close dialog first
+                  final constraint = await ref.read(constraintByIdProvider(constraintId).future);
+                  if (constraint == null) return;
+
+                  await showDialog(
+                    context: context,
+                    builder:
+                        (_) => EvConstraintDialog(
+                          groupId: tappedEvent.description ?? const Uuid().v4(),
+                          evId: widget.id,
+                          initialConstraintId: constraint.id,
+                          initialStart: constraint.startTime,
+                          initialEnd: constraint.chargedBy,
+                          initialPercentage: constraint.targetPercentage * 100,
+                        ),
+                  );
+                },
+                child: const Text("Edit"),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
-
 
   List<CalendarEventData> splitMultiDayEvent({
     required int constraintId,
