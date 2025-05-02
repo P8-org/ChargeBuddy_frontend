@@ -4,7 +4,6 @@ import 'package:ev_charge/database/db_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'views/calendar_page.dart';
 
 /// A global provider for the Drift database
 final dbProvider = Provider<AppDatabase>((ref) {
