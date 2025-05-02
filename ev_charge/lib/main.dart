@@ -28,6 +28,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(routerConfig: router);
+    return MaterialApp.router(
+      routerConfig: router,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+          dynamicSchemeVariant: DynamicSchemeVariant.content,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+      ),
+    );
   }
 }

@@ -10,7 +10,8 @@ class ElectricityPricesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Electricity prices'),
-        backgroundColor: Colors.green,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
       body: Center(child: ElectricityPricesWidget()),
       bottomNavigationBar: const BottomNavBar(),

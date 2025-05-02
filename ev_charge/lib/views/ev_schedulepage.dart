@@ -14,7 +14,11 @@ class _EvSchedulePageState extends State<EvSchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('EV Schedule'), backgroundColor: Colors.green),
+      appBar: AppBar(
+        title: Text('EV Schedule'),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
       body: Column(
         children: [
           Padding(

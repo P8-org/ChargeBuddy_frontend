@@ -1,12 +1,10 @@
 import 'package:ev_charge/core/backend_service.dart';
-import 'package:ev_charge/core/models.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 import 'package:ev_charge/widgets/battery_circle.dart';
 import 'package:ev_charge/widgets/charging_curve_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import '../widgets/bottom_navbar.dart';
 
@@ -19,7 +17,6 @@ class EvDetailsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ev = ref.watch(singleEvDetailProvider(id));
     final backendService = BackendService();
-
     return ev.when(
       loading:
           () =>
@@ -33,31 +30,13 @@ class EvDetailsPage extends ConsumerWidget {
         if (ev == null) {
           return const Scaffold(body: Center(child: Text("EV not found")));
         }
+
         final indicatorColor =
             ev.state == "charging"
                 ? Colors.green
                 : ev.state == "idle"
                 ? Colors.amber
                 : Colors.red;
-
-        final chargingCurveData =
-            ev.schedule.scheduleData
-                .split(',')
-                .map((e) => double.tryParse(e) ?? 0.0)
-                .toList();
-
-        final cumulativeChargingCurve = <double>[];
-
-        // add items to make the graph start from current hour
-        cumulativeChargingCurve.add(ev.schedule.startCharge);
-        cumulativeChargingCurve.add(ev.schedule.startCharge);
-
-        double sum = ev.schedule.startCharge;
-        for (final value in chargingCurveData) {
-          sum += value;
-          cumulativeChargingCurve.add(sum);
-        }
-        double currentX = getNowX(ev, cumulativeChargingCurve);
 
         return Scaffold(
           appBar: AppBar(
@@ -78,7 +57,8 @@ class EvDetailsPage extends ConsumerWidget {
                 icon: const Icon(Icons.delete_forever_rounded),
               ),
             ],
-            backgroundColor: Colors.green,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -89,7 +69,7 @@ class EvDetailsPage extends ConsumerWidget {
                   ev.userSetName,
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -115,8 +95,8 @@ class EvDetailsPage extends ConsumerWidget {
                     return BatteryLevelCircle(
                       value: value,
                       limitValue: ev.constraint.targetPercentage,
-                      height: 300,
-                      width: 300,
+                      height: 250,
+                      width: 250,
                       strokeWidth: 30,
                       center: Column(
                         children: [
@@ -142,19 +122,7 @@ class EvDetailsPage extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: 16),
-                if (ev.schedule.end.isAfter(DateTime.now()))
-                  ChargingCurve(
-                    currentX: currentX,
-                    chargingData: List.generate(
-                      cumulativeChargingCurve.length,
-                      (index) => FlSpot(
-                        index.toDouble(),
-                        cumulativeChargingCurve[index] /
-                            ev.carModel.batteryCapacity *
-                            100,
-                      ),
-                    ),
-                  ),
+                SizedBox(child: ChargingCurve(ev: ev)),
               ],
             ),
           ),
@@ -162,17 +130,5 @@ class EvDetailsPage extends ConsumerWidget {
         );
       },
     );
-  }
-
-  // used to get the x-coordinate for the vertical line at the current time
-  double getNowX(UserEV ev, List<double> cumulativeChargingCurve) {
-    final totalDuration =
-        ev.schedule.end.difference(ev.schedule.start).inSeconds + 3600 * 2;
-    final currentDuration =
-        DateTime.now().difference(ev.schedule.start).inSeconds + 3600;
-
-    final progress = currentDuration / totalDuration;
-    final currentX = progress * cumulativeChargingCurve.length;
-    return currentX;
   }
 }

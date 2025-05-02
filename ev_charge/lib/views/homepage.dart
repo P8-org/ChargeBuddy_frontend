@@ -20,7 +20,8 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-        backgroundColor: Colors.green,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.account_circle),
@@ -50,14 +51,14 @@ class HomePage extends ConsumerWidget {
             );
           }
           return RefreshIndicator(
-              onRefresh: () async {
-                final db = ref.read(dbProvider);
-                await DbManager.updateDatabase(db);
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Database refreshed.')),
-                );
-              },
+            onRefresh: () async {
+              final db = ref.read(dbProvider);
+              await DbManager.updateDatabase(db);
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Database refreshed.')),
+              );
+            },
 
             child: ListView.builder(
               itemCount: evs.length,
