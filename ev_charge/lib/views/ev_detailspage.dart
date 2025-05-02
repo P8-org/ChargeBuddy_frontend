@@ -58,8 +58,9 @@ class EvDetailsPage extends ConsumerWidget {
         }
 
         // // remove 'old' data
-        for (var i = padLength; i < 0; i++) {
-          cumulativeChargingCurve.removeAt(0);
+        if (padLength < 0) {
+          final removeCount = padLength.abs().clamp(0, cumulativeChargingCurve.length);
+          cumulativeChargingCurve.removeRange(0, removeCount);
         }
 
         return Scaffold(

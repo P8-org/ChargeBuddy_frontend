@@ -4,101 +4,31 @@ import 'package:ev_charge/core/models.dart';
 
 class formVM extends ChangeNotifier {
   final BackendService _backendService;
-  late UserEV _ev;
-  bool _loading = false;
-  bool _isError = false;
-  String _errorMessage = "";
 
   formVM({BackendService? backendService})
     : _backendService = backendService ?? BackendService();
 
-  UserEV get ev => _ev;
-  bool get loading => _loading;
-  bool get isError => _isError;
-  String get errorMessage => _errorMessage;
-
-  Future<void> getEv(int id) async {
-    _loading = true;
-    notifyListeners();
+  Future<bool> putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
+    final userEv = UserEV(
+      id: oldUserEv.id,
+      userSetName: userSetName,
+      currentCharge: oldUserEv.currentCharge,
+      state: oldUserEv.state,
+      currentChargingPower: oldUserEv.currentChargingPower,
+      carModelId: carModel.id,
+      carModel: carModel,
+      constraint: oldUserEv.constraint,
+      schedule: oldUserEv.schedule
+    );
     try {
-      _ev = await _backendService.getEvById(id);
-      _isError = false;
+      await _backendService.putEv(userEv, oldUserEv.id);
+      return (true);
     } catch (e) {
-      _isError = true;
-      _errorMessage = e.toString();
-    } finally {
-      _loading = false;
-      notifyListeners();
+      return (false);
     }
   }
 
-  void putEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower, int carModelId, int evId) async {
-    final bs = BackendService();
-    
-    var carModel = CarModel(
-      id: carModelId,
-      modelName: modelName,
-      modelYear: int.parse(modelYear),
-      batteryCapacity: double.parse(batteryCapacity),
-      maxChargingPower: double.parse(maxChargingPower),
-    );
-    await bs.putCarModel(carModel);
-
-    if (userSetName == null || userSetName.isEmpty) {
-      userSetName = modelName;
-    }
-
-    final userEv = UserEV(
-      id: evId,
-      userSetName: userSetName,
-      currentCharge: 0,
-      state: 'Not Charging',
-      currentChargingPower: 0,
-      carModelId: carModel.id,
-      carModel: carModel,
-      constraint: Constraint(
-        id: 0,
-        chargedBy: DateTime.now(),
-        targetPercentage: 0,
-      ),
-      schedule: Schedule(
-        id: 0,
-        start: DateTime.now(),
-        end: DateTime.now(),
-        startCharge: 20, // change value
-        scheduleData: 'n/a',
-      ),
-    );
-    await bs.putEv(userEv, evId);
-  }
-
-  void addEv(String modelName, String modelYear, String? userSetName, String batteryCapacity, String maxChargingPower) async {
-    final bs = BackendService();
-    // Step 1: POST /carmodels + retrieve 'correct' carModelId from db
-    var carModel = CarModel(
-      id: 0,
-      modelName: modelName,
-      modelYear: int.parse(modelYear),
-      batteryCapacity: double.parse(batteryCapacity),
-      maxChargingPower: double.parse(maxChargingPower),
-    );
-    final carModelId = await bs.postCarModel(carModel);
-
-    // step 2: Create new carModel with an Id that points to the created carmodel on the db
-    carModel = CarModel(
-      id: carModelId,
-      modelName: modelName,
-      modelYear: int.parse(modelYear),
-      batteryCapacity: double.parse(batteryCapacity),
-      maxChargingPower: double.parse(maxChargingPower),
-    );
-
-    // step 3: Validate userSetName (its optional in the form but not on the DB)
-    if (userSetName == null || userSetName.isEmpty) {
-      userSetName = modelName;
-    }
-
-    // Step 4: create UserEV object + POST /evs
+  Future<bool> addEv(String userSetName, CarModel carModel) async {
     final userEv = UserEV(
       id: 0,
       userSetName: userSetName,
@@ -116,10 +46,15 @@ class formVM extends ChangeNotifier {
         id: 0,
         start: DateTime.now(),
         end: DateTime.now(),
-        startCharge: 20, // change value
+        startCharge: 0.0,
         scheduleData: 'n/a',
       ),
     );
-    await bs.postEv(userEv);
+    try {
+      await _backendService.postEv(userEv);
+      return (true);
+    } catch (e) {
+      return (false);
+    }
   }
 }
