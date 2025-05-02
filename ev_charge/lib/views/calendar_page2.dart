@@ -2,157 +2,197 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:uuid/uuid.dart';
-import '../core/backend_service.dart';
-import '../providers/ev_providers.dart';
+import 'package:ev_charge/core/backend_service.dart';
+import 'package:ev_charge/providers/ev_providers.dart';
+
 enum CalendarViewType { day, week, month }
 
-class EventCalendarPage extends ConsumerStatefulWidget{
+class EventCalendarPage extends ConsumerStatefulWidget {
   final int id;
 
   const EventCalendarPage({Key? key, required this.id}) : super(key: key);
-  
+
   @override
-  _EventCalendarPage createState() => _EventCalendarPage(); 
+  _EventCalendarPage createState() => _EventCalendarPage();
 }
 
-class _EventCalendarPage extends ConsumerState<EventCalendarPage>{
-  final EventController _eventController = EventController();
+class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
   CalendarViewType _currentView = CalendarViewType.day;
-  final Map<String, List<CalendarEventData>> _groupedEvents = {};
 
-  @override
-  void dispose() {
-    _eventController.dispose();
-    super.dispose();
-  }
-  
   @override
   Widget build(BuildContext context) {
-    Widget calendarView;
-    final evstate = ref.watch(singleEvDetailProvider(widget.id));
-    switch (_currentView) {
-      case CalendarViewType.day:
-        calendarView = DayView(onEventTap: _handleEventTap);
-        break;
-      case CalendarViewType.week:
-        calendarView = WeekView(onEventTap: _handleEventTap);
-        break;
-      case CalendarViewType.month:
-        calendarView = MonthView();
-        break;
-    }
+    final constraintsAsync = ref.watch(
+      localConstraintsStreamProvider(widget.id),
+    );
 
-    return CalendarControllerProvider(
-      controller: _eventController,
-      child: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              child: calendarView,
+    return constraintsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
+      data: (constraints) {
+        final List<CalendarEventData> events = [];
+
+        for (final constraint in constraints) {
+          events.addAll(
+            splitMultiDayEvent(
+              constraintId: constraint.id,
+              start: constraint.startTime,
+              end: constraint.chargedBy,
+              minCharge: (constraint.targetPercentage * 100).round(),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          );
+        }
+
+        final controller = EventController();
+        for (final e in events) {
+          controller.add(e);
+        }
+
+        final calendarView = switch (_currentView) {
+          CalendarViewType.day => DayView(onEventTap: _handleEventTap),
+          CalendarViewType.week => WeekView(onEventTap: _handleEventTap),
+          CalendarViewType.month => MonthView(),
+        };
+
+        return CalendarControllerProvider(
+          controller: controller,
+          child: Scaffold(
+            body: Column(
               children: [
-                FloatingActionButton(
-                  onPressed: () async {
-                    final uuid = const Uuid().v4();
-                    final result = await showDialog<List<CalendarEventData>>(
-                      context: context,
-                      builder: (_) => EventDialog(groupId: uuid, evId: widget.id, ),
-                    );
-                    if (result != null) {
-                  _groupedEvents[uuid] = result;
-                  for (final e in result) {
-                    _eventController.add(e);
-                  }
-                }
-                  },
-                  child: const Icon(Icons.add),
+                Expanded(child: calendarView),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FloatingActionButton(
+                      onPressed: () async {
+                        await showDialog<List<CalendarEventData>>(
+                          context: context,
+                          builder:
+                              (_) => EvConstraintDialog(
+                                groupId: const Uuid().v4(),
+                                evId: widget.id,
+                              ),
+                        );
+                      },
+                      child: const Icon(Icons.add),
+                    ),
+                    const SizedBox(width: 16),
+                    PopupMenuButton<CalendarViewType>(
+                      icon: const Icon(Icons.calendar_view_day),
+                      offset: const Offset(115, 0),
+                      onSelected: (view) {
+                        setState(() {
+                          _currentView = view;
+                        });
+                      },
+                      itemBuilder:
+                          (context) => [
+                            const PopupMenuItem(
+                              value: CalendarViewType.day,
+                              child: Text("Day View"),
+                            ),
+                            const PopupMenuItem(
+                              value: CalendarViewType.week,
+                              child: Text("Week View"),
+                            ),
+                            const PopupMenuItem(
+                              value: CalendarViewType.month,
+                              child: Text("Month View"),
+                            ),
+                          ],
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                PopupMenuButton<CalendarViewType>(
-                icon: const Icon(Icons.calendar_view_day),
-                offset: const Offset(115,0),
-                onSelected: (view) {
-                  setState(() {
-                    _currentView = view;
-                  });
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: CalendarViewType.day,
-                    child: Text("Day View"),
-                  ),
-                  const PopupMenuItem(
-                    value: CalendarViewType.week,
-                    child: Text("Week View"),
-                  ),
-                  const PopupMenuItem(
-                    value: CalendarViewType.month,
-                    child: Text("Month View"),
-                  ),
-                ],
-              ),
+                const SizedBox(height: 16),
               ],
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   void _handleEventTap(List<CalendarEventData> events, DateTime date) {
     final tappedEvent = events.first;
 
-    String? groupId;
-
-    // Find which group this event belongs to
-    groupId = tappedEvent.description;
-
-    if (groupId == null) {
-      // fallback: delete only the tapped event
-      _eventController.remove(tappedEvent);
-      return;
-    }
-
-    final groupEvents = _groupedEvents[groupId]!;
+    final constraintId = tappedEvent.description;
+    if (constraintId == null) return;
 
     showDialog(
       context: context,
       builder:
           (_) => AlertDialog(
             title: Text(tappedEvent.title ?? "Event"),
-            content: const Text("Delete all related events in this group?"),
+            content: const Text("This event was generated from a constraint."),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () { for (final e in groupEvents) { _eventController.remove(e); }
-                  _groupedEvents.remove(groupId);
-                  Navigator.pop(context);
-                },
-                child: const Text("Delete All"),
+                child: const Text("OK"),
               ),
             ],
           ),
     );
   }
+
+  List<CalendarEventData> splitMultiDayEvent({
+    required int constraintId,
+    required DateTime start,
+    required DateTime end,
+    required int minCharge,
+  }) {
+    final List<CalendarEventData> events = [];
+    DateTime current = DateTime(start.year, start.month, start.day);
+    DateTime finalDay = DateTime(end.year, end.month, end.day);
+
+    while (!current.isAfter(finalDay)) {
+      final isStartDay = current.isAtSameMomentAs(
+        DateTime(start.year, start.month, start.day),
+      );
+      final isEndDay = current.isAtSameMomentAs(
+        DateTime(end.year, end.month, end.day),
+      );
+
+      final dayStart =
+          isStartDay
+              ? start
+              : DateTime(current.year, current.month, current.day, 0, 0);
+      final dayEnd =
+          isEndDay
+              ? end
+              : DateTime(current.year, current.month, current.day, 23, 59);
+
+      events.add(
+        CalendarEventData(
+          title: "Min charge: $minCharge%",
+          description: constraintId.toString(),
+          date: current,
+          startTime: dayStart,
+          endTime: dayEnd,
+        ),
+      );
+
+      current = current.add(const Duration(days: 1));
+    }
+
+    return events;
+  }
 }
 
-class EventDialog extends StatefulWidget {
+class EvConstraintDialog extends StatefulWidget {
   final String groupId;
-  final int evId; 
-  const EventDialog({required this.groupId, super.key, required this.evId});
+  final int evId;
+
+  const EvConstraintDialog({
+    required this.groupId,
+    super.key,
+    required this.evId,
+  });
 
   @override
-  _EventDialogState createState() => _EventDialogState();
+  EvConstraintDialogState createState() => EvConstraintDialogState();
 }
 
-class _EventDialogState extends State<EventDialog> {
+class EvConstraintDialogState extends State<EvConstraintDialog> {
   final TextEditingController _titleController = TextEditingController();
   DateTime _start = DateTime.now();
   DateTime _end = DateTime.now().add(const Duration(hours: 1));
@@ -250,23 +290,23 @@ class _EventDialogState extends State<EventDialog> {
         ),
         ElevatedButton(
           onPressed: () async {
-            try{
+            try {
               await backend_service.postConstraint(
                 evId: widget.evId,
-                startTime:_start,
-                deadline:_end,
-                targetPercentage:_minCharge.toDouble()/100,
+                startTime: _start,
+                deadline: _end,
+                targetPercentage: _minCharge.toDouble() / 100,
               );
 
-            final events = splitMultiDayEvent(
-              title: _titleController.text,
-              start: _start,
-              end: _end,
-              minCharge: _minCharge.toInt(),
-              groupId: widget.groupId,
-            );
-            Navigator.pop(context, events);
-            } catch(e){
+              final events = splitMultiDayEvent(
+                title: _titleController.text,
+                start: _start,
+                end: _end,
+                minCharge: _minCharge.toInt(),
+                groupId: widget.groupId,
+              );
+              Navigator.pop(context, events);
+            } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Failed to add constraint: $e')),
               );
@@ -279,6 +319,7 @@ class _EventDialogState extends State<EventDialog> {
   }
 
   final uuid = Uuid();
+
   List<CalendarEventData> splitMultiDayEvent({
     required String title,
     required DateTime start,

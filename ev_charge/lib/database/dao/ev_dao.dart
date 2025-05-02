@@ -121,9 +121,21 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
     );
   }
 
+
+  Stream<List<models.Constraint>> watchConstraintsForEv(int evId) {
+    return (select(constraints)..where((tbl) => tbl.userEvId.equals(evId)))
+        .watch()
+        .map((rows) => rows.map((c) => models.Constraint(
+      id: c.id,
+      startTime: c.startTime,
+      chargedBy: c.chargedBy,
+      targetPercentage: c.minPercentage,
+    )).toList());
+  }
+
+
   Stream<List<models.CarModel>> watchCarModels() {
     final query = select(eVCarModels);
-    
     return query.watch().map((rows) {
       return rows.map((row) {
         return models.CarModel(id: row.id, modelName: row.modelName, modelYear: row.modelYear, batteryCapacity: row.batteryCapacity, maxChargingPower: row.maxChargingPower);
