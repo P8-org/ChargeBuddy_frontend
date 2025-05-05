@@ -71,6 +71,7 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
                               (_) => EvConstraintDialog(
                                 groupId: const Uuid().v4(),
                                 evId: widget.id,
+                                title: "New Charging Window"
                               ),
                         );
                       },
@@ -167,6 +168,7 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
                           initialStart: constraint.startTime,
                           initialEnd: constraint.chargedBy,
                           initialPercentage: constraint.targetPercentage * 100,
+                          title: 'Edit Charging Window' 
                         ),
                   );
                 },
@@ -228,7 +230,7 @@ class EvConstraintDialog extends StatefulWidget {
   final DateTime? initialStart;
   final DateTime? initialEnd;
   final double? initialPercentage;
-
+  final String? title;
   const EvConstraintDialog({
     required this.groupId,
     required this.evId,
@@ -236,6 +238,7 @@ class EvConstraintDialog extends StatefulWidget {
     this.initialStart,
     this.initialEnd,
     this.initialPercentage,
+    this.title,
     super.key,
   });
 
@@ -300,7 +303,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('New Event'),
+      title: Text(widget.title ?? "Constraint"),
       content: SingleChildScrollView(
         child: Column(
           children: [
