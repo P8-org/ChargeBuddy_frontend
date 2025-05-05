@@ -247,7 +247,6 @@ class EvConstraintDialog extends StatefulWidget {
 }
 
 class EvConstraintDialogState extends State<EvConstraintDialog> {
-  final TextEditingController _titleController = TextEditingController();
   DateTime _start = DateTime.now();
   DateTime _end = DateTime.now().add(const Duration(hours: 1));
   double _minCharge = 50;
@@ -307,11 +306,6 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
       content: SingleChildScrollView(
         child: Column(
           children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
-            ),
-            const SizedBox(height: 10),
             Row(
               children: [
                 Text("Start: ${_start.toString().substring(0, 16)}"),
@@ -364,7 +358,6 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
               );
 
               final events = splitMultiDayEvent(
-                title: _titleController.text,
                 start: _start,
                 end: _end,
                 minCharge: _minCharge.toInt(),
@@ -386,7 +379,6 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
   final uuid = Uuid();
 
   List<CalendarEventData> splitMultiDayEvent({
-    required String title,
     required DateTime start,
     required DateTime end,
     required int minCharge,
@@ -419,7 +411,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
 
       events.add(
         CalendarEventData(
-          title: "$title (Min charge: $minCharge%)",
+          title: "(Min charge: $minCharge%)",
           description: groupId,
           date: current,
           startTime: dayStart,
