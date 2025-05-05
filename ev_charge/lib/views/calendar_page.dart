@@ -48,8 +48,22 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
         }
 
         final calendarView = switch (_currentView) {
-          CalendarViewType.day => DayView(onEventTap: _handleEventTap),
-          CalendarViewType.week => WeekView(onEventTap: _handleEventTap),
+          CalendarViewType.day => DayView(
+            onEventTap: _handleEventTap,
+            timeLineBuilder:
+                (date) => Text(
+                  "${date.hour}:${date.minute.toStringAsFixed(0).padLeft(2, "0")}",
+                  textAlign: TextAlign.center,
+                ),
+          ),
+          CalendarViewType.week => WeekView(
+            onEventTap: _handleEventTap,
+            timeLineBuilder:
+                (date) => Text(
+                  "${date.hour}:${date.minute.toStringAsFixed(0).padLeft(2, "0")}",
+                  textAlign: TextAlign.center,
+                ),
+          ),
           CalendarViewType.month => MonthView(),
         };
 
@@ -155,7 +169,9 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
               TextButton(
                 onPressed: () async {
                   Navigator.pop(context); // close dialog first
-                  final constraint = await ref.read(constraintByIdProvider(constraintId).future);
+                  final constraint = await ref.read(
+                    constraintByIdProvider(constraintId).future,
+                  );
                   if (constraint == null) return;
 
                   await showDialog(
