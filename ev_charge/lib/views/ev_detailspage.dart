@@ -59,7 +59,10 @@ class EvDetailsPage extends ConsumerWidget {
 
         // // remove 'old' data
         if (padLength < 0) {
-          final removeCount = padLength.abs().clamp(0, cumulativeChargingCurve.length);
+          final removeCount = padLength.abs().clamp(
+            0,
+            cumulativeChargingCurve.length,
+          );
           cumulativeChargingCurve.removeRange(0, removeCount);
         }
 
@@ -91,17 +94,7 @@ class EvDetailsPage extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: EVInfoCard(
-                    id: ev.id,
-                    userSetName: ev.userSetName,
-                    modelName: ev.carModel.modelName,
-                    modelYear: ev.carModel.modelYear,
-                    batteryCapacity: ev.carModel.batteryCapacity,
-                    maxChargingPower: ev.carModel.maxChargingPower,
-                    currentCharge: ev.currentCharge,
-                    state: ev.state,
-                    targetPercentage: ev.constraint.targetPercentage,
-                  ),
+                  child: EVInfoCard(id: ev.id),
                 ),
                 SizedBox(height: 16),
                 if (ev.schedule.end.isAfter(DateTime.now()))
