@@ -12,7 +12,7 @@ class BackendService {
   BackendService({Client? client, String? baseUrl})
     : client = client ?? Client(),
       baseUrl = baseUrl ?? getBaseUrl();
-  
+
   Future<List<CarModel>> getCarModels() async {
     final uri = Uri.parse("$baseUrl/carmodels");
     final response = await client.get(uri);
@@ -21,7 +21,7 @@ class BackendService {
       return (jsonData as List).map((item) => CarModel.fromJson(item)).toList();
     } else {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
-    }    
+    }
   }
 
   Future<List<UserEV>> getEvs() async {
