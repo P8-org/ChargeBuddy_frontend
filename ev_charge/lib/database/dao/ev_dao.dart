@@ -9,6 +9,7 @@ part 'ev_dao.g.dart';
 class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
   EvDao(super.db);
 
+  // Watches all UserEVs with their details
   Stream<List<models.UserEV>> watchUserEVsWithDetails() {
     final query = select(userEVs).join([
       innerJoin(eVCarModels, eVCarModels.id.equalsExp(userEVs.carModelId)),
@@ -21,6 +22,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
     });
   }
 
+  // Watches a single UserEV by ID with its details
   Stream<models.UserEV?> watchSingleEVWithDetails(int id) {
     final query = select(userEVs).join([
       innerJoin(eVCarModels, eVCarModels.id.equalsExp(userEVs.carModelId)),
@@ -37,7 +39,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
     });
   }
 
-// Updated mapping function using `QueryRow`
+  // Combines the data from the joined tables into a single UserEV object
   models.UserEV mapJoinedRowToUserEV(TypedResult row) {
     final userEv = row.readTable(userEVs);
     final carModel = row.readTable(eVCarModels);
