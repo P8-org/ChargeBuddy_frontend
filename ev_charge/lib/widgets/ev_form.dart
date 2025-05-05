@@ -23,7 +23,7 @@ class EVFormState extends ConsumerState<EVForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<EVFormState>.
   final _formKey = GlobalKey<FormState>();
-  final vm = formVM();
+  final vm = FormVM();
 
   bool isLoading = false;
 

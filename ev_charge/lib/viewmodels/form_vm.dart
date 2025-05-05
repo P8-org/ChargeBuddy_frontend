@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/core/models.dart';
 
-class formVM extends ChangeNotifier {
+class FormVM extends ChangeNotifier {
   final BackendService _backendService;
 
-  formVM({BackendService? backendService})
+  FormVM({BackendService? backendService})
     : _backendService = backendService ?? BackendService();
 
   Future<bool> putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
