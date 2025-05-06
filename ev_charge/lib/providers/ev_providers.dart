@@ -14,7 +14,7 @@ final allUserEvsProvider = StreamProvider<List<UserEV>>((ref) {
   return dao.watchUserEVsWithDetails(); // exposes the DAO's stream
 });
 
-final singleEvDetailProvider = StreamProvider.family<UserEV?, int>((ref, id) {
+final singleEvDetailProvider = FutureProvider.family<UserEV?, int>((ref, id) {
   final dao = ref.watch(evDaoProvider);
   return dao.watchSingleEVWithDetails(id);
 });
