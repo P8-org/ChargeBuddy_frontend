@@ -69,27 +69,25 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
     }
   }
 
-
-
   Stream<models.UserEV?> watchSingleEVWithDetails(int id) async* {
-    await for (final evList in (select(userEVs)
-      ..where((t) => t.id.equals(id))).watch()) {
+    await for (final evList
+        in (select(userEVs)..where((t) => t.id.equals(id))).watch()) {
       if (evList.isEmpty) {
         yield null;
       } else {
         final userEv = evList.first;
 
         final carModel =
-        await (select(eVCarModels)
-          ..where((t) => t.id.equals(userEv.carModelId))).getSingle();
+            await (select(eVCarModels)
+              ..where((t) => t.id.equals(userEv.carModelId))).getSingle();
 
         final constraintsList =
-        await (select(constraints)
-          ..where((t) => t.userEvId.equals(userEv.id))).get();
+            await (select(constraints)
+              ..where((t) => t.userEvId.equals(userEv.id))).get();
 
         final schedule =
-        await (select(schedules)
-          ..where((t) => t.userEvId.equals(userEv.id))).getSingle();
+            await (select(schedules)
+              ..where((t) => t.userEvId.equals(userEv.id))).getSingle();
 
         yield models.UserEV(
           id: userEv.id,
@@ -106,17 +104,16 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
             maxChargingPower: carModel.maxChargingPower,
           ),
           constraints:
-          constraintsList
-              .map(
-                (c) =>
-                models.Constraint(
-                  id: c.id,
-                  startTime: c.startTime,
-                  chargedBy: c.chargedBy,
-                  targetPercentage: c.minPercentage,
-                ),
-          )
-              .toList(),
+              constraintsList
+                  .map(
+                    (c) => models.Constraint(
+                      id: c.id,
+                      startTime: c.startTime,
+                      chargedBy: c.chargedBy,
+                      targetPercentage: c.minPercentage,
+                    ),
+                  )
+                  .toList(),
           schedule: models.Schedule(
             id: schedule.id,
             start: schedule.start,
@@ -130,19 +127,26 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
   }
 
   Stream<List<models.Constraint>> watchConstraintsForEv(int evId) {
-    return (select(constraints)..where((tbl) => tbl.userEvId.equals(evId)))
-        .watch()
-        .map((rows) => rows.map((c) => models.Constraint(
-      id: c.id,
-      startTime: c.startTime,
-      chargedBy: c.chargedBy,
-      targetPercentage: c.minPercentage,
-    )).toList());
+    return (select(constraints)
+      ..where((tbl) => tbl.userEvId.equals(evId))).watch().map(
+      (rows) =>
+          rows
+              .map(
+                (c) => models.Constraint(
+                  id: c.id,
+                  startTime: c.startTime,
+                  chargedBy: c.chargedBy,
+                  targetPercentage: c.minPercentage,
+                ),
+              )
+              .toList(),
+    );
   }
 
-
   Future<models.Constraint?> getConstraintById(int constraintId) async {
-    final c = await (select(constraints)..where((t) => t.id.equals(constraintId))).getSingleOrNull();
+    final c =
+        await (select(constraints)
+          ..where((t) => t.id.equals(constraintId))).getSingleOrNull();
     if (c == null) return null;
 
     return models.Constraint(
@@ -152,7 +156,6 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
       targetPercentage: c.minPercentage,
     );
   }
-
 
   Stream<List<models.CarModel>> watchCarModels() {
     final query = select(eVCarModels);
@@ -170,4 +173,3 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
     });
   }
 }
-
