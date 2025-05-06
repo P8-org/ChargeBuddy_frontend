@@ -17,7 +17,7 @@ class FormVM extends ChangeNotifier {
       currentChargingPower: oldUserEv.currentChargingPower,
       carModelId: carModel.id,
       carModel: carModel,
-      constraint: oldUserEv.constraint,
+      constraints: oldUserEv.constraints,
       schedule: oldUserEv.schedule
     );
     try {
@@ -37,11 +37,7 @@ class FormVM extends ChangeNotifier {
       currentChargingPower: 0,
       carModelId: carModel.id,
       carModel: carModel,
-      constraint: Constraint(
-        id: 0,
-        chargedBy: DateTime.now(),
-        targetPercentage: 0,
-      ),
+      constraints: List<Constraint>.empty(),
       schedule: Schedule(
         id: 0,
         start: DateTime.now(),

@@ -23,3 +23,14 @@ final carModelsProvider = StreamProvider<List<CarModel>>((ref) {
   final dao = ref.watch(evDaoProvider);
   return dao.watchCarModels(); // exposes the DAO's stream
 });
+
+final localConstraintsStreamProvider =
+StreamProvider.family<List<Constraint>, int>((ref, evId) {
+  final dao = ref.watch(evDaoProvider);
+  return dao.watchConstraintsForEv(evId);
+});
+
+final constraintByIdProvider = FutureProvider.family<Constraint?, int>((ref, constraintId) async {
+  final dao = ref.watch(evDaoProvider);
+  return await dao.getConstraintById(constraintId);
+});

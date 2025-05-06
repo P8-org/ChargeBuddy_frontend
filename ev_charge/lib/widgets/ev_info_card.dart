@@ -94,7 +94,7 @@ class EVInfoCard extends ConsumerWidget {
                         builder: (context, value, child) {
                           return BatteryLevelCircle(
                             value: value,
-                            limitValue: ev.constraint.targetPercentage,
+                            limitValue: 200,
                             height: 200,
                             width: 200,
                             strokeWidth: 20,
