@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/core/models.dart';
 
-class formVM extends ChangeNotifier {
+class FormVM extends ChangeNotifier {
   final BackendService _backendService;
 
-  formVM({BackendService? backendService})
+  FormVM({BackendService? backendService})
     : _backendService = backendService ?? BackendService();
 
   Future<bool> putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
@@ -17,7 +17,7 @@ class formVM extends ChangeNotifier {
       currentChargingPower: oldUserEv.currentChargingPower,
       carModelId: carModel.id,
       carModel: carModel,
-      constraint: oldUserEv.constraint,
+      constraints: oldUserEv.constraints,
       schedule: oldUserEv.schedule
     );
     try {
@@ -37,11 +37,7 @@ class formVM extends ChangeNotifier {
       currentChargingPower: 0,
       carModelId: carModel.id,
       carModel: carModel,
-      constraint: Constraint(
-        id: 0,
-        chargedBy: DateTime.now(),
-        targetPercentage: 0,
-      ),
+      constraints: List<Constraint>.empty(),
       schedule: Schedule(
         id: 0,
         start: DateTime.now(),

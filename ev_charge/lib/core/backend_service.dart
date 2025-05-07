@@ -12,16 +12,16 @@ class BackendService {
   BackendService({Client? client, String? baseUrl})
     : client = client ?? Client(),
       baseUrl = baseUrl ?? getBaseUrl();
-  
+
   Future<List<CarModel>> getCarModels() async {
     final uri = Uri.parse("$baseUrl/carmodels");
     final response = await client.get(uri);
     if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
+      final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
       return (jsonData as List).map((item) => CarModel.fromJson(item)).toList();
     } else {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
-    }    
+    }
   }
 
   Future<List<UserEV>> getEvs() async {
@@ -30,7 +30,7 @@ class BackendService {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
     }
-    final jsonData = jsonDecode(response.body);
+    final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
     return (jsonData as List).map((item) => UserEV.fromJson(item)).toList();
   }
 
@@ -40,7 +40,7 @@ class BackendService {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
     }
-    final jsonData = jsonDecode(response.body);
+    final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
     return UserEV.fromJson(jsonData);
   }
 
@@ -54,26 +54,40 @@ class BackendService {
       );
     }
   }
-
-  Future<void> postConstraint(
-    int evId,
-    DateTime deadline,
-    double targetPercentage,
-  ) async {
+  Future<void> postConstraint({
+    int? id, // optional for new constraints
+    required int evId,
+    required DateTime startTime,
+    required DateTime deadline,
+    required double targetPercentage,
+  }) async {
     final uri = Uri.parse("$baseUrl/evs/$evId/constraints");
-    final response = await client.patch(
+
+    final Map<String, dynamic> body = {
+      if (id != null) 'id': id,
+      'startTime': startTime.toIso8601String(),
+      'deadline': deadline.toIso8601String(),
+      'target_percentage': targetPercentage,
+    };
+
+    final response = await client.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'deadline': deadline.toIso8601String(),
-        'target_percentage': targetPercentage,
-      }),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode(body),
     );
+
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw HttpException(
-        'Http error ${response.statusCode}: ${response.body}',
-        uri: uri,
-      );
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
+    }
+  }
+
+  Future<void> deleteConstraint(int constraintId) async {
+    final uri = Uri.parse("$baseUrl/constraints/$constraintId");
+    final response = await client.delete(uri);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('Http error: ${response.statusCode}', uri: uri);
     }
   }
 
@@ -81,14 +95,12 @@ class BackendService {
     final uri = Uri.parse("$baseUrl/evs");
     final response = await client.post(
       uri,
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "name": userEv.userSetName,
         "car_model_id": userEv.carModelId,
         "battery_level": userEv.currentCharge,
-        })
+      }),
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
@@ -120,15 +132,13 @@ class BackendService {
     final uri = Uri.parse("$baseUrl/carmodels");
     final response = await client.post(
       uri,
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "name": carModel.modelName,
         "year": carModel.modelYear,
         "battery_capacity": carModel.batteryCapacity,
         "max_charging_power": carModel.maxChargingPower,
-        })
+      }),
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);
@@ -140,15 +150,13 @@ class BackendService {
     final uri = Uri.parse("$baseUrl/carmodels/${carModel.id}");
     final response = await client.put(
       uri,
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "name": carModel.modelName,
         "year": carModel.modelYear,
         "battery_capacity": carModel.batteryCapacity,
         "max_charging_power": carModel.maxChargingPower,
-        })
+      }),
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw HttpException('Http error: ${response.statusCode}', uri: uri);

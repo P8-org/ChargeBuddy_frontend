@@ -837,6 +837,17 @@ class $ConstraintsTable extends Constraints
       'REFERENCES user_e_vs (id)',
     ),
   );
+  static const VerificationMeta _startTimeMeta = const VerificationMeta(
+    'startTime',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startTime = GeneratedColumn<DateTime>(
+    'start_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _chargedByMeta = const VerificationMeta(
     'chargedBy',
   );
@@ -863,6 +874,7 @@ class $ConstraintsTable extends Constraints
   List<GeneratedColumn> get $columns => [
     id,
     userEvId,
+    startTime,
     chargedBy,
     minPercentage,
   ];
@@ -888,6 +900,14 @@ class $ConstraintsTable extends Constraints
       );
     } else if (isInserting) {
       context.missing(_userEvIdMeta);
+    }
+    if (data.containsKey('start_time')) {
+      context.handle(
+        _startTimeMeta,
+        startTime.isAcceptableOrUnknown(data['start_time']!, _startTimeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startTimeMeta);
     }
     if (data.containsKey('charged_by')) {
       context.handle(
@@ -927,6 +947,11 @@ class $ConstraintsTable extends Constraints
             DriftSqlType.int,
             data['${effectivePrefix}user_ev_id'],
           )!,
+      startTime:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}start_time'],
+          )!,
       chargedBy:
           attachedDatabase.typeMapping.read(
             DriftSqlType.dateTime,
@@ -949,11 +974,13 @@ class $ConstraintsTable extends Constraints
 class Constraint extends DataClass implements Insertable<Constraint> {
   final int id;
   final int userEvId;
+  final DateTime startTime;
   final DateTime chargedBy;
   final double minPercentage;
   const Constraint({
     required this.id,
     required this.userEvId,
+    required this.startTime,
     required this.chargedBy,
     required this.minPercentage,
   });
@@ -962,6 +989,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['user_ev_id'] = Variable<int>(userEvId);
+    map['start_time'] = Variable<DateTime>(startTime);
     map['charged_by'] = Variable<DateTime>(chargedBy);
     map['min_percentage'] = Variable<double>(minPercentage);
     return map;
@@ -971,6 +999,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     return ConstraintsCompanion(
       id: Value(id),
       userEvId: Value(userEvId),
+      startTime: Value(startTime),
       chargedBy: Value(chargedBy),
       minPercentage: Value(minPercentage),
     );
@@ -984,6 +1013,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     return Constraint(
       id: serializer.fromJson<int>(json['id']),
       userEvId: serializer.fromJson<int>(json['userEvId']),
+      startTime: serializer.fromJson<DateTime>(json['startTime']),
       chargedBy: serializer.fromJson<DateTime>(json['chargedBy']),
       minPercentage: serializer.fromJson<double>(json['minPercentage']),
     );
@@ -994,6 +1024,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'userEvId': serializer.toJson<int>(userEvId),
+      'startTime': serializer.toJson<DateTime>(startTime),
       'chargedBy': serializer.toJson<DateTime>(chargedBy),
       'minPercentage': serializer.toJson<double>(minPercentage),
     };
@@ -1002,11 +1033,13 @@ class Constraint extends DataClass implements Insertable<Constraint> {
   Constraint copyWith({
     int? id,
     int? userEvId,
+    DateTime? startTime,
     DateTime? chargedBy,
     double? minPercentage,
   }) => Constraint(
     id: id ?? this.id,
     userEvId: userEvId ?? this.userEvId,
+    startTime: startTime ?? this.startTime,
     chargedBy: chargedBy ?? this.chargedBy,
     minPercentage: minPercentage ?? this.minPercentage,
   );
@@ -1014,6 +1047,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     return Constraint(
       id: data.id.present ? data.id.value : this.id,
       userEvId: data.userEvId.present ? data.userEvId.value : this.userEvId,
+      startTime: data.startTime.present ? data.startTime.value : this.startTime,
       chargedBy: data.chargedBy.present ? data.chargedBy.value : this.chargedBy,
       minPercentage:
           data.minPercentage.present
@@ -1027,6 +1061,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     return (StringBuffer('Constraint(')
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
+          ..write('startTime: $startTime, ')
           ..write('chargedBy: $chargedBy, ')
           ..write('minPercentage: $minPercentage')
           ..write(')'))
@@ -1034,13 +1069,15 @@ class Constraint extends DataClass implements Insertable<Constraint> {
   }
 
   @override
-  int get hashCode => Object.hash(id, userEvId, chargedBy, minPercentage);
+  int get hashCode =>
+      Object.hash(id, userEvId, startTime, chargedBy, minPercentage);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Constraint &&
           other.id == this.id &&
           other.userEvId == this.userEvId &&
+          other.startTime == this.startTime &&
           other.chargedBy == this.chargedBy &&
           other.minPercentage == this.minPercentage);
 }
@@ -1048,31 +1085,37 @@ class Constraint extends DataClass implements Insertable<Constraint> {
 class ConstraintsCompanion extends UpdateCompanion<Constraint> {
   final Value<int> id;
   final Value<int> userEvId;
+  final Value<DateTime> startTime;
   final Value<DateTime> chargedBy;
   final Value<double> minPercentage;
   const ConstraintsCompanion({
     this.id = const Value.absent(),
     this.userEvId = const Value.absent(),
+    this.startTime = const Value.absent(),
     this.chargedBy = const Value.absent(),
     this.minPercentage = const Value.absent(),
   });
   ConstraintsCompanion.insert({
     this.id = const Value.absent(),
     required int userEvId,
+    required DateTime startTime,
     required DateTime chargedBy,
     required double minPercentage,
   }) : userEvId = Value(userEvId),
+       startTime = Value(startTime),
        chargedBy = Value(chargedBy),
        minPercentage = Value(minPercentage);
   static Insertable<Constraint> custom({
     Expression<int>? id,
     Expression<int>? userEvId,
+    Expression<DateTime>? startTime,
     Expression<DateTime>? chargedBy,
     Expression<double>? minPercentage,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (userEvId != null) 'user_ev_id': userEvId,
+      if (startTime != null) 'start_time': startTime,
       if (chargedBy != null) 'charged_by': chargedBy,
       if (minPercentage != null) 'min_percentage': minPercentage,
     });
@@ -1081,12 +1124,14 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
   ConstraintsCompanion copyWith({
     Value<int>? id,
     Value<int>? userEvId,
+    Value<DateTime>? startTime,
     Value<DateTime>? chargedBy,
     Value<double>? minPercentage,
   }) {
     return ConstraintsCompanion(
       id: id ?? this.id,
       userEvId: userEvId ?? this.userEvId,
+      startTime: startTime ?? this.startTime,
       chargedBy: chargedBy ?? this.chargedBy,
       minPercentage: minPercentage ?? this.minPercentage,
     );
@@ -1100,6 +1145,9 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
     }
     if (userEvId.present) {
       map['user_ev_id'] = Variable<int>(userEvId.value);
+    }
+    if (startTime.present) {
+      map['start_time'] = Variable<DateTime>(startTime.value);
     }
     if (chargedBy.present) {
       map['charged_by'] = Variable<DateTime>(chargedBy.value);
@@ -1115,6 +1163,7 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
     return (StringBuffer('ConstraintsCompanion(')
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
+          ..write('startTime: $startTime, ')
           ..write('chargedBy: $chargedBy, ')
           ..write('minPercentage: $minPercentage')
           ..write(')'))
@@ -2394,6 +2443,7 @@ typedef $$ConstraintsTableCreateCompanionBuilder =
     ConstraintsCompanion Function({
       Value<int> id,
       required int userEvId,
+      required DateTime startTime,
       required DateTime chargedBy,
       required double minPercentage,
     });
@@ -2401,6 +2451,7 @@ typedef $$ConstraintsTableUpdateCompanionBuilder =
     ConstraintsCompanion Function({
       Value<int> id,
       Value<int> userEvId,
+      Value<DateTime> startTime,
       Value<DateTime> chargedBy,
       Value<double> minPercentage,
     });
@@ -2440,6 +2491,11 @@ class $$ConstraintsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startTime => $composableBuilder(
+    column: $table.startTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2491,6 +2547,11 @@ class $$ConstraintsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get startTime => $composableBuilder(
+    column: $table.startTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get chargedBy => $composableBuilder(
     column: $table.chargedBy,
     builder: (column) => ColumnOrderings(column),
@@ -2536,6 +2597,9 @@ class $$ConstraintsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startTime =>
+      $composableBuilder(column: $table.startTime, builder: (column) => column);
 
   GeneratedColumn<DateTime> get chargedBy =>
       $composableBuilder(column: $table.chargedBy, builder: (column) => column);
@@ -2600,11 +2664,13 @@ class $$ConstraintsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> userEvId = const Value.absent(),
+                Value<DateTime> startTime = const Value.absent(),
                 Value<DateTime> chargedBy = const Value.absent(),
                 Value<double> minPercentage = const Value.absent(),
               }) => ConstraintsCompanion(
                 id: id,
                 userEvId: userEvId,
+                startTime: startTime,
                 chargedBy: chargedBy,
                 minPercentage: minPercentage,
               ),
@@ -2612,11 +2678,13 @@ class $$ConstraintsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int userEvId,
+                required DateTime startTime,
                 required DateTime chargedBy,
                 required double minPercentage,
               }) => ConstraintsCompanion.insert(
                 id: id,
                 userEvId: userEvId,
+                startTime: startTime,
                 chargedBy: chargedBy,
                 minPercentage: minPercentage,
               ),

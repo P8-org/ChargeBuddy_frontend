@@ -24,7 +24,7 @@ void main() {
   });
 
   testWidgets('Add EV test', (WidgetTester tester) async { // TODO: Update to use BackendService or the new Providers
-    
+
     router.go('/add_ev');
     
     await tester.pumpWidget(ProviderScope(overrides: [dbProvider.overrideWithValue(db)], child: MaterialApp.router(routerConfig: router,)));
