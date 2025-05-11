@@ -19,6 +19,7 @@ class DatabaseAutoUpdater {
   late WebSocketChannel _channel;
 
   static DatabaseAutoUpdater? _instance;
+  static bool _initial = true;
 
   DatabaseAutoUpdater._internal(this.db) {
     _connectWS();
@@ -35,12 +36,18 @@ class DatabaseAutoUpdater {
       try {
         _channel = WebSocketChannel.connect(Uri.parse(url));
         await _channel.ready;
+        if (!_initial) {
+          DbManager.updateDatabase(db);
+        }
+        _initial = false;
         print("ws connected");
         _channel.stream.listen(
           (event) => DbManager.updateDatabase(db),
           cancelOnError: true,
         );
         await _channel.sink.done;
+      } catch (e) {
+        print(e);
       } finally {
         print("ws disconnected");
         await Future.delayed(const Duration(seconds: 5));
