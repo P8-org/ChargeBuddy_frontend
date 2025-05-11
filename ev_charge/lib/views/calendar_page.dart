@@ -402,12 +402,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
   }
 
   DateTime _roundUpToNearestHour(DateTime dateTime) {
-    return DateTime(
-      dateTime.year,
-      dateTime.month,
-      dateTime.day,
-      dateTime.hour,
-    ).add(const Duration(hours: 1));
+    return _roundDownToNearestHour(dateTime).add(const Duration(hours: 1));
   }
 
   // Helper function to adjust a DateTime by a given number of hours
@@ -431,40 +426,39 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  children: [
-                    Text(
-                      "Start:",
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    Text(
-                      "${_getDateString(_start)}\n${_start.hour}:${_start.minute.toString().padLeft(2, '0')}",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed:
-                              () => setState(() {
-                                _start = _adjustHour(_start, -1);
-                              }),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed:
-                              () => setState(() {
-                                _start = _adjustHour(_start, 1);
-                              }),
-                        ),
-                      ],
-                    ),
-                    // IconButton(
-                    //   icon: const Icon(Icons.calendar_today),
-                    //   onPressed: () => _selectDateTime(context, true),
-                    // ),
-                  ],
+                InkWell(
+                  onTap: () => _selectDateTime(context, true),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Start:",
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      Text(
+                        "${_getDateString(_start)}\n${_start.hour}:${_start.minute.toString().padLeft(2, '0')}",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed:
+                                () => setState(() {
+                                  _start = _adjustHour(_start, -1);
+                                }),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed:
+                                () => setState(() {
+                                  _start = _adjustHour(_start, 1);
+                                }),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
@@ -473,37 +467,43 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
                     size: 40,
                   ),
                 ),
-                Column(
-                  children: [
-                    Text("End:", style: Theme.of(context).textTheme.labelLarge),
-                    Text(
-                      "${_getDateString(_end)}\n${_end.hour}:${_end.minute.toString().padLeft(2, '0')}",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed:
-                              () => setState(() {
-                                _end = _adjustHour(_end, -1);
-                              }),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed:
-                              () => setState(() {
-                                _end = _adjustHour(_end, 1);
-                              }),
-                        ),
-                      ],
-                    ),
-                    // IconButton(
-                    //   icon: const Icon(Icons.calendar_today),
-                    //   onPressed: () => _selectDateTime(context, false),
-                    // ),
-                  ],
+                InkWell(
+                  onTap: () => _selectDateTime(context, false),
+                  child: Column(
+                    children: [
+                      Text(
+                        "End:",
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      Text(
+                        "${_getDateString(_end)}\n${_end.hour}:${_end.minute.toString().padLeft(2, '0')}",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed:
+                                () => setState(() {
+                                  _end = _adjustHour(_end, -1);
+                                }),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed:
+                                () => setState(() {
+                                  _end = _adjustHour(_end, 1);
+                                }),
+                          ),
+                        ],
+                      ),
+                      // IconButton(
+                      //   icon: const Icon(Icons.calendar_today),
+                      //   onPressed: () => _selectDateTime(context, false),
+                      // ),
+                    ],
+                  ),
                 ),
               ],
             ),
