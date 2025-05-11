@@ -393,7 +393,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
         date.day == now.add(const Duration(days: 1)).day) {
       return "Tomorrow";
     } else {
-      return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+      return "${date.day}/${date.month}/${date.year}";
     }
   }
 
@@ -437,9 +437,10 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
                       "Start:",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
-                    Text(_getDateString(_start)),
                     Text(
-                      "${_start.hour}:${_start.minute.toString().padLeft(2, '0')}",
+                      "${_getDateString(_start)}\n${_start.hour}:${_start.minute.toString().padLeft(2, '0')}",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
                     ),
                     Row(
                       children: [
@@ -475,10 +476,10 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
                 Column(
                   children: [
                     Text("End:", style: Theme.of(context).textTheme.labelLarge),
-                    Text(_getDateString(_end)),
-
                     Text(
-                      "${_end.hour}:${_end.minute.toString().padLeft(2, '0')}",
+                      "${_getDateString(_end)}\n${_end.hour}:${_end.minute.toString().padLeft(2, '0')}",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
                     ),
                     Row(
                       children: [
