@@ -33,7 +33,8 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
             id: ev.id,
             userSetName: ev.userSetName,
             currentCharge: ev.currentCharge,
-            currentChargingPower: ev.currentChargePower,
+            currentChargingPower: ev.currentChargingPower,
+            maxChargingPower: ev.maxChargingPower,
             state: ev.state,
             carModelId: ev.carModelId,
             carModel: models.CarModel(
@@ -97,7 +98,8 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
           id: userEv.id,
           userSetName: userEv.userSetName,
           currentCharge: userEv.currentCharge,
-          currentChargingPower: userEv.currentChargePower,
+          currentChargingPower: userEv.currentChargingPower,
+          maxChargingPower: userEv.maxChargingPower,
           state: userEv.state,
           carModelId: userEv.carModelId,
           carModel: models.CarModel(

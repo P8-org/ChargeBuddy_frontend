@@ -25,7 +25,8 @@ class UserEVs extends Table {
   late final userSetName = text().withLength(min: 3, max: 64)();
   late final currentCharge = real()();
   late final state = text()();
-  late final currentChargePower = real()();
+  late final currentChargingPower = real()();
+  late final maxChargingPower = real()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

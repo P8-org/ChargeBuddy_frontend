@@ -436,17 +436,28 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _currentChargePowerMeta =
-      const VerificationMeta('currentChargePower');
+  static const VerificationMeta _currentChargingPowerMeta =
+      const VerificationMeta('currentChargingPower');
   @override
-  late final GeneratedColumn<double> currentChargePower =
+  late final GeneratedColumn<double> currentChargingPower =
       GeneratedColumn<double>(
-        'current_charge_power',
+        'current_charging_power',
         aliasedName,
         false,
         type: DriftSqlType.double,
         requiredDuringInsert: true,
       );
+  static const VerificationMeta _maxChargingPowerMeta = const VerificationMeta(
+    'maxChargingPower',
+  );
+  @override
+  late final GeneratedColumn<double> maxChargingPower = GeneratedColumn<double>(
+    'max_charging_power',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -454,7 +465,8 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     userSetName,
     currentCharge,
     state,
-    currentChargePower,
+    currentChargingPower,
+    maxChargingPower,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -512,16 +524,27 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     } else if (isInserting) {
       context.missing(_stateMeta);
     }
-    if (data.containsKey('current_charge_power')) {
+    if (data.containsKey('current_charging_power')) {
       context.handle(
-        _currentChargePowerMeta,
-        currentChargePower.isAcceptableOrUnknown(
-          data['current_charge_power']!,
-          _currentChargePowerMeta,
+        _currentChargingPowerMeta,
+        currentChargingPower.isAcceptableOrUnknown(
+          data['current_charging_power']!,
+          _currentChargingPowerMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_currentChargePowerMeta);
+      context.missing(_currentChargingPowerMeta);
+    }
+    if (data.containsKey('max_charging_power')) {
+      context.handle(
+        _maxChargingPowerMeta,
+        maxChargingPower.isAcceptableOrUnknown(
+          data['max_charging_power']!,
+          _maxChargingPowerMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_maxChargingPowerMeta);
     }
     return context;
   }
@@ -557,10 +580,15 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
             DriftSqlType.string,
             data['${effectivePrefix}state'],
           )!,
-      currentChargePower:
+      currentChargingPower:
           attachedDatabase.typeMapping.read(
             DriftSqlType.double,
-            data['${effectivePrefix}current_charge_power'],
+            data['${effectivePrefix}current_charging_power'],
+          )!,
+      maxChargingPower:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.double,
+            data['${effectivePrefix}max_charging_power'],
           )!,
     );
   }
@@ -577,14 +605,16 @@ class UserEV extends DataClass implements Insertable<UserEV> {
   final String userSetName;
   final double currentCharge;
   final String state;
-  final double currentChargePower;
+  final double currentChargingPower;
+  final double maxChargingPower;
   const UserEV({
     required this.id,
     required this.carModelId,
     required this.userSetName,
     required this.currentCharge,
     required this.state,
-    required this.currentChargePower,
+    required this.currentChargingPower,
+    required this.maxChargingPower,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -594,7 +624,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     map['user_set_name'] = Variable<String>(userSetName);
     map['current_charge'] = Variable<double>(currentCharge);
     map['state'] = Variable<String>(state);
-    map['current_charge_power'] = Variable<double>(currentChargePower);
+    map['current_charging_power'] = Variable<double>(currentChargingPower);
+    map['max_charging_power'] = Variable<double>(maxChargingPower);
     return map;
   }
 
@@ -605,7 +636,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       userSetName: Value(userSetName),
       currentCharge: Value(currentCharge),
       state: Value(state),
-      currentChargePower: Value(currentChargePower),
+      currentChargingPower: Value(currentChargingPower),
+      maxChargingPower: Value(maxChargingPower),
     );
   }
 
@@ -620,9 +652,10 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       userSetName: serializer.fromJson<String>(json['userSetName']),
       currentCharge: serializer.fromJson<double>(json['currentCharge']),
       state: serializer.fromJson<String>(json['state']),
-      currentChargePower: serializer.fromJson<double>(
-        json['currentChargePower'],
+      currentChargingPower: serializer.fromJson<double>(
+        json['currentChargingPower'],
       ),
+      maxChargingPower: serializer.fromJson<double>(json['maxChargingPower']),
     );
   }
   @override
@@ -634,7 +667,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       'userSetName': serializer.toJson<String>(userSetName),
       'currentCharge': serializer.toJson<double>(currentCharge),
       'state': serializer.toJson<String>(state),
-      'currentChargePower': serializer.toJson<double>(currentChargePower),
+      'currentChargingPower': serializer.toJson<double>(currentChargingPower),
+      'maxChargingPower': serializer.toJson<double>(maxChargingPower),
     };
   }
 
@@ -644,14 +678,16 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     String? userSetName,
     double? currentCharge,
     String? state,
-    double? currentChargePower,
+    double? currentChargingPower,
+    double? maxChargingPower,
   }) => UserEV(
     id: id ?? this.id,
     carModelId: carModelId ?? this.carModelId,
     userSetName: userSetName ?? this.userSetName,
     currentCharge: currentCharge ?? this.currentCharge,
     state: state ?? this.state,
-    currentChargePower: currentChargePower ?? this.currentChargePower,
+    currentChargingPower: currentChargingPower ?? this.currentChargingPower,
+    maxChargingPower: maxChargingPower ?? this.maxChargingPower,
   );
   UserEV copyWithCompanion(UserEVsCompanion data) {
     return UserEV(
@@ -665,10 +701,14 @@ class UserEV extends DataClass implements Insertable<UserEV> {
               ? data.currentCharge.value
               : this.currentCharge,
       state: data.state.present ? data.state.value : this.state,
-      currentChargePower:
-          data.currentChargePower.present
-              ? data.currentChargePower.value
-              : this.currentChargePower,
+      currentChargingPower:
+          data.currentChargingPower.present
+              ? data.currentChargingPower.value
+              : this.currentChargingPower,
+      maxChargingPower:
+          data.maxChargingPower.present
+              ? data.maxChargingPower.value
+              : this.maxChargingPower,
     );
   }
 
@@ -680,7 +720,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
           ..write('userSetName: $userSetName, ')
           ..write('currentCharge: $currentCharge, ')
           ..write('state: $state, ')
-          ..write('currentChargePower: $currentChargePower')
+          ..write('currentChargingPower: $currentChargingPower, ')
+          ..write('maxChargingPower: $maxChargingPower')
           ..write(')'))
         .toString();
   }
@@ -692,7 +733,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     userSetName,
     currentCharge,
     state,
-    currentChargePower,
+    currentChargingPower,
+    maxChargingPower,
   );
   @override
   bool operator ==(Object other) =>
@@ -703,7 +745,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
           other.userSetName == this.userSetName &&
           other.currentCharge == this.currentCharge &&
           other.state == this.state &&
-          other.currentChargePower == this.currentChargePower);
+          other.currentChargingPower == this.currentChargingPower &&
+          other.maxChargingPower == this.maxChargingPower);
 }
 
 class UserEVsCompanion extends UpdateCompanion<UserEV> {
@@ -712,14 +755,16 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
   final Value<String> userSetName;
   final Value<double> currentCharge;
   final Value<String> state;
-  final Value<double> currentChargePower;
+  final Value<double> currentChargingPower;
+  final Value<double> maxChargingPower;
   const UserEVsCompanion({
     this.id = const Value.absent(),
     this.carModelId = const Value.absent(),
     this.userSetName = const Value.absent(),
     this.currentCharge = const Value.absent(),
     this.state = const Value.absent(),
-    this.currentChargePower = const Value.absent(),
+    this.currentChargingPower = const Value.absent(),
+    this.maxChargingPower = const Value.absent(),
   });
   UserEVsCompanion.insert({
     this.id = const Value.absent(),
@@ -727,19 +772,22 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     required String userSetName,
     required double currentCharge,
     required String state,
-    required double currentChargePower,
+    required double currentChargingPower,
+    required double maxChargingPower,
   }) : carModelId = Value(carModelId),
        userSetName = Value(userSetName),
        currentCharge = Value(currentCharge),
        state = Value(state),
-       currentChargePower = Value(currentChargePower);
+       currentChargingPower = Value(currentChargingPower),
+       maxChargingPower = Value(maxChargingPower);
   static Insertable<UserEV> custom({
     Expression<int>? id,
     Expression<int>? carModelId,
     Expression<String>? userSetName,
     Expression<double>? currentCharge,
     Expression<String>? state,
-    Expression<double>? currentChargePower,
+    Expression<double>? currentChargingPower,
+    Expression<double>? maxChargingPower,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -747,8 +795,9 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
       if (userSetName != null) 'user_set_name': userSetName,
       if (currentCharge != null) 'current_charge': currentCharge,
       if (state != null) 'state': state,
-      if (currentChargePower != null)
-        'current_charge_power': currentChargePower,
+      if (currentChargingPower != null)
+        'current_charging_power': currentChargingPower,
+      if (maxChargingPower != null) 'max_charging_power': maxChargingPower,
     });
   }
 
@@ -758,7 +807,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     Value<String>? userSetName,
     Value<double>? currentCharge,
     Value<String>? state,
-    Value<double>? currentChargePower,
+    Value<double>? currentChargingPower,
+    Value<double>? maxChargingPower,
   }) {
     return UserEVsCompanion(
       id: id ?? this.id,
@@ -766,7 +816,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
       userSetName: userSetName ?? this.userSetName,
       currentCharge: currentCharge ?? this.currentCharge,
       state: state ?? this.state,
-      currentChargePower: currentChargePower ?? this.currentChargePower,
+      currentChargingPower: currentChargingPower ?? this.currentChargingPower,
+      maxChargingPower: maxChargingPower ?? this.maxChargingPower,
     );
   }
 
@@ -788,8 +839,13 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     if (state.present) {
       map['state'] = Variable<String>(state.value);
     }
-    if (currentChargePower.present) {
-      map['current_charge_power'] = Variable<double>(currentChargePower.value);
+    if (currentChargingPower.present) {
+      map['current_charging_power'] = Variable<double>(
+        currentChargingPower.value,
+      );
+    }
+    if (maxChargingPower.present) {
+      map['max_charging_power'] = Variable<double>(maxChargingPower.value);
     }
     return map;
   }
@@ -802,7 +858,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
           ..write('userSetName: $userSetName, ')
           ..write('currentCharge: $currentCharge, ')
           ..write('state: $state, ')
-          ..write('currentChargePower: $currentChargePower')
+          ..write('currentChargingPower: $currentChargingPower, ')
+          ..write('maxChargingPower: $maxChargingPower')
           ..write(')'))
         .toString();
   }
@@ -1972,7 +2029,8 @@ typedef $$UserEVsTableCreateCompanionBuilder =
       required String userSetName,
       required double currentCharge,
       required String state,
-      required double currentChargePower,
+      required double currentChargingPower,
+      required double maxChargingPower,
     });
 typedef $$UserEVsTableUpdateCompanionBuilder =
     UserEVsCompanion Function({
@@ -1981,7 +2039,8 @@ typedef $$UserEVsTableUpdateCompanionBuilder =
       Value<String> userSetName,
       Value<double> currentCharge,
       Value<String> state,
-      Value<double> currentChargePower,
+      Value<double> currentChargingPower,
+      Value<double> maxChargingPower,
     });
 
 final class $$UserEVsTableReferences
@@ -2073,8 +2132,13 @@ class $$UserEVsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get currentChargePower => $composableBuilder(
-    column: $table.currentChargePower,
+  ColumnFilters<double> get currentChargingPower => $composableBuilder(
+    column: $table.currentChargingPower,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get maxChargingPower => $composableBuilder(
+    column: $table.maxChargingPower,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2181,8 +2245,13 @@ class $$UserEVsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get currentChargePower => $composableBuilder(
-    column: $table.currentChargePower,
+  ColumnOrderings<double> get currentChargingPower => $composableBuilder(
+    column: $table.currentChargingPower,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get maxChargingPower => $composableBuilder(
+    column: $table.maxChargingPower,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2235,8 +2304,13 @@ class $$UserEVsTableAnnotationComposer
   GeneratedColumn<String> get state =>
       $composableBuilder(column: $table.state, builder: (column) => column);
 
-  GeneratedColumn<double> get currentChargePower => $composableBuilder(
-    column: $table.currentChargePower,
+  GeneratedColumn<double> get currentChargingPower => $composableBuilder(
+    column: $table.currentChargingPower,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get maxChargingPower => $composableBuilder(
+    column: $table.maxChargingPower,
     builder: (column) => column,
   );
 
@@ -2351,14 +2425,16 @@ class $$UserEVsTableTableManager
                 Value<String> userSetName = const Value.absent(),
                 Value<double> currentCharge = const Value.absent(),
                 Value<String> state = const Value.absent(),
-                Value<double> currentChargePower = const Value.absent(),
+                Value<double> currentChargingPower = const Value.absent(),
+                Value<double> maxChargingPower = const Value.absent(),
               }) => UserEVsCompanion(
                 id: id,
                 carModelId: carModelId,
                 userSetName: userSetName,
                 currentCharge: currentCharge,
                 state: state,
-                currentChargePower: currentChargePower,
+                currentChargingPower: currentChargingPower,
+                maxChargingPower: maxChargingPower,
               ),
           createCompanionCallback:
               ({
@@ -2367,14 +2443,16 @@ class $$UserEVsTableTableManager
                 required String userSetName,
                 required double currentCharge,
                 required String state,
-                required double currentChargePower,
+                required double currentChargingPower,
+                required double maxChargingPower,
               }) => UserEVsCompanion.insert(
                 id: id,
                 carModelId: carModelId,
                 userSetName: userSetName,
                 currentCharge: currentCharge,
                 state: state,
-                currentChargePower: currentChargePower,
+                currentChargingPower: currentChargingPower,
+                maxChargingPower: maxChargingPower,
               ),
           withReferenceMapper:
               (p0) =>

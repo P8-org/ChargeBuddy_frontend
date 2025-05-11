@@ -8,6 +8,7 @@ class FormVM extends ChangeNotifier {
   FormVM({BackendService? backendService})
     : _backendService = backendService ?? BackendService();
 
+  // TODO vi skal have lavet så man kan overskrive max charging power fra carModel
   Future<bool> putEv(
     String userSetName,
     CarModel carModel,
@@ -19,6 +20,7 @@ class FormVM extends ChangeNotifier {
       currentCharge: oldUserEv.currentCharge,
       state: oldUserEv.state,
       currentChargingPower: oldUserEv.currentChargingPower,
+      maxChargingPower: oldUserEv.maxChargingPower,
       carModelId: carModel.id,
       carModel: carModel,
       constraints: oldUserEv.constraints,
@@ -37,8 +39,9 @@ class FormVM extends ChangeNotifier {
       id: 0,
       userSetName: userSetName,
       currentCharge: 0,
-      state: 'Not Charging',
+      state: 'idle',
       currentChargingPower: 0,
+      maxChargingPower: carModel.maxChargingPower,
       carModelId: carModel.id,
       carModel: carModel,
       constraints: List<Constraint>.empty(),

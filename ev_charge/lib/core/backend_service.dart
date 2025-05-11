@@ -116,6 +116,7 @@ class BackendService {
           "name": userEv.userSetName,
           "car_model_id": userEv.carModelId,
           "battery_level": userEv.schedule?.startCharge ?? userEv.currentCharge,
+          "max_charging_power": userEv.maxChargingPower,
         }),
       );
       if (response.statusCode == 200) {

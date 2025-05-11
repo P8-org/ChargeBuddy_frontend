@@ -75,7 +75,8 @@ class DbManager {
                 carModelId: ev.carModel.id,
                 userSetName: ev.userSetName,
                 currentCharge: ev.currentCharge,
-                currentChargePower: ev.currentChargingPower,
+                currentChargingPower: ev.currentChargingPower,
+                maxChargingPower: ev.maxChargingPower,
                 state: ev.state,
               ),
             );

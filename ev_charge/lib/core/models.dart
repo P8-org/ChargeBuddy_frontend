@@ -82,6 +82,7 @@ class UserEV {
   double currentCharge;
   String state;
   final double currentChargingPower;
+  final double maxChargingPower;
   final int carModelId;
   final CarModel carModel;
   final List<Constraint> constraints;
@@ -93,6 +94,7 @@ class UserEV {
     required this.currentCharge,
     required this.state,
     required this.currentChargingPower,
+    required this.maxChargingPower,
     required this.carModelId,
     required this.carModel,
     required this.constraints,
@@ -111,6 +113,7 @@ class UserEV {
       currentCharge: json['current_charge'],
       state: json['state'] ?? 'charging',
       currentChargingPower: json['current_charging_power'],
+      maxChargingPower: json['max_charging_power'],
       carModelId: json['car_model_id'],
       carModel: CarModel.fromJson(json['car_model']),
       constraints: constraints,
