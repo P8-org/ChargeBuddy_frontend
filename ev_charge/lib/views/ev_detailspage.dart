@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../widgets/bottom_navbar.dart';
-
 class EvDetailsPage extends ConsumerWidget {
   const EvDetailsPage({super.key, required this.id});
 
@@ -40,7 +38,7 @@ class EvDetailsPage extends ConsumerWidget {
                   try {
                     await backendService.deleteEvById(id);
                     if (!context.mounted) return;
-                    context.go('/home');
+                    context.go('/');
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Failed to delete: $e")),
@@ -60,14 +58,12 @@ class EvDetailsPage extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: EVInfoCard(id: ev.id),
+                  child: EVInfoCard(ev: ev),
                 ),
-                SizedBox(height: 16),
                 SizedBox(child: ChargingCurve(ev: ev)),
               ],
             ),
           ),
-          bottomNavigationBar: const BottomNavBar(),
         );
       },
     );

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../widgets/bottom_navbar.dart';
 import '../views/calendar_page.dart';
 
 class EvSchedulePage extends StatefulWidget {
@@ -12,35 +10,48 @@ class EvSchedulePage extends StatefulWidget {
 }
 
 class _EvSchedulePageState extends State<EvSchedulePage> {
+  CalendarViewType _currentView = CalendarViewType.day;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('EV Schedule'),
+        actions: [
+          PopupMenuButton<CalendarViewType>(
+            icon: const Icon(Icons.calendar_view_day),
+            offset: const Offset(64, -64),
+            onSelected: (view) {
+              setState(() {
+                _currentView = view;
+              });
+            },
+            itemBuilder:
+                (context) => [
+                  const PopupMenuItem(
+                    value: CalendarViewType.day,
+                    child: Text("Day View"),
+                  ),
+                  const PopupMenuItem(
+                    value: CalendarViewType.week,
+                    child: Text("Week View"),
+                  ),
+                  const PopupMenuItem(
+                    value: CalendarViewType.month,
+                    child: Text("Month View"),
+                  ),
+                ],
+          ),
+        ],
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: Center(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  context.go("/ev/${widget.id}/details");
-                },
-                icon: Icon(Icons.info),
-                label: Text("View EV Details", style: TextStyle(fontSize: 18)),
-              ),
-            ),
-          ),
-
           Expanded(
-              child: EventCalendarPage(id: widget.id)               
+            child: EventCalendarPage(id: widget.id, currentView: _currentView),
           ),
         ],
       ),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

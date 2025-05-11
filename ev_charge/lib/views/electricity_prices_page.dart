@@ -1,4 +1,3 @@
-import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/electricity_prices_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +13,6 @@ class ElectricityPricesPage extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
       body: Center(child: ElectricityPricesWidget()),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

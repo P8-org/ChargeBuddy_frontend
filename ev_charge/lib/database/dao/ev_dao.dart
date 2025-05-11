@@ -26,7 +26,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
 
         final schedule =
             await (select(schedules)
-              ..where((t) => t.userEvId.equals(ev.id))).getSingle();
+              ..where((t) => t.userEvId.equals(ev.id))).getSingleOrNull();
 
         evList.add(
           models.UserEV(
@@ -49,18 +49,22 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
                       (c) => models.Constraint(
                         id: c.id,
                         startTime: c.startTime,
-                        chargedBy: c.chargedBy,
+                        endTime: c.endTime,
                         targetPercentage: c.minPercentage,
                       ),
                     )
                     .toList(),
-            schedule: models.Schedule(
-              id: schedule.id,
-              start: schedule.start,
-              end: schedule.end,
-              startCharge: schedule.startCharge,
-              scheduleData: schedule.scheduleData,
-            ),
+            schedule:
+                schedule == null
+                    ? null
+                    : models.Schedule(
+                      id: schedule.id,
+                      start: schedule.start,
+                      end: schedule.end,
+                      startCharge: schedule.startCharge,
+                      scheduleData: schedule.scheduleData,
+                      feasible: schedule.feasible,
+                    ),
           ),
         );
       }
@@ -87,7 +91,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
 
         final schedule =
             await (select(schedules)
-              ..where((t) => t.userEvId.equals(userEv.id))).getSingle();
+              ..where((t) => t.userEvId.equals(userEv.id))).getSingleOrNull();
 
         yield models.UserEV(
           id: userEv.id,
@@ -109,18 +113,22 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
                     (c) => models.Constraint(
                       id: c.id,
                       startTime: c.startTime,
-                      chargedBy: c.chargedBy,
+                      endTime: c.endTime,
                       targetPercentage: c.minPercentage,
                     ),
                   )
                   .toList(),
-          schedule: models.Schedule(
-            id: schedule.id,
-            start: schedule.start,
-            end: schedule.end,
-            startCharge: schedule.startCharge,
-            scheduleData: schedule.scheduleData,
-          ),
+          schedule:
+              schedule == null
+                  ? null
+                  : models.Schedule(
+                    id: schedule.id,
+                    start: schedule.start,
+                    end: schedule.end,
+                    startCharge: schedule.startCharge,
+                    scheduleData: schedule.scheduleData,
+                    feasible: schedule.feasible,
+                  ),
         );
       }
     }
@@ -135,7 +143,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
                 (c) => models.Constraint(
                   id: c.id,
                   startTime: c.startTime,
-                  chargedBy: c.chargedBy,
+                  endTime: c.endTime,
                   targetPercentage: c.minPercentage,
                 ),
               )
@@ -152,7 +160,7 @@ class EvDao extends DatabaseAccessor<AppDatabase> with _$EvDaoMixin {
     return models.Constraint(
       id: c.id,
       startTime: c.startTime,
-      chargedBy: c.chargedBy,
+      endTime: c.endTime,
       targetPercentage: c.minPercentage,
     );
   }

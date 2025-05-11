@@ -40,7 +40,11 @@ class _ChargingCurveState extends State<ChargingCurve> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.ev.schedule.end.isBefore(DateTime.now())) return SizedBox();
+    if (widget.ev.schedule == null ||
+        widget.ev.schedule!.end.isBefore(DateTime.now())) {
+      return SizedBox();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
@@ -51,7 +55,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
             children: [
               Icon(Icons.battery_charging_full, color: Colors.green),
               Text(
-                'Charging Curve',
+                'Charging Schedule',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ],
@@ -76,7 +80,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(fontWeight: FontWeight.w600, fontSize: 12);
     final hour =
-        widget.ev.schedule.start.add(Duration(hours: value.toInt() - 1)).hour;
+        widget.ev.schedule!.start.add(Duration(hours: value.toInt() - 1)).hour;
 
     return SideTitleWidget(meta: meta, child: Text('$hour:00', style: style));
   }
@@ -99,7 +103,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
       Theme.of(context).colorScheme.tertiary,
     ];
     final chargingData =
-        widget.ev.schedule.scheduleData
+        widget.ev.schedule!.scheduleData
             .split(',')
             .map((e) => double.tryParse(e) ?? 0.0)
             .toList();
@@ -107,14 +111,17 @@ class _ChargingCurveState extends State<ChargingCurve> {
     final cumulativeChargingCurve = <double>[];
 
     // add items to make the graph start one hour before schedule.start
-    cumulativeChargingCurve.add(widget.ev.schedule.startCharge);
-    cumulativeChargingCurve.add(widget.ev.schedule.startCharge);
+    cumulativeChargingCurve.add(widget.ev.schedule!.startCharge);
+    cumulativeChargingCurve.add(widget.ev.schedule!.startCharge);
 
-    double sum = widget.ev.schedule.startCharge;
+    double sum = widget.ev.schedule!.startCharge;
     for (final value in chargingData) {
       sum += value;
       cumulativeChargingCurve.add(sum);
     }
+    // add one final data point to make it look nice
+    cumulativeChargingCurve.add(cumulativeChargingCurve.last);
+
     return LineChartData(
       lineTouchData: LineTouchData(
         enabled: true,
@@ -125,7 +132,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
           getTooltipItems: (touchedSpots) {
             return touchedSpots.map((spot) {
               final time =
-                  "${widget.ev.schedule.start.add(Duration(hours: spot.x.toInt() - 1)).hour}:00";
+                  "${widget.ev.schedule!.start.add(Duration(hours: spot.x.toInt() - 1)).hour}:00";
 
               final percentage = '${spot.y.toStringAsFixed(0)}%';
               return LineTooltipItem(
@@ -165,9 +172,13 @@ class _ChargingCurveState extends State<ChargingCurve> {
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
+            maxIncluded:
+                (cumulativeChargingCurve.length.round() - 1) %
+                    _calcInterval(cumulativeChargingCurve).round() ==
+                0,
             showTitles: true,
             reservedSize: 30,
-            interval: _calcInterval(chargingData),
+            interval: _calcInterval(cumulativeChargingCurve),
             getTitlesWidget: bottomTitleWidgets,
           ),
         ),
@@ -235,7 +246,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
 
   double _calcInterval(List<double> chargingData) {
     double chartWidth = MediaQuery.of(context).size.width - 50;
-    double approxLabelWidth = 60;
+    double approxLabelWidth = 50;
     int maxLabels = (chartWidth / approxLabelWidth).floor();
     double interval = (chargingData.length / maxLabels).ceilToDouble();
     return interval < 1 ? 1 : interval;
@@ -243,11 +254,14 @@ class _ChargingCurveState extends State<ChargingCurve> {
 
   // used to get the x-coordinate for the vertical line at the current time
   double _getNowX(List<double> cumulativeChargingCurve) {
+    final now = DateTime.now();
     final totalDuration =
-        widget.ev.schedule.end.difference(widget.ev.schedule.start).inSeconds +
-        3600 * 2;
+        widget.ev.schedule!.end
+            .difference(widget.ev.schedule!.start)
+            .inSeconds +
+        3600 * 3;
     final currentDuration =
-        DateTime.now().difference(widget.ev.schedule.start).inSeconds + 3600;
+        now.difference(widget.ev.schedule!.start).inSeconds + 3600;
 
     final progress = currentDuration / totalDuration;
     final currentX = progress * cumulativeChargingCurve.length;

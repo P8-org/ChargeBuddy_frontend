@@ -80,18 +80,21 @@ class DbManager {
               ),
             );
 
-        await db
-            .into(db.schedules)
-            .insertOnConflictUpdate(
-              SchedulesCompanion.insert(
-                id: Value(ev.schedule.id),
-                userEvId: ev.id,
-                start: ev.schedule.start,
-                end: ev.schedule.end,
-                startCharge: ev.schedule.startCharge,
-                scheduleData: ev.schedule.scheduleData,
-              ),
-            );
+        if (ev.schedule != null) {
+          await db
+              .into(db.schedules)
+              .insertOnConflictUpdate(
+                SchedulesCompanion.insert(
+                  id: Value(ev.schedule!.id),
+                  userEvId: ev.id,
+                  start: ev.schedule!.start,
+                  end: ev.schedule!.end,
+                  startCharge: ev.schedule!.startCharge,
+                  scheduleData: ev.schedule!.scheduleData,
+                  feasible: ev.schedule!.feasible,
+                ),
+              );
+        }
 
         for (final constraint in ev.constraints) {
           await db
@@ -101,21 +104,21 @@ class DbManager {
                   id: Value(constraint.id),
                   userEvId: ev.id,
                   startTime: constraint.startTime,
-                  chargedBy: constraint.chargedBy,
+                  endTime: constraint.endTime,
                   minPercentage: constraint.targetPercentage,
                 ),
               );
         }
-        }
-
+      }
 
       if (kDebugMode) print('[Update] Database updated.');
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (kDebugMode) {
         print(
           '[Warning] Error fetching data from backend, keeping local cache.',
         );
         print('[Error]: $e');
+        debugPrintStack(stackTrace: stackTrace);
       }
     }
   }

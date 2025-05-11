@@ -54,6 +54,7 @@ class BackendService {
       );
     }
   }
+
   Future<void> postConstraint({
     int? id, // optional for new constraints
     required int evId,
@@ -65,16 +66,14 @@ class BackendService {
 
     final Map<String, dynamic> body = {
       if (id != null) 'id': id,
-      'startTime': startTime.toIso8601String(),
-      'deadline': deadline.toIso8601String(),
+      'start_time': startTime.toIso8601String(),
+      'end_time': deadline.toIso8601String(),
       'target_percentage': targetPercentage,
     };
 
     final response = await client.post(
       uri,
-      headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-      },
+      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: jsonEncode(body),
     );
 
@@ -116,7 +115,7 @@ class BackendService {
         body: jsonEncode({
           "name": userEv.userSetName,
           "car_model_id": userEv.carModelId,
-          "battery_level": userEv.currentCharge,
+          "battery_level": userEv.schedule?.startCharge ?? userEv.currentCharge,
         }),
       );
       if (response.statusCode == 200) {

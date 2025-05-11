@@ -1,28 +1,69 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:ev_charge/core/backend_service.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
 
 enum CalendarViewType { day, week, month }
 
+const List<String> days = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+const List<String> months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 class EventCalendarPage extends ConsumerStatefulWidget {
   final int id;
+  final CalendarViewType currentView;
 
-  const EventCalendarPage({super.key, required this.id});
+  const EventCalendarPage({
+    super.key,
+    required this.id,
+    required this.currentView,
+  });
 
   @override
   _EventCalendarPage createState() => _EventCalendarPage();
 }
 
 class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
-  CalendarViewType _currentView = CalendarViewType.day;
-
   @override
   Widget build(BuildContext context) {
+    final controller = EventController();
     final constraintsAsync = ref.watch(
       localConstraintsStreamProvider(widget.id),
+    );
+
+    final headerStyle = HeaderStyle(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      ),
+      leftIconConfig: IconDataConfig(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      rightIconConfig: IconDataConfig(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
     );
 
     return constraintsAsync.when(
@@ -36,20 +77,45 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
             splitMultiDayEvent(
               constraintId: constraint.id,
               start: constraint.startTime,
-              end: constraint.chargedBy,
+              end: constraint.endTime,
               minCharge: (constraint.targetPercentage * 100).round(),
             ),
           );
         }
 
-        final controller = EventController();
         for (final e in events) {
           controller.add(e);
         }
 
-        final calendarView = switch (_currentView) {
+        final calendarView = switch (widget.currentView) {
           CalendarViewType.day => DayView(
+            scrollOffset: (DateTime.now().hour - 5) * 60 * 0.6,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            headerStyle: headerStyle,
+            liveTimeIndicatorSettings: LiveTimeIndicatorSettings(
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onEventTap: _handleEventTap,
+            heightPerMinute: 0.6,
+            dateStringBuilder: (date, {secondaryDate}) {
+              final dayString = days[date.weekday - 1];
+              final monthString = months[date.month - 1];
+
+              final string = "$dayString, $monthString ${date.day}";
+
+              if (date.day == DateTime.now().day &&
+                  date.month == DateTime.now().month) {
+                return "Today - $string";
+              }
+              if (date.day == DateTime.now().add(Duration(days: 1)).day &&
+                  date.month == DateTime.now().month) {
+                return "Tomorrow - $string";
+              }
+
+              return string;
+            },
+            keepScrollOffset: true,
+            timeLineOffset: 9,
             timeLineBuilder:
                 (date) => Text(
                   "${date.hour}:${date.minute.toStringAsFixed(0).padLeft(2, "0")}",
@@ -57,70 +123,69 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
                 ),
           ),
           CalendarViewType.week => WeekView(
+            scrollOffset: (DateTime.now().hour - 5) * 60 * 0.6,
+            keepScrollOffset: true,
+            headerStyle: headerStyle,
+            heightPerMinute: 0.6,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            liveTimeIndicatorSettings: LiveTimeIndicatorSettings(
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onEventTap: _handleEventTap,
+            timeLineOffset: 9,
             timeLineBuilder:
                 (date) => Text(
                   "${date.hour}:${date.minute.toStringAsFixed(0).padLeft(2, "0")}",
                   textAlign: TextAlign.center,
                 ),
           ),
-          CalendarViewType.month => MonthView(),
+          CalendarViewType.month => MonthView(
+            borderColor: Theme.of(context).dividerColor,
+            borderSize: 0,
+            headerStyle: headerStyle,
+          ),
         };
 
         return CalendarControllerProvider(
           controller: controller,
           child: Scaffold(
-            body: Column(
+            floatingActionButton: Column(
+              spacing: 16,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Expanded(child: calendarView),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FloatingActionButton(
-                      onPressed: () async {
-                        await showDialog<List<CalendarEventData>>(
-                          context: context,
-                          builder:
-                              (_) => EvConstraintDialog(
-                                groupId: const Uuid().v4(),
-                                evId: widget.id,
-                                title: "New Charging Window"
-                              ),
-                        );
-                      },
-                      child: const Icon(Icons.add),
-                    ),
-                    const SizedBox(width: 16),
-                    PopupMenuButton<CalendarViewType>(
-                      icon: const Icon(Icons.calendar_view_day),
-                      offset: const Offset(115, 0),
-                      onSelected: (view) {
-                        setState(() {
-                          _currentView = view;
-                        });
-                      },
-                      itemBuilder:
-                          (context) => [
-                            const PopupMenuItem(
-                              value: CalendarViewType.day,
-                              child: Text("Day View"),
-                            ),
-                            const PopupMenuItem(
-                              value: CalendarViewType.week,
-                              child: Text("Week View"),
-                            ),
-                            const PopupMenuItem(
-                              value: CalendarViewType.month,
-                              child: Text("Month View"),
-                            ),
-                          ],
-                    ),
-                  ],
+                FloatingActionButton(
+                  shape: CircleBorder(),
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onSecondaryContainer,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  onPressed: () => context.push("/ev/${widget.id}/details"),
+                  heroTag: null,
+                  child: Icon(Icons.info_outline),
                 ),
-                const SizedBox(height: 16),
+                FloatingActionButton.extended(
+                  label: Text("New"),
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onPrimaryContainer,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                  onPressed: () async {
+                    await showDialog<List<CalendarEventData>>(
+                      context: context,
+                      builder:
+                          (_) => EvConstraintDialog(
+                            groupId: const Uuid().v4(),
+                            evId: widget.id,
+                            title: "New Charging Window",
+                          ),
+                    );
+                  },
+                  icon: Icon(Icons.add),
+                ),
               ],
             ),
+            body: Column(children: [Expanded(child: calendarView)]),
           ),
         );
       },
@@ -142,7 +207,7 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => context.pop(),
                 child: const Text("Cancel"),
               ),
               TextButton(
@@ -150,25 +215,26 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
                   final backendService = BackendService();
                   try {
                     await backendService.deleteConstraint(constraintId);
-                    Navigator.pop(context);
+                    context.pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Constraint deleted.")),
                     );
                   } catch (e) {
-                    Navigator.pop(context);
+                    context.pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Delete failed: $e")),
                     );
                   }
                 },
-                child: const Text(
+                child: Text(
                   "Delete",
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
               TextButton(
                 onPressed: () async {
-                  Navigator.pop(context); // close dialog first
+                  context.pop(); // close dialog first
+                  ref.invalidate(constraintByIdProvider(constraintId));
                   final constraint = await ref.read(
                     constraintByIdProvider(constraintId).future,
                   );
@@ -182,9 +248,9 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
                           evId: widget.id,
                           initialConstraintId: constraint.id,
                           initialStart: constraint.startTime,
-                          initialEnd: constraint.chargedBy,
+                          initialEnd: constraint.endTime,
                           initialPercentage: constraint.targetPercentage * 100,
-                          title: 'Edit Charging Window' 
+                          title: 'Edit Charging Window',
                         ),
                   );
                 },
@@ -229,6 +295,7 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
           date: current,
           startTime: dayStart,
           endTime: dayEnd,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
       );
 
@@ -267,7 +334,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
   DateTime _end = DateTime.now().add(const Duration(hours: 1));
   double _minCharge = 50;
   int? _constraintId;
-  final backend_service = BackendService();
+  final _backendService = BackendService();
 
   @override
   void initState() {
@@ -365,7 +432,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
         ElevatedButton(
           onPressed: () async {
             try {
-              await backend_service.postConstraint(
+              await _backendService.postConstraint(
                 id: _constraintId,
                 evId: widget.evId,
                 startTime: _start,

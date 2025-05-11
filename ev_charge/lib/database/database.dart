@@ -35,7 +35,7 @@ class Constraints extends Table {
   late final id = integer()();
   late final userEvId = integer().references(UserEVs, #id)();
   late final startTime = dateTime()();
-  late final chargedBy = dateTime()();
+  late final endTime = dateTime()();
   late final minPercentage = real()();
 
   @override
@@ -52,6 +52,8 @@ class Schedules extends Table {
   late final startCharge = real()();
 
   late final scheduleData = text()();
+
+  late final feasible = boolean()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

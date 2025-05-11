@@ -4,7 +4,6 @@ import 'package:ev_charge/database/db_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 /// A global provider for the Drift database
 final dbProvider = Provider<AppDatabase>((ref) {
   return AppDatabase(); // Calls _openConnection() internally
@@ -35,10 +34,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.green,
           dynamicSchemeVariant: DynamicSchemeVariant.content,
-          brightness: Brightness.light,
         ),
         useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+          dynamicSchemeVariant: DynamicSchemeVariant.content,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.light,
     );
   }
 }

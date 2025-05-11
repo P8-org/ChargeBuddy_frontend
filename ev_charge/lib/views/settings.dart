@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ev_charge/widgets/bottom_navbar.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -23,7 +22,6 @@ class Settings extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

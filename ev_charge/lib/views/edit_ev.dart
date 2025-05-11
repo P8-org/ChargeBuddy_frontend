@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:ev_charge/widgets/ev_form.dart';
-import '../widgets/bottom_navbar.dart';
 
 class EVEdit extends StatelessWidget {
   const EVEdit({super.key, required this.id});
@@ -12,10 +11,10 @@ class EVEdit extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit EV'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
       body: EVForm(id: id),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

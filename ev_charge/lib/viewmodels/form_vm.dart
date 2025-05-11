@@ -8,7 +8,11 @@ class FormVM extends ChangeNotifier {
   FormVM({BackendService? backendService})
     : _backendService = backendService ?? BackendService();
 
-  Future<bool> putEv(String userSetName, CarModel carModel, UserEV oldUserEv) async { 
+  Future<bool> putEv(
+    String userSetName,
+    CarModel carModel,
+    UserEV oldUserEv,
+  ) async {
     final userEv = UserEV(
       id: oldUserEv.id,
       userSetName: userSetName,
@@ -18,7 +22,7 @@ class FormVM extends ChangeNotifier {
       carModelId: carModel.id,
       carModel: carModel,
       constraints: oldUserEv.constraints,
-      schedule: oldUserEv.schedule
+      schedule: oldUserEv.schedule,
     );
     try {
       await _backendService.putEv(userEv, oldUserEv.id);
@@ -38,13 +42,7 @@ class FormVM extends ChangeNotifier {
       carModelId: carModel.id,
       carModel: carModel,
       constraints: List<Constraint>.empty(),
-      schedule: Schedule(
-        id: 0,
-        start: DateTime.now(),
-        end: DateTime.now(),
-        startCharge: 0.0,
-        scheduleData: 'n/a',
-      ),
+      schedule: null,
     );
     try {
       await _backendService.postEv(userEv);
