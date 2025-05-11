@@ -453,7 +453,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
               );
             }
           },
-          child: const Text('Add Event'),
+          child: const Text('Save Event'),
         ),
       ],
     );
