@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../views/calendar_page.dart';
 
@@ -41,6 +42,7 @@ class _EvSchedulePageState extends State<EvSchedulePage> {
                   ),
                 ],
           ),
+          if (kDebugMode) SizedBox(width: 50),
         ],
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,

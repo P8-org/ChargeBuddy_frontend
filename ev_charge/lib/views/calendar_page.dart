@@ -382,6 +382,44 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
     });
   }
 
+  String _getDateString(DateTime date) {
+    final now = DateTime.now();
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
+      return "Today";
+    } else if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.add(const Duration(days: 1)).day) {
+      return "Tomorrow";
+    } else {
+      return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+    }
+  }
+
+  DateTime _roundDownToNearestHour(DateTime dateTime) {
+    return DateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour);
+  }
+
+  DateTime _roundUpToNearestHour(DateTime dateTime) {
+    return DateTime(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      dateTime.hour,
+    ).add(const Duration(hours: 1));
+  }
+
+  // Helper function to adjust a DateTime by a given number of hours
+  DateTime _adjustHour(DateTime dateTime, int hours) {
+    if (dateTime.minute != 0) {
+      return hours > 0
+          ? _roundUpToNearestHour(dateTime)
+          : _roundDownToNearestHour(dateTime);
+    }
+    return dateTime.add(Duration(hours: hours));
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -390,25 +428,91 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Start: ${_start.toString().substring(0, 16)}"),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () => _selectDateTime(context, true),
+                Column(
+                  children: [
+                    Text(
+                      "Start:",
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    Text(_getDateString(_start)),
+                    Text(
+                      "${_start.hour}:${_start.minute.toString().padLeft(2, '0')}",
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed:
+                              () => setState(() {
+                                _start = _adjustHour(_start, -1);
+                              }),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed:
+                              () => setState(() {
+                                _start = _adjustHour(_start, 1);
+                              }),
+                        ),
+                      ],
+                    ),
+                    // IconButton(
+                    //   icon: const Icon(Icons.calendar_today),
+                    //   onPressed: () => _selectDateTime(context, true),
+                    // ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Icon(
+                    Icons.keyboard_double_arrow_right_rounded,
+                    size: 40,
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text("End:", style: Theme.of(context).textTheme.labelLarge),
+                    Text(_getDateString(_end)),
+
+                    Text(
+                      "${_end.hour}:${_end.minute.toString().padLeft(2, '0')}",
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed:
+                              () => setState(() {
+                                _end = _adjustHour(_end, -1);
+                              }),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed:
+                              () => setState(() {
+                                _end = _adjustHour(_end, 1);
+                              }),
+                        ),
+                      ],
+                    ),
+                    // IconButton(
+                    //   icon: const Icon(Icons.calendar_today),
+                    //   onPressed: () => _selectDateTime(context, false),
+                    // ),
+                  ],
                 ),
               ],
             ),
-            Row(
-              children: [
-                Text("End: ${_end.toString().substring(0, 16)}"),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () => _selectDateTime(context, false),
-                ),
-              ],
+            Divider(),
+            SizedBox(height: 12),
+            Text(
+              "Minimum Charge Level:",
+              style: Theme.of(context).textTheme.labelLarge,
             ),
-            const SizedBox(height: 10),
-            Text("Minimum Charge Level: ${_minCharge.toInt()}%"),
+            Text("${_minCharge.toInt()}%"),
             Slider(
               value: _minCharge,
               min: 0,
