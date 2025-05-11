@@ -108,7 +108,7 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
                 return "Today - $string";
               }
               if (date.day == DateTime.now().add(Duration(days: 1)).day &&
-                  date.month == DateTime.now().month) {
+                  date.month == DateTime.now().add(Duration(days: 1)).month) {
                 return "Tomorrow - $string";
               }
 
