@@ -54,14 +54,7 @@ class EvDetailsPage extends ConsumerWidget {
           body: SingleChildScrollView(
             child: Column(
               spacing: 16,
-              children: [
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: EVInfoCard(ev: ev),
-                ),
-                SizedBox(child: ChargingCurve(ev: ev)),
-              ],
+              children: [EVInfoCard(ev: ev), ChargingCurve(ev: ev)],
             ),
           ),
         );
