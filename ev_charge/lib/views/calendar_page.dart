@@ -536,7 +536,7 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
         ),
         ElevatedButton(
           onPressed:
-              _end.isAfter(_start)
+              _end.isAfter(_start) && _end.isAfter(DateTime.now())
                   ? () async {
                     try {
                       await _backendService.postConstraint(
