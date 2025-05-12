@@ -1,6 +1,5 @@
 import 'package:ev_charge/providers/db_refresh_provider.dart';
 import 'package:ev_charge/providers/ev_providers.dart';
-import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/ev_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,13 +18,14 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-        backgroundColor: Colors.green,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.account_circle),
             tooltip: 'Profile',
             onPressed: () {
-              context.go('/settings');
+              context.push('/settings');
             },
           ),
         ],
@@ -40,7 +40,7 @@ class HomePage extends ConsumerWidget {
                   const Text("No cars in db"),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
-                    onPressed: () => context.go("/add_ev"),
+                    onPressed: () => context.push("/add_ev"),
                     label: const Text("Add EV"),
                     icon: const Icon(Icons.add),
                   ),
@@ -49,14 +49,14 @@ class HomePage extends ConsumerWidget {
             );
           }
           return RefreshIndicator(
-              onRefresh: () async {
-                final db = ref.read(dbProvider);
-                await DbManager.updateDatabase(db);
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Database refreshed.')),
-                );
-              },
+            onRefresh: () async {
+              final db = ref.read(dbProvider);
+              await DbManager.updateDatabase(db);
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Database refreshed.')),
+              );
+            },
 
             child: ListView.builder(
               itemCount: evs.length,
@@ -66,7 +66,7 @@ class HomePage extends ConsumerWidget {
                     children: [
                       EvCard(ev: evs[index]),
                       ElevatedButton.icon(
-                        onPressed: () => context.go("/add_ev"),
+                        onPressed: () => context.push("/add_ev"),
                         label: Text("Add EV"),
                         icon: Icon(Icons.add),
                       ),
@@ -79,21 +79,22 @@ class HomePage extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error:
-            (e, _) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Error: $e"),
-                  ElevatedButton(
-                    onPressed: () => ref.refresh(allUserEvsProvider),
-                    child: const Text("Try again"),
-                  ),
-                ],
-              ),
+        error: (e, stackTrace) {
+          debugPrintStack(stackTrace: stackTrace);
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Error: $e"),
+                ElevatedButton(
+                  onPressed: () => ref.refresh(allUserEvsProvider),
+                  child: const Text("Try again"),
+                ),
+              ],
             ),
+          );
+        },
       ),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

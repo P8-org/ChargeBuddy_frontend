@@ -1,21 +1,21 @@
 class Constraint {
   final int id;
   final DateTime startTime;
-  final DateTime chargedBy;
+  final DateTime endTime;
   final double targetPercentage;
 
   Constraint({
     required this.id,
     required this.startTime,
-    required this.chargedBy,
+    required this.endTime,
     required this.targetPercentage,
   });
 
   factory Constraint.fromJson(Map<String, dynamic> json) {
     return Constraint(
       id: json['id'],
-      startTime: DateTime.parse(json['start_time']??'string'),
-      chargedBy: DateTime.parse(json['charged_by']),
+      startTime: DateTime.parse(json['start_time']),
+      endTime: DateTime.parse(json['end_time']),
       targetPercentage: json['target_percentage'],
     );
   }
@@ -27,6 +27,7 @@ class Schedule {
   final DateTime end;
   final String scheduleData;
   final double startCharge;
+  final bool feasible;
 
   Schedule({
     required this.id,
@@ -34,6 +35,7 @@ class Schedule {
     required this.end,
     required this.startCharge,
     required this.scheduleData,
+    required this.feasible,
   });
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class Schedule {
       end: DateTime.parse(json['end']),
       startCharge: json['start_charge'],
       scheduleData: json['schedule_data'],
+      feasible: json['feasible'],
     );
   }
 }
@@ -79,10 +82,11 @@ class UserEV {
   double currentCharge;
   String state;
   final double currentChargingPower;
+  final double maxChargingPower;
   final int carModelId;
   final CarModel carModel;
   final List<Constraint> constraints;
-  final Schedule schedule;
+  final Schedule? schedule;
 
   UserEV({
     required this.id,
@@ -90,6 +94,7 @@ class UserEV {
     required this.currentCharge,
     required this.state,
     required this.currentChargingPower,
+    required this.maxChargingPower,
     required this.carModelId,
     required this.carModel,
     required this.constraints,
@@ -98,19 +103,22 @@ class UserEV {
 
   factory UserEV.fromJson(Map<String, dynamic> json) {
     var constraintListJson = json['constraints'] as List;
-    List<Constraint> constraints = constraintListJson
-        .map((constraint) => Constraint.fromJson(constraint))
-        .toList();
+    List<Constraint> constraints =
+        constraintListJson
+            .map((constraint) => Constraint.fromJson(constraint))
+            .toList();
     return UserEV(
       id: json['id'],
       userSetName: json['user_set_name'],
       currentCharge: json['current_charge'],
       state: json['state'] ?? 'charging',
       currentChargingPower: json['current_charging_power'],
+      maxChargingPower: json['max_charging_power'],
       carModelId: json['car_model_id'],
       carModel: CarModel.fromJson(json['car_model']),
       constraints: constraints,
-      schedule: Schedule.fromJson(json['schedule']),
+      schedule:
+          json['schedule'] != null ? Schedule.fromJson(json['schedule']) : null,
     );
   }
 }

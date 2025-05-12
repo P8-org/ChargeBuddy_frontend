@@ -436,17 +436,28 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _currentChargePowerMeta =
-      const VerificationMeta('currentChargePower');
+  static const VerificationMeta _currentChargingPowerMeta =
+      const VerificationMeta('currentChargingPower');
   @override
-  late final GeneratedColumn<double> currentChargePower =
+  late final GeneratedColumn<double> currentChargingPower =
       GeneratedColumn<double>(
-        'current_charge_power',
+        'current_charging_power',
         aliasedName,
         false,
         type: DriftSqlType.double,
         requiredDuringInsert: true,
       );
+  static const VerificationMeta _maxChargingPowerMeta = const VerificationMeta(
+    'maxChargingPower',
+  );
+  @override
+  late final GeneratedColumn<double> maxChargingPower = GeneratedColumn<double>(
+    'max_charging_power',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -454,7 +465,8 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     userSetName,
     currentCharge,
     state,
-    currentChargePower,
+    currentChargingPower,
+    maxChargingPower,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -512,16 +524,27 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
     } else if (isInserting) {
       context.missing(_stateMeta);
     }
-    if (data.containsKey('current_charge_power')) {
+    if (data.containsKey('current_charging_power')) {
       context.handle(
-        _currentChargePowerMeta,
-        currentChargePower.isAcceptableOrUnknown(
-          data['current_charge_power']!,
-          _currentChargePowerMeta,
+        _currentChargingPowerMeta,
+        currentChargingPower.isAcceptableOrUnknown(
+          data['current_charging_power']!,
+          _currentChargingPowerMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_currentChargePowerMeta);
+      context.missing(_currentChargingPowerMeta);
+    }
+    if (data.containsKey('max_charging_power')) {
+      context.handle(
+        _maxChargingPowerMeta,
+        maxChargingPower.isAcceptableOrUnknown(
+          data['max_charging_power']!,
+          _maxChargingPowerMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_maxChargingPowerMeta);
     }
     return context;
   }
@@ -557,10 +580,15 @@ class $UserEVsTable extends UserEVs with TableInfo<$UserEVsTable, UserEV> {
             DriftSqlType.string,
             data['${effectivePrefix}state'],
           )!,
-      currentChargePower:
+      currentChargingPower:
           attachedDatabase.typeMapping.read(
             DriftSqlType.double,
-            data['${effectivePrefix}current_charge_power'],
+            data['${effectivePrefix}current_charging_power'],
+          )!,
+      maxChargingPower:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.double,
+            data['${effectivePrefix}max_charging_power'],
           )!,
     );
   }
@@ -577,14 +605,16 @@ class UserEV extends DataClass implements Insertable<UserEV> {
   final String userSetName;
   final double currentCharge;
   final String state;
-  final double currentChargePower;
+  final double currentChargingPower;
+  final double maxChargingPower;
   const UserEV({
     required this.id,
     required this.carModelId,
     required this.userSetName,
     required this.currentCharge,
     required this.state,
-    required this.currentChargePower,
+    required this.currentChargingPower,
+    required this.maxChargingPower,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -594,7 +624,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     map['user_set_name'] = Variable<String>(userSetName);
     map['current_charge'] = Variable<double>(currentCharge);
     map['state'] = Variable<String>(state);
-    map['current_charge_power'] = Variable<double>(currentChargePower);
+    map['current_charging_power'] = Variable<double>(currentChargingPower);
+    map['max_charging_power'] = Variable<double>(maxChargingPower);
     return map;
   }
 
@@ -605,7 +636,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       userSetName: Value(userSetName),
       currentCharge: Value(currentCharge),
       state: Value(state),
-      currentChargePower: Value(currentChargePower),
+      currentChargingPower: Value(currentChargingPower),
+      maxChargingPower: Value(maxChargingPower),
     );
   }
 
@@ -620,9 +652,10 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       userSetName: serializer.fromJson<String>(json['userSetName']),
       currentCharge: serializer.fromJson<double>(json['currentCharge']),
       state: serializer.fromJson<String>(json['state']),
-      currentChargePower: serializer.fromJson<double>(
-        json['currentChargePower'],
+      currentChargingPower: serializer.fromJson<double>(
+        json['currentChargingPower'],
       ),
+      maxChargingPower: serializer.fromJson<double>(json['maxChargingPower']),
     );
   }
   @override
@@ -634,7 +667,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
       'userSetName': serializer.toJson<String>(userSetName),
       'currentCharge': serializer.toJson<double>(currentCharge),
       'state': serializer.toJson<String>(state),
-      'currentChargePower': serializer.toJson<double>(currentChargePower),
+      'currentChargingPower': serializer.toJson<double>(currentChargingPower),
+      'maxChargingPower': serializer.toJson<double>(maxChargingPower),
     };
   }
 
@@ -644,14 +678,16 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     String? userSetName,
     double? currentCharge,
     String? state,
-    double? currentChargePower,
+    double? currentChargingPower,
+    double? maxChargingPower,
   }) => UserEV(
     id: id ?? this.id,
     carModelId: carModelId ?? this.carModelId,
     userSetName: userSetName ?? this.userSetName,
     currentCharge: currentCharge ?? this.currentCharge,
     state: state ?? this.state,
-    currentChargePower: currentChargePower ?? this.currentChargePower,
+    currentChargingPower: currentChargingPower ?? this.currentChargingPower,
+    maxChargingPower: maxChargingPower ?? this.maxChargingPower,
   );
   UserEV copyWithCompanion(UserEVsCompanion data) {
     return UserEV(
@@ -665,10 +701,14 @@ class UserEV extends DataClass implements Insertable<UserEV> {
               ? data.currentCharge.value
               : this.currentCharge,
       state: data.state.present ? data.state.value : this.state,
-      currentChargePower:
-          data.currentChargePower.present
-              ? data.currentChargePower.value
-              : this.currentChargePower,
+      currentChargingPower:
+          data.currentChargingPower.present
+              ? data.currentChargingPower.value
+              : this.currentChargingPower,
+      maxChargingPower:
+          data.maxChargingPower.present
+              ? data.maxChargingPower.value
+              : this.maxChargingPower,
     );
   }
 
@@ -680,7 +720,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
           ..write('userSetName: $userSetName, ')
           ..write('currentCharge: $currentCharge, ')
           ..write('state: $state, ')
-          ..write('currentChargePower: $currentChargePower')
+          ..write('currentChargingPower: $currentChargingPower, ')
+          ..write('maxChargingPower: $maxChargingPower')
           ..write(')'))
         .toString();
   }
@@ -692,7 +733,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
     userSetName,
     currentCharge,
     state,
-    currentChargePower,
+    currentChargingPower,
+    maxChargingPower,
   );
   @override
   bool operator ==(Object other) =>
@@ -703,7 +745,8 @@ class UserEV extends DataClass implements Insertable<UserEV> {
           other.userSetName == this.userSetName &&
           other.currentCharge == this.currentCharge &&
           other.state == this.state &&
-          other.currentChargePower == this.currentChargePower);
+          other.currentChargingPower == this.currentChargingPower &&
+          other.maxChargingPower == this.maxChargingPower);
 }
 
 class UserEVsCompanion extends UpdateCompanion<UserEV> {
@@ -712,14 +755,16 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
   final Value<String> userSetName;
   final Value<double> currentCharge;
   final Value<String> state;
-  final Value<double> currentChargePower;
+  final Value<double> currentChargingPower;
+  final Value<double> maxChargingPower;
   const UserEVsCompanion({
     this.id = const Value.absent(),
     this.carModelId = const Value.absent(),
     this.userSetName = const Value.absent(),
     this.currentCharge = const Value.absent(),
     this.state = const Value.absent(),
-    this.currentChargePower = const Value.absent(),
+    this.currentChargingPower = const Value.absent(),
+    this.maxChargingPower = const Value.absent(),
   });
   UserEVsCompanion.insert({
     this.id = const Value.absent(),
@@ -727,19 +772,22 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     required String userSetName,
     required double currentCharge,
     required String state,
-    required double currentChargePower,
+    required double currentChargingPower,
+    required double maxChargingPower,
   }) : carModelId = Value(carModelId),
        userSetName = Value(userSetName),
        currentCharge = Value(currentCharge),
        state = Value(state),
-       currentChargePower = Value(currentChargePower);
+       currentChargingPower = Value(currentChargingPower),
+       maxChargingPower = Value(maxChargingPower);
   static Insertable<UserEV> custom({
     Expression<int>? id,
     Expression<int>? carModelId,
     Expression<String>? userSetName,
     Expression<double>? currentCharge,
     Expression<String>? state,
-    Expression<double>? currentChargePower,
+    Expression<double>? currentChargingPower,
+    Expression<double>? maxChargingPower,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -747,8 +795,9 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
       if (userSetName != null) 'user_set_name': userSetName,
       if (currentCharge != null) 'current_charge': currentCharge,
       if (state != null) 'state': state,
-      if (currentChargePower != null)
-        'current_charge_power': currentChargePower,
+      if (currentChargingPower != null)
+        'current_charging_power': currentChargingPower,
+      if (maxChargingPower != null) 'max_charging_power': maxChargingPower,
     });
   }
 
@@ -758,7 +807,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     Value<String>? userSetName,
     Value<double>? currentCharge,
     Value<String>? state,
-    Value<double>? currentChargePower,
+    Value<double>? currentChargingPower,
+    Value<double>? maxChargingPower,
   }) {
     return UserEVsCompanion(
       id: id ?? this.id,
@@ -766,7 +816,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
       userSetName: userSetName ?? this.userSetName,
       currentCharge: currentCharge ?? this.currentCharge,
       state: state ?? this.state,
-      currentChargePower: currentChargePower ?? this.currentChargePower,
+      currentChargingPower: currentChargingPower ?? this.currentChargingPower,
+      maxChargingPower: maxChargingPower ?? this.maxChargingPower,
     );
   }
 
@@ -788,8 +839,13 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
     if (state.present) {
       map['state'] = Variable<String>(state.value);
     }
-    if (currentChargePower.present) {
-      map['current_charge_power'] = Variable<double>(currentChargePower.value);
+    if (currentChargingPower.present) {
+      map['current_charging_power'] = Variable<double>(
+        currentChargingPower.value,
+      );
+    }
+    if (maxChargingPower.present) {
+      map['max_charging_power'] = Variable<double>(maxChargingPower.value);
     }
     return map;
   }
@@ -802,7 +858,8 @@ class UserEVsCompanion extends UpdateCompanion<UserEV> {
           ..write('userSetName: $userSetName, ')
           ..write('currentCharge: $currentCharge, ')
           ..write('state: $state, ')
-          ..write('currentChargePower: $currentChargePower')
+          ..write('currentChargingPower: $currentChargingPower, ')
+          ..write('maxChargingPower: $maxChargingPower')
           ..write(')'))
         .toString();
   }
@@ -848,12 +905,12 @@ class $ConstraintsTable extends Constraints
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _chargedByMeta = const VerificationMeta(
-    'chargedBy',
+  static const VerificationMeta _endTimeMeta = const VerificationMeta(
+    'endTime',
   );
   @override
-  late final GeneratedColumn<DateTime> chargedBy = GeneratedColumn<DateTime>(
-    'charged_by',
+  late final GeneratedColumn<DateTime> endTime = GeneratedColumn<DateTime>(
+    'end_time',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
@@ -875,7 +932,7 @@ class $ConstraintsTable extends Constraints
     id,
     userEvId,
     startTime,
-    chargedBy,
+    endTime,
     minPercentage,
   ];
   @override
@@ -909,13 +966,13 @@ class $ConstraintsTable extends Constraints
     } else if (isInserting) {
       context.missing(_startTimeMeta);
     }
-    if (data.containsKey('charged_by')) {
+    if (data.containsKey('end_time')) {
       context.handle(
-        _chargedByMeta,
-        chargedBy.isAcceptableOrUnknown(data['charged_by']!, _chargedByMeta),
+        _endTimeMeta,
+        endTime.isAcceptableOrUnknown(data['end_time']!, _endTimeMeta),
       );
     } else if (isInserting) {
-      context.missing(_chargedByMeta);
+      context.missing(_endTimeMeta);
     }
     if (data.containsKey('min_percentage')) {
       context.handle(
@@ -952,10 +1009,10 @@ class $ConstraintsTable extends Constraints
             DriftSqlType.dateTime,
             data['${effectivePrefix}start_time'],
           )!,
-      chargedBy:
+      endTime:
           attachedDatabase.typeMapping.read(
             DriftSqlType.dateTime,
-            data['${effectivePrefix}charged_by'],
+            data['${effectivePrefix}end_time'],
           )!,
       minPercentage:
           attachedDatabase.typeMapping.read(
@@ -975,13 +1032,13 @@ class Constraint extends DataClass implements Insertable<Constraint> {
   final int id;
   final int userEvId;
   final DateTime startTime;
-  final DateTime chargedBy;
+  final DateTime endTime;
   final double minPercentage;
   const Constraint({
     required this.id,
     required this.userEvId,
     required this.startTime,
-    required this.chargedBy,
+    required this.endTime,
     required this.minPercentage,
   });
   @override
@@ -990,7 +1047,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     map['id'] = Variable<int>(id);
     map['user_ev_id'] = Variable<int>(userEvId);
     map['start_time'] = Variable<DateTime>(startTime);
-    map['charged_by'] = Variable<DateTime>(chargedBy);
+    map['end_time'] = Variable<DateTime>(endTime);
     map['min_percentage'] = Variable<double>(minPercentage);
     return map;
   }
@@ -1000,7 +1057,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
       id: Value(id),
       userEvId: Value(userEvId),
       startTime: Value(startTime),
-      chargedBy: Value(chargedBy),
+      endTime: Value(endTime),
       minPercentage: Value(minPercentage),
     );
   }
@@ -1014,7 +1071,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
       id: serializer.fromJson<int>(json['id']),
       userEvId: serializer.fromJson<int>(json['userEvId']),
       startTime: serializer.fromJson<DateTime>(json['startTime']),
-      chargedBy: serializer.fromJson<DateTime>(json['chargedBy']),
+      endTime: serializer.fromJson<DateTime>(json['endTime']),
       minPercentage: serializer.fromJson<double>(json['minPercentage']),
     );
   }
@@ -1025,7 +1082,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
       'id': serializer.toJson<int>(id),
       'userEvId': serializer.toJson<int>(userEvId),
       'startTime': serializer.toJson<DateTime>(startTime),
-      'chargedBy': serializer.toJson<DateTime>(chargedBy),
+      'endTime': serializer.toJson<DateTime>(endTime),
       'minPercentage': serializer.toJson<double>(minPercentage),
     };
   }
@@ -1034,13 +1091,13 @@ class Constraint extends DataClass implements Insertable<Constraint> {
     int? id,
     int? userEvId,
     DateTime? startTime,
-    DateTime? chargedBy,
+    DateTime? endTime,
     double? minPercentage,
   }) => Constraint(
     id: id ?? this.id,
     userEvId: userEvId ?? this.userEvId,
     startTime: startTime ?? this.startTime,
-    chargedBy: chargedBy ?? this.chargedBy,
+    endTime: endTime ?? this.endTime,
     minPercentage: minPercentage ?? this.minPercentage,
   );
   Constraint copyWithCompanion(ConstraintsCompanion data) {
@@ -1048,7 +1105,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
       id: data.id.present ? data.id.value : this.id,
       userEvId: data.userEvId.present ? data.userEvId.value : this.userEvId,
       startTime: data.startTime.present ? data.startTime.value : this.startTime,
-      chargedBy: data.chargedBy.present ? data.chargedBy.value : this.chargedBy,
+      endTime: data.endTime.present ? data.endTime.value : this.endTime,
       minPercentage:
           data.minPercentage.present
               ? data.minPercentage.value
@@ -1062,7 +1119,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
           ..write('startTime: $startTime, ')
-          ..write('chargedBy: $chargedBy, ')
+          ..write('endTime: $endTime, ')
           ..write('minPercentage: $minPercentage')
           ..write(')'))
         .toString();
@@ -1070,7 +1127,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
 
   @override
   int get hashCode =>
-      Object.hash(id, userEvId, startTime, chargedBy, minPercentage);
+      Object.hash(id, userEvId, startTime, endTime, minPercentage);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1078,7 +1135,7 @@ class Constraint extends DataClass implements Insertable<Constraint> {
           other.id == this.id &&
           other.userEvId == this.userEvId &&
           other.startTime == this.startTime &&
-          other.chargedBy == this.chargedBy &&
+          other.endTime == this.endTime &&
           other.minPercentage == this.minPercentage);
 }
 
@@ -1086,37 +1143,37 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
   final Value<int> id;
   final Value<int> userEvId;
   final Value<DateTime> startTime;
-  final Value<DateTime> chargedBy;
+  final Value<DateTime> endTime;
   final Value<double> minPercentage;
   const ConstraintsCompanion({
     this.id = const Value.absent(),
     this.userEvId = const Value.absent(),
     this.startTime = const Value.absent(),
-    this.chargedBy = const Value.absent(),
+    this.endTime = const Value.absent(),
     this.minPercentage = const Value.absent(),
   });
   ConstraintsCompanion.insert({
     this.id = const Value.absent(),
     required int userEvId,
     required DateTime startTime,
-    required DateTime chargedBy,
+    required DateTime endTime,
     required double minPercentage,
   }) : userEvId = Value(userEvId),
        startTime = Value(startTime),
-       chargedBy = Value(chargedBy),
+       endTime = Value(endTime),
        minPercentage = Value(minPercentage);
   static Insertable<Constraint> custom({
     Expression<int>? id,
     Expression<int>? userEvId,
     Expression<DateTime>? startTime,
-    Expression<DateTime>? chargedBy,
+    Expression<DateTime>? endTime,
     Expression<double>? minPercentage,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (userEvId != null) 'user_ev_id': userEvId,
       if (startTime != null) 'start_time': startTime,
-      if (chargedBy != null) 'charged_by': chargedBy,
+      if (endTime != null) 'end_time': endTime,
       if (minPercentage != null) 'min_percentage': minPercentage,
     });
   }
@@ -1125,14 +1182,14 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
     Value<int>? id,
     Value<int>? userEvId,
     Value<DateTime>? startTime,
-    Value<DateTime>? chargedBy,
+    Value<DateTime>? endTime,
     Value<double>? minPercentage,
   }) {
     return ConstraintsCompanion(
       id: id ?? this.id,
       userEvId: userEvId ?? this.userEvId,
       startTime: startTime ?? this.startTime,
-      chargedBy: chargedBy ?? this.chargedBy,
+      endTime: endTime ?? this.endTime,
       minPercentage: minPercentage ?? this.minPercentage,
     );
   }
@@ -1149,8 +1206,8 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
     if (startTime.present) {
       map['start_time'] = Variable<DateTime>(startTime.value);
     }
-    if (chargedBy.present) {
-      map['charged_by'] = Variable<DateTime>(chargedBy.value);
+    if (endTime.present) {
+      map['end_time'] = Variable<DateTime>(endTime.value);
     }
     if (minPercentage.present) {
       map['min_percentage'] = Variable<double>(minPercentage.value);
@@ -1164,7 +1221,7 @@ class ConstraintsCompanion extends UpdateCompanion<Constraint> {
           ..write('id: $id, ')
           ..write('userEvId: $userEvId, ')
           ..write('startTime: $startTime, ')
-          ..write('chargedBy: $chargedBy, ')
+          ..write('endTime: $endTime, ')
           ..write('minPercentage: $minPercentage')
           ..write(')'))
         .toString();
@@ -1240,6 +1297,20 @@ class $SchedulesTable extends Schedules
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _feasibleMeta = const VerificationMeta(
+    'feasible',
+  );
+  @override
+  late final GeneratedColumn<bool> feasible = GeneratedColumn<bool>(
+    'feasible',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("feasible" IN (0, 1))',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1248,6 +1319,7 @@ class $SchedulesTable extends Schedules
     end,
     startCharge,
     scheduleData,
+    feasible,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1310,6 +1382,14 @@ class $SchedulesTable extends Schedules
     } else if (isInserting) {
       context.missing(_scheduleDataMeta);
     }
+    if (data.containsKey('feasible')) {
+      context.handle(
+        _feasibleMeta,
+        feasible.isAcceptableOrUnknown(data['feasible']!, _feasibleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_feasibleMeta);
+    }
     return context;
   }
 
@@ -1349,6 +1429,11 @@ class $SchedulesTable extends Schedules
             DriftSqlType.string,
             data['${effectivePrefix}schedule_data'],
           )!,
+      feasible:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}feasible'],
+          )!,
     );
   }
 
@@ -1365,6 +1450,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
   final DateTime end;
   final double startCharge;
   final String scheduleData;
+  final bool feasible;
   const Schedule({
     required this.id,
     required this.userEvId,
@@ -1372,6 +1458,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     required this.end,
     required this.startCharge,
     required this.scheduleData,
+    required this.feasible,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1382,6 +1469,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     map['end'] = Variable<DateTime>(end);
     map['start_charge'] = Variable<double>(startCharge);
     map['schedule_data'] = Variable<String>(scheduleData);
+    map['feasible'] = Variable<bool>(feasible);
     return map;
   }
 
@@ -1393,6 +1481,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       end: Value(end),
       startCharge: Value(startCharge),
       scheduleData: Value(scheduleData),
+      feasible: Value(feasible),
     );
   }
 
@@ -1408,6 +1497,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       end: serializer.fromJson<DateTime>(json['end']),
       startCharge: serializer.fromJson<double>(json['startCharge']),
       scheduleData: serializer.fromJson<String>(json['scheduleData']),
+      feasible: serializer.fromJson<bool>(json['feasible']),
     );
   }
   @override
@@ -1420,6 +1510,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
       'end': serializer.toJson<DateTime>(end),
       'startCharge': serializer.toJson<double>(startCharge),
       'scheduleData': serializer.toJson<String>(scheduleData),
+      'feasible': serializer.toJson<bool>(feasible),
     };
   }
 
@@ -1430,6 +1521,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     DateTime? end,
     double? startCharge,
     String? scheduleData,
+    bool? feasible,
   }) => Schedule(
     id: id ?? this.id,
     userEvId: userEvId ?? this.userEvId,
@@ -1437,6 +1529,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
     end: end ?? this.end,
     startCharge: startCharge ?? this.startCharge,
     scheduleData: scheduleData ?? this.scheduleData,
+    feasible: feasible ?? this.feasible,
   );
   Schedule copyWithCompanion(SchedulesCompanion data) {
     return Schedule(
@@ -1450,6 +1543,7 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           data.scheduleData.present
               ? data.scheduleData.value
               : this.scheduleData,
+      feasible: data.feasible.present ? data.feasible.value : this.feasible,
     );
   }
 
@@ -1461,14 +1555,22 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           ..write('start: $start, ')
           ..write('end: $end, ')
           ..write('startCharge: $startCharge, ')
-          ..write('scheduleData: $scheduleData')
+          ..write('scheduleData: $scheduleData, ')
+          ..write('feasible: $feasible')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, userEvId, start, end, startCharge, scheduleData);
+  int get hashCode => Object.hash(
+    id,
+    userEvId,
+    start,
+    end,
+    startCharge,
+    scheduleData,
+    feasible,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1478,7 +1580,8 @@ class Schedule extends DataClass implements Insertable<Schedule> {
           other.start == this.start &&
           other.end == this.end &&
           other.startCharge == this.startCharge &&
-          other.scheduleData == this.scheduleData);
+          other.scheduleData == this.scheduleData &&
+          other.feasible == this.feasible);
 }
 
 class SchedulesCompanion extends UpdateCompanion<Schedule> {
@@ -1488,6 +1591,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
   final Value<DateTime> end;
   final Value<double> startCharge;
   final Value<String> scheduleData;
+  final Value<bool> feasible;
   const SchedulesCompanion({
     this.id = const Value.absent(),
     this.userEvId = const Value.absent(),
@@ -1495,6 +1599,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     this.end = const Value.absent(),
     this.startCharge = const Value.absent(),
     this.scheduleData = const Value.absent(),
+    this.feasible = const Value.absent(),
   });
   SchedulesCompanion.insert({
     this.id = const Value.absent(),
@@ -1503,11 +1608,13 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     required DateTime end,
     required double startCharge,
     required String scheduleData,
+    required bool feasible,
   }) : userEvId = Value(userEvId),
        start = Value(start),
        end = Value(end),
        startCharge = Value(startCharge),
-       scheduleData = Value(scheduleData);
+       scheduleData = Value(scheduleData),
+       feasible = Value(feasible);
   static Insertable<Schedule> custom({
     Expression<int>? id,
     Expression<int>? userEvId,
@@ -1515,6 +1622,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     Expression<DateTime>? end,
     Expression<double>? startCharge,
     Expression<String>? scheduleData,
+    Expression<bool>? feasible,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1523,6 +1631,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
       if (end != null) 'end': end,
       if (startCharge != null) 'start_charge': startCharge,
       if (scheduleData != null) 'schedule_data': scheduleData,
+      if (feasible != null) 'feasible': feasible,
     });
   }
 
@@ -1533,6 +1642,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     Value<DateTime>? end,
     Value<double>? startCharge,
     Value<String>? scheduleData,
+    Value<bool>? feasible,
   }) {
     return SchedulesCompanion(
       id: id ?? this.id,
@@ -1541,6 +1651,7 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
       end: end ?? this.end,
       startCharge: startCharge ?? this.startCharge,
       scheduleData: scheduleData ?? this.scheduleData,
+      feasible: feasible ?? this.feasible,
     );
   }
 
@@ -1565,6 +1676,9 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
     if (scheduleData.present) {
       map['schedule_data'] = Variable<String>(scheduleData.value);
     }
+    if (feasible.present) {
+      map['feasible'] = Variable<bool>(feasible.value);
+    }
     return map;
   }
 
@@ -1576,7 +1690,8 @@ class SchedulesCompanion extends UpdateCompanion<Schedule> {
           ..write('start: $start, ')
           ..write('end: $end, ')
           ..write('startCharge: $startCharge, ')
-          ..write('scheduleData: $scheduleData')
+          ..write('scheduleData: $scheduleData, ')
+          ..write('feasible: $feasible')
           ..write(')'))
         .toString();
   }
@@ -1914,7 +2029,8 @@ typedef $$UserEVsTableCreateCompanionBuilder =
       required String userSetName,
       required double currentCharge,
       required String state,
-      required double currentChargePower,
+      required double currentChargingPower,
+      required double maxChargingPower,
     });
 typedef $$UserEVsTableUpdateCompanionBuilder =
     UserEVsCompanion Function({
@@ -1923,7 +2039,8 @@ typedef $$UserEVsTableUpdateCompanionBuilder =
       Value<String> userSetName,
       Value<double> currentCharge,
       Value<String> state,
-      Value<double> currentChargePower,
+      Value<double> currentChargingPower,
+      Value<double> maxChargingPower,
     });
 
 final class $$UserEVsTableReferences
@@ -2015,8 +2132,13 @@ class $$UserEVsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get currentChargePower => $composableBuilder(
-    column: $table.currentChargePower,
+  ColumnFilters<double> get currentChargingPower => $composableBuilder(
+    column: $table.currentChargingPower,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get maxChargingPower => $composableBuilder(
+    column: $table.maxChargingPower,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2123,8 +2245,13 @@ class $$UserEVsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get currentChargePower => $composableBuilder(
-    column: $table.currentChargePower,
+  ColumnOrderings<double> get currentChargingPower => $composableBuilder(
+    column: $table.currentChargingPower,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get maxChargingPower => $composableBuilder(
+    column: $table.maxChargingPower,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2177,8 +2304,13 @@ class $$UserEVsTableAnnotationComposer
   GeneratedColumn<String> get state =>
       $composableBuilder(column: $table.state, builder: (column) => column);
 
-  GeneratedColumn<double> get currentChargePower => $composableBuilder(
-    column: $table.currentChargePower,
+  GeneratedColumn<double> get currentChargingPower => $composableBuilder(
+    column: $table.currentChargingPower,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get maxChargingPower => $composableBuilder(
+    column: $table.maxChargingPower,
     builder: (column) => column,
   );
 
@@ -2293,14 +2425,16 @@ class $$UserEVsTableTableManager
                 Value<String> userSetName = const Value.absent(),
                 Value<double> currentCharge = const Value.absent(),
                 Value<String> state = const Value.absent(),
-                Value<double> currentChargePower = const Value.absent(),
+                Value<double> currentChargingPower = const Value.absent(),
+                Value<double> maxChargingPower = const Value.absent(),
               }) => UserEVsCompanion(
                 id: id,
                 carModelId: carModelId,
                 userSetName: userSetName,
                 currentCharge: currentCharge,
                 state: state,
-                currentChargePower: currentChargePower,
+                currentChargingPower: currentChargingPower,
+                maxChargingPower: maxChargingPower,
               ),
           createCompanionCallback:
               ({
@@ -2309,14 +2443,16 @@ class $$UserEVsTableTableManager
                 required String userSetName,
                 required double currentCharge,
                 required String state,
-                required double currentChargePower,
+                required double currentChargingPower,
+                required double maxChargingPower,
               }) => UserEVsCompanion.insert(
                 id: id,
                 carModelId: carModelId,
                 userSetName: userSetName,
                 currentCharge: currentCharge,
                 state: state,
-                currentChargePower: currentChargePower,
+                currentChargingPower: currentChargingPower,
+                maxChargingPower: maxChargingPower,
               ),
           withReferenceMapper:
               (p0) =>
@@ -2444,7 +2580,7 @@ typedef $$ConstraintsTableCreateCompanionBuilder =
       Value<int> id,
       required int userEvId,
       required DateTime startTime,
-      required DateTime chargedBy,
+      required DateTime endTime,
       required double minPercentage,
     });
 typedef $$ConstraintsTableUpdateCompanionBuilder =
@@ -2452,7 +2588,7 @@ typedef $$ConstraintsTableUpdateCompanionBuilder =
       Value<int> id,
       Value<int> userEvId,
       Value<DateTime> startTime,
-      Value<DateTime> chargedBy,
+      Value<DateTime> endTime,
       Value<double> minPercentage,
     });
 
@@ -2499,8 +2635,8 @@ class $$ConstraintsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get chargedBy => $composableBuilder(
-    column: $table.chargedBy,
+  ColumnFilters<DateTime> get endTime => $composableBuilder(
+    column: $table.endTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2552,8 +2688,8 @@ class $$ConstraintsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get chargedBy => $composableBuilder(
-    column: $table.chargedBy,
+  ColumnOrderings<DateTime> get endTime => $composableBuilder(
+    column: $table.endTime,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2601,8 +2737,8 @@ class $$ConstraintsTableAnnotationComposer
   GeneratedColumn<DateTime> get startTime =>
       $composableBuilder(column: $table.startTime, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get chargedBy =>
-      $composableBuilder(column: $table.chargedBy, builder: (column) => column);
+  GeneratedColumn<DateTime> get endTime =>
+      $composableBuilder(column: $table.endTime, builder: (column) => column);
 
   GeneratedColumn<double> get minPercentage => $composableBuilder(
     column: $table.minPercentage,
@@ -2665,13 +2801,13 @@ class $$ConstraintsTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int> userEvId = const Value.absent(),
                 Value<DateTime> startTime = const Value.absent(),
-                Value<DateTime> chargedBy = const Value.absent(),
+                Value<DateTime> endTime = const Value.absent(),
                 Value<double> minPercentage = const Value.absent(),
               }) => ConstraintsCompanion(
                 id: id,
                 userEvId: userEvId,
                 startTime: startTime,
-                chargedBy: chargedBy,
+                endTime: endTime,
                 minPercentage: minPercentage,
               ),
           createCompanionCallback:
@@ -2679,13 +2815,13 @@ class $$ConstraintsTableTableManager
                 Value<int> id = const Value.absent(),
                 required int userEvId,
                 required DateTime startTime,
-                required DateTime chargedBy,
+                required DateTime endTime,
                 required double minPercentage,
               }) => ConstraintsCompanion.insert(
                 id: id,
                 userEvId: userEvId,
                 startTime: startTime,
-                chargedBy: chargedBy,
+                endTime: endTime,
                 minPercentage: minPercentage,
               ),
           withReferenceMapper:
@@ -2765,6 +2901,7 @@ typedef $$SchedulesTableCreateCompanionBuilder =
       required DateTime end,
       required double startCharge,
       required String scheduleData,
+      required bool feasible,
     });
 typedef $$SchedulesTableUpdateCompanionBuilder =
     SchedulesCompanion Function({
@@ -2774,6 +2911,7 @@ typedef $$SchedulesTableUpdateCompanionBuilder =
       Value<DateTime> end,
       Value<double> startCharge,
       Value<String> scheduleData,
+      Value<bool> feasible,
     });
 
 final class $$SchedulesTableReferences
@@ -2829,6 +2967,11 @@ class $$SchedulesTableFilterComposer
 
   ColumnFilters<String> get scheduleData => $composableBuilder(
     column: $table.scheduleData,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get feasible => $composableBuilder(
+    column: $table.feasible,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2890,6 +3033,11 @@ class $$SchedulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get feasible => $composableBuilder(
+    column: $table.feasible,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$UserEVsTableOrderingComposer get userEvId {
     final $$UserEVsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2941,6 +3089,9 @@ class $$SchedulesTableAnnotationComposer
     column: $table.scheduleData,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get feasible =>
+      $composableBuilder(column: $table.feasible, builder: (column) => column);
 
   $$UserEVsTableAnnotationComposer get userEvId {
     final $$UserEVsTableAnnotationComposer composer = $composerBuilder(
@@ -3000,6 +3151,7 @@ class $$SchedulesTableTableManager
                 Value<DateTime> end = const Value.absent(),
                 Value<double> startCharge = const Value.absent(),
                 Value<String> scheduleData = const Value.absent(),
+                Value<bool> feasible = const Value.absent(),
               }) => SchedulesCompanion(
                 id: id,
                 userEvId: userEvId,
@@ -3007,6 +3159,7 @@ class $$SchedulesTableTableManager
                 end: end,
                 startCharge: startCharge,
                 scheduleData: scheduleData,
+                feasible: feasible,
               ),
           createCompanionCallback:
               ({
@@ -3016,6 +3169,7 @@ class $$SchedulesTableTableManager
                 required DateTime end,
                 required double startCharge,
                 required String scheduleData,
+                required bool feasible,
               }) => SchedulesCompanion.insert(
                 id: id,
                 userEvId: userEvId,
@@ -3023,6 +3177,7 @@ class $$SchedulesTableTableManager
                 end: end,
                 startCharge: startCharge,
                 scheduleData: scheduleData,
+                feasible: feasible,
               ),
           withReferenceMapper:
               (p0) =>

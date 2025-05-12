@@ -2,16 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
+  const BottomNavBar({super.key});
 
   static const List<NavItem> navItems = [
-    NavItem(route: '/', label: 'Home', icon: Icons.home),
+    NavItem(
+      route: '/',
+      label: 'Home',
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home,
+    ),
     NavItem(
       route: '/prices',
       label: 'Electricity prices',
-      icon: Icons.auto_graph_rounded,
+      icon: Icons.bar_chart_outlined,
+      selectedIcon: Icons.bar_chart,
     ),
-    NavItem(route: '/settings', label: 'Settings', icon: Icons.settings),
+    NavItem(
+      route: '/settings',
+      label: 'Settings',
+      icon: Icons.settings_outlined,
+      selectedIcon: Icons.settings,
+    ),
   ];
 
   int _calculateSelectedIndex(BuildContext context) {
@@ -29,16 +40,19 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedIndex = _calculateSelectedIndex(context);
 
-    return BottomNavigationBar(
-      currentIndex: selectedIndex,
-      onTap: (index) => context.go(navItems[index].route),
-      items:
-          navItems.map((item) {
-            return BottomNavigationBarItem(
-              icon: Icon(item.icon),
-              label: item.label,
-            );
-          }).toList(),
+    return NavigationBar(
+      destinations:
+          navItems
+              .map(
+                (navItem) => NavigationDestination(
+                  icon: Icon(navItem.icon),
+                  label: navItem.label,
+                  selectedIcon: Icon(navItem.selectedIcon),
+                ),
+              )
+              .toList(),
+      onDestinationSelected: (index) => context.go(navItems[index].route),
+      selectedIndex: selectedIndex,
     );
   }
 }
@@ -47,6 +61,12 @@ class NavItem {
   final String route;
   final String label;
   final IconData icon;
+  final IconData selectedIcon;
 
-  const NavItem({required this.route, required this.label, required this.icon});
+  const NavItem({
+    required this.route,
+    required this.label,
+    required this.icon,
+    required this.selectedIcon,
+  });
 }

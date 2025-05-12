@@ -32,7 +32,8 @@ class BatteryLevelCircle extends StatelessWidget {
             // ignore: deprecated_member_use
             year2023: false,
             trackGap: 0,
-            color: Theme.of(context).hintColor.withAlpha(75),
+            color: Theme.of(context).dividerColor.withAlpha(50),
+            backgroundColor: Theme.of(context).dividerColor.withAlpha(50),
           ),
         ),
         SizedBox(
