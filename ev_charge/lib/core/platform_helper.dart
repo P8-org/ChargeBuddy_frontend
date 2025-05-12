@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart'
 
 String getBaseUrl() {
   if (defaultTargetPlatform == TargetPlatform.android) {
-    return 'http://192.168.0.197:8000'; // Android Emulator
+    return 'http://10.0.2.2:8000'; // Android Emulator
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
     return 'http://localhost:8000'; // iOS Simulator
   } else {
