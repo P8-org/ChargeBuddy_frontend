@@ -535,29 +535,32 @@ class EvConstraintDialogState extends State<EvConstraintDialog> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: () async {
-            try {
-              await _backendService.postConstraint(
-                id: _constraintId,
-                evId: widget.evId,
-                startTime: _start,
-                deadline: _end,
-                targetPercentage: _minCharge.toDouble() / 100,
-              );
+          onPressed:
+              _end.isAfter(_start)
+                  ? () async {
+                    try {
+                      await _backendService.postConstraint(
+                        id: _constraintId,
+                        evId: widget.evId,
+                        startTime: _start,
+                        deadline: _end,
+                        targetPercentage: _minCharge.toDouble() / 100,
+                      );
 
-              final events = splitMultiDayEvent(
-                start: _start,
-                end: _end,
-                minCharge: _minCharge.toInt(),
-                groupId: widget.groupId,
-              );
-              Navigator.pop(context, events);
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to add constraint: $e')),
-              );
-            }
-          },
+                      final events = splitMultiDayEvent(
+                        start: _start,
+                        end: _end,
+                        minCharge: _minCharge.toInt(),
+                        groupId: widget.groupId,
+                      );
+                      Navigator.pop(context, events);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to add constraint: $e')),
+                      );
+                    }
+                  }
+                  : null,
           child: const Text('Save Event'),
         ),
       ],
