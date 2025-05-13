@@ -143,6 +143,7 @@ class _EventCalendarPage extends ConsumerState<EventCalendarPage> {
             borderColor: Theme.of(context).dividerColor,
             borderSize: 0,
             headerStyle: headerStyle,
+            onEventTap: (event, date) => _handleEventTap([event], date),
           ),
         };
 

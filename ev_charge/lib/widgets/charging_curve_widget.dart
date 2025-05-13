@@ -122,8 +122,38 @@ class _ChargingCurveState extends State<ChargingCurve> {
     // add one final data point to make it look nice
     cumulativeChargingCurve.add(cumulativeChargingCurve.last);
 
+    final spotList = List.generate(cumulativeChargingCurve.length, (index) {
+      double x = index.toDouble();
+      if (index == 1) {
+        final frac = widget.ev.schedule!.start.minute / 60.toDouble();
+        x += frac;
+      }
+      if (index == chargingData.length + 1) {
+        final frac =
+            widget.ev.schedule!.end.minute == 0
+                ? 0
+                : (60 - widget.ev.schedule!.end.minute) / 60.toDouble();
+        x -= frac;
+      }
+      return FlSpot(
+        x,
+        cumulativeChargingCurve[index] /
+            widget.ev.carModel.batteryCapacity *
+            100,
+      );
+    });
+
+    spotList.insert(1, spotList[1].copyWith(x: spotList[1].x.floorToDouble()));
+    spotList.insert(
+      spotList.length - 1,
+      spotList[spotList.length - 2].copyWith(
+        x: spotList[spotList.length - 2].x.ceilToDouble(),
+      ),
+    );
+
     return LineChartData(
       lineTouchData: LineTouchData(
+        touchSpotThreshold: 30,
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
           fitInsideHorizontally: true,
@@ -131,8 +161,17 @@ class _ChargingCurveState extends State<ChargingCurve> {
           tooltipRoundedRadius: 8,
           getTooltipItems: (touchedSpots) {
             return touchedSpots.map((spot) {
-              final time =
+              String time =
                   "${widget.ev.schedule!.start.add(Duration(hours: spot.x.toInt() - 1)).hour}:00";
+
+              if (spot.spotIndex == 2) {
+                time =
+                    "Start:\n${widget.ev.schedule!.start.hour}:${widget.ev.schedule!.start.minute.toString().padLeft(2, '0')}";
+              }
+              if (spot.spotIndex == chargingData.length + 2) {
+                time =
+                    "End:\n${widget.ev.schedule!.end.hour}:${widget.ev.schedule!.end.minute.toString().padLeft(2, '0')}";
+              }
 
               final percentage = '${spot.y.toStringAsFixed(0)}%';
               return LineTooltipItem(
@@ -203,15 +242,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
       maxY: 100.001,
       lineBarsData: [
         LineChartBarData(
-          spots: List.generate(
-            cumulativeChargingCurve.length,
-            (index) => FlSpot(
-              index.toDouble(),
-              cumulativeChargingCurve[index] /
-                  widget.ev.carModel.batteryCapacity *
-                  100,
-            ),
-          ),
+          spots: spotList,
           gradient: LinearGradient(colors: gradientColors),
           barWidth: 4,
           isStrokeCapRound: false,
@@ -230,7 +261,7 @@ class _ChargingCurveState extends State<ChargingCurve> {
       extraLinesData: ExtraLinesData(
         verticalLines: [
           VerticalLine(
-            x: _getNowX(cumulativeChargingCurve),
+            x: _getNowX(spotList),
             color: Colors.grey,
             dashArray: [5],
             label: VerticalLineLabel(
@@ -253,18 +284,36 @@ class _ChargingCurveState extends State<ChargingCurve> {
   }
 
   // used to get the x-coordinate for the vertical line at the current time
-  double _getNowX(List<double> cumulativeChargingCurve) {
+  double _getNowX(List<FlSpot> spots) {
+    final start = DateTime(
+      widget.ev.schedule!.start.year,
+      widget.ev.schedule!.start.month,
+      widget.ev.schedule!.start.day,
+      widget.ev.schedule!.start.hour - 1,
+    );
+
+    // Round end up to the nearest hour
+    final end =
+        widget.ev.schedule!.end.minute == 0
+            ? DateTime(
+              widget.ev.schedule!.end.year,
+              widget.ev.schedule!.end.month,
+              widget.ev.schedule!.end.day,
+              widget.ev.schedule!.end.hour + 1,
+            )
+            : DateTime(
+              widget.ev.schedule!.end.year,
+              widget.ev.schedule!.end.month,
+              widget.ev.schedule!.end.day,
+              widget.ev.schedule!.end.hour + 2,
+            );
     final now = DateTime.now();
-    final totalDuration =
-        widget.ev.schedule!.end
-            .difference(widget.ev.schedule!.start)
-            .inSeconds +
-        3600 * 3;
-    final currentDuration =
-        now.difference(widget.ev.schedule!.start).inSeconds + 3600;
+
+    final totalDuration = end.difference(start).inSeconds;
+    final currentDuration = now.difference(start).inSeconds;
 
     final progress = currentDuration / totalDuration;
-    final currentX = progress * cumulativeChargingCurve.length;
+    final currentX = spots.first.x + progress * (spots.last.x - spots.first.x);
     return currentX;
   }
 }
