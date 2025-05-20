@@ -53,7 +53,11 @@ class EVFormState extends ConsumerState<EVForm> {
     }
   }
 
-  getInitialSelection(FormFieldState<int> state, List<CarModel> carModels, UserEV ev) {
+  getInitialSelection(
+    FormFieldState<int> state,
+    List<CarModel> carModels,
+    UserEV ev,
+  ) {
     if (carModelController.text.isEmpty) {
       final entry = getCarModelEntries(
         carModels,
@@ -69,11 +73,22 @@ class EVFormState extends ConsumerState<EVForm> {
   }
 
   Text formSnackbarText(success) {
-    String suffix = userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text;
+    String suffix =
+        userSetNameController.text.isEmpty
+            ? modelNameController.text
+            : userSetNameController.text;
     if (widget.id == null) {
-      return Text(success ? "Successfully added '$suffix'" : "Failed to add '$suffix'. Try again later");
+      return Text(
+        success
+            ? "Successfully added '$suffix'"
+            : "Failed to add '$suffix'. Try again later",
+      );
     } else {
-      return Text(success ? "Successfully edited '$suffix'" : "Failed to edit '$suffix'. Try again later");
+      return Text(
+        success
+            ? "Successfully edited '$suffix'"
+            : "Failed to edit '$suffix'. Try again later",
+      );
     }
   }
 
@@ -96,34 +111,50 @@ class EVFormState extends ConsumerState<EVForm> {
     bool success = false;
 
     if (widget.id == null) {
-      success = await vm.addEv(userSetNameController.text.isEmpty ? modelNameController.text : userSetNameController.text, selectedCarModel!);
+      success = await vm.addEv(
+        userSetNameController.text.isEmpty
+            ? modelNameController.text
+            : userSetNameController.text,
+        selectedCarModel!,
+      );
     } else {
-      success = await vm.putEv(userSetNameController.text.isEmpty ? modelNameController.text: userSetNameController.text, selectedCarModel!, ev!,);
+      success = await vm.putEv(
+        userSetNameController.text.isEmpty
+            ? modelNameController.text
+            : userSetNameController.text,
+        selectedCarModel!,
+        ev!,
+      );
     }
 
-    if (mounted){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: formSnackbarText(success)));
-      Navigator.of(context).pop();
-    }  
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: formSnackbarText(success)));
+      context.pop();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     AsyncValue<List<UserEV?>> evProvider;
     UserEV? ev;
 
     final carModels = ref.watch(carModelsProvider);
 
     if (widget.id != null) {
-      evProvider = ref.watch(allUserEvsProvider); // TODO: Future optimization, use getSingleEVWithDetails, this requires getSingleEVWithDetails to be a Stream so it's values get updated.
+      evProvider = ref.watch(
+        allUserEvsProvider,
+      ); // TODO: Future optimization, use getSingleEVWithDetails, this requires getSingleEVWithDetails to be a Stream so it's values get updated.
       evProvider.when(
         loading: () => null,
-        error: (e, _) {return const Scaffold(body: Center(child: Text("EV not found"))); },
+        error: (e, _) {
+          return const Scaffold(body: Center(child: Text("EV not found")));
+        },
         data: (data) {
           ev = data.firstWhere((ev) => ev!.id == widget.id);
           userSetNameController.text.isEmpty ? initializeFields(ev!) : null;
-          },
+        },
       );
     }
 
@@ -152,9 +183,17 @@ class EVFormState extends ConsumerState<EVForm> {
                   child: ListView(
                     padding: const EdgeInsets.all(8),
                     children: <Widget>[
-                      FormHelper.inputField("Custom Name", true, userSetNameController, FormHelper.optionalStringValidator()),
+                      FormHelper.inputField(
+                        "Custom Name",
+                        true,
+                        userSetNameController,
+                        FormHelper.optionalStringValidator(),
+                      ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 16,
+                        ),
                         child: FormField<int>(
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: FormHelper.dropdownSelectionValidator(),
@@ -162,22 +201,43 @@ class EVFormState extends ConsumerState<EVForm> {
                             return DropdownMenu(
                               label: Text("Select Car Model"),
                               controller: carModelController,
-                              dropdownMenuEntries: getCarModelEntries(carModels),
+                              dropdownMenuEntries: getCarModelEntries(
+                                carModels,
+                              ),
                               menuHeight: 200,
                               expandedInsets: EdgeInsets.zero,
                               enableFilter: true,
                               errorText: state.errorText,
-                              initialSelection: (widget.id == null ? null : getInitialSelection(state, carModels, ev!)),
+                              initialSelection:
+                                  (widget.id == null
+                                      ? null
+                                      : getInitialSelection(
+                                        state,
+                                        carModels,
+                                        ev!,
+                                      )),
                               onSelected: (value) {
                                 if (value != null) {
                                   state.didChange(value as int);
                                   _formKey.currentState!.validate();
                                   setState(() {
-                                    selectedCarModel = carModels.where((carModel) => carModel.id == value).first;
-                                    modelNameController.text = selectedCarModel!.modelName.toString();
-                                    modelYearController.text = selectedCarModel!.modelYear.toString();
-                                    batteryCapacityController.text = selectedCarModel!.batteryCapacity.toString();
-                                    maxChargingPowerController.text = selectedCarModel!.maxChargingPower.toString();
+                                    selectedCarModel =
+                                        carModels
+                                            .where(
+                                              (carModel) =>
+                                                  carModel.id == value,
+                                            )
+                                            .first;
+                                    modelNameController.text =
+                                        selectedCarModel!.modelName.toString();
+                                    modelYearController.text =
+                                        selectedCarModel!.modelYear.toString();
+                                    batteryCapacityController.text =
+                                        selectedCarModel!.batteryCapacity
+                                            .toString();
+                                    maxChargingPowerController.text =
+                                        selectedCarModel!.maxChargingPower
+                                            .toString();
                                   });
                                 }
                               },
@@ -185,10 +245,30 @@ class EVFormState extends ConsumerState<EVForm> {
                           },
                         ),
                       ),
-                      FormHelper.inputField("Model", false, modelNameController, null),
-                      FormHelper.inputField("Model Year", false, modelYearController, null),
-                      FormHelper.inputField("Battery Capacity (kWh)", false, batteryCapacityController, null),
-                      FormHelper.inputField("Maximum Charging Power (kW)", false, maxChargingPowerController, null),
+                      FormHelper.inputField(
+                        "Model",
+                        false,
+                        modelNameController,
+                        null,
+                      ),
+                      FormHelper.inputField(
+                        "Model Year",
+                        false,
+                        modelYearController,
+                        null,
+                      ),
+                      FormHelper.inputField(
+                        "Battery Capacity (kWh)",
+                        false,
+                        batteryCapacityController,
+                        null,
+                      ),
+                      FormHelper.inputField(
+                        "Maximum Charging Power (kW)",
+                        false,
+                        maxChargingPowerController,
+                        null,
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -198,8 +278,12 @@ class EVFormState extends ConsumerState<EVForm> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             ElevatedButton(
-                              style: ElevatedButton.styleFrom(foregroundColor: Colors.red),
-                              onPressed: () {context.pop();},
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                context.pop();
+                              },
                               child: const Text('Cancel'),
                             ),
                             ElevatedButton(
@@ -219,6 +303,7 @@ class EVFormState extends ConsumerState<EVForm> {
             if (isLoading) Center(child: CircularProgressIndicator()),
           ],
         );
-      });
+      },
+    );
   }
 }

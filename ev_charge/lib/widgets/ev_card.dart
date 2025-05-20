@@ -16,10 +16,10 @@ class EvCard extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () {
-          context.go("/ev/${ev.id}");
+          context.push("/ev/${ev.id}");
         },
         onLongPress: () {
-          context.go("/edit_ev/${ev.id}");
+          context.push("/edit_ev/${ev.id}");
         },
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -53,7 +53,7 @@ class EvCard extends StatelessWidget {
                         ev.currentChargingPower != 0.0
                             ? Icon(
                               Icons.battery_charging_full_rounded,
-                              color: Theme.of(context).hintColor,
+                              color: Theme.of(context).colorScheme.primary,
                             )
                             : Icon(
                               Icons.battery_0_bar_rounded,

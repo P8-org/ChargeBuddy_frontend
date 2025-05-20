@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:ev_charge/widgets/bottom_navbar.dart';
 import 'package:ev_charge/widgets/ev_form.dart';
 
 class AddEv extends StatelessWidget {
@@ -11,10 +10,10 @@ class AddEv extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add EV'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
       body: const EVForm(),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
